@@ -1,0 +1,47 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.68])
+AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+AC_CONFIG_SRCDIR([config.h.in])
+AC_CONFIG_HEADERS([config.h])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+AC_MSG_CHECKING([for bison++])
+if bison++ --help 2> /dev/null;
+then
+  AC_MSG_RESULT([yes])
+   AC_SUBST([BISONXX], [bison++])
+else
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([MCC needs bison++.])
+fi
+AC_MSG_CHECKING([for flexx++])
+if flex++ --help > /dev/null;
+then
+  AC_MSG_RESULT([yes])
+   AC_SUBST([FLEXXX], [flex++])
+else
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([MCC needs flexx++.])
+fi
+
+
+# Checks for libraries.
+
+# Checks for header files.
+AC_FUNC_ALLOCA
+AC_CHECK_HEADERS([malloc.h stdlib.h string.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_CHECK_FUNCS([bzero])
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

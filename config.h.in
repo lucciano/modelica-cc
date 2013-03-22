@@ -1,0 +1,2 @@
+#define MCC_DEBUG
+#define MAX_STR_CONST 1000000
