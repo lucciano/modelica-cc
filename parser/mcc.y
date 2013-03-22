@@ -93,7 +93,7 @@ public:
 %token <real>   TOKFLOAT 
 %token <string> TOKSTRING TOKID 
 
-%type <argument> argument element_modification_replaceable element_redeclaration element_reclaration_1 element_reclaration_2 short_class_definition  component_clause1 element_modification element_replaceable   
+%type <argument> argument element_modification_replaceable element_redeclaration element_redeclaration_1 element_redeclaration_2 short_class_definition  component_clause1 element_modification element_replaceable   
 %type <argument_list> opt_argument_list argument_list class_modification opt_class_modification
 %type <class_list> class_definition_list
 %type <class_prefix> class_prefix class_prefixes opt_pure_impure_operator 
@@ -503,15 +503,15 @@ opt_equal_exp:
 ;
 
 element_redeclaration:
-  TOKREDECLARE opt_each opt_final element_reclaration_1 { $$ = newAST_Redeclaration($2,$3,$4); }
+  TOKREDECLARE opt_each opt_final element_redeclaration_1 { $$ = newAST_Redeclaration($2,$3,$4); }
 ;
 
-element_reclaration_1:
-   element_reclaration_2 { $$ = $1; }
+element_redeclaration_1:
+   element_redeclaration_2 { $$ = $1; }
  | element_replaceable   { $$ = $1; }
 ;
 
-element_reclaration_2:
+element_redeclaration_2:
     short_class_definition  { $$ = $1; }
   | component_clause1       { $$ = $1; }
 ;
