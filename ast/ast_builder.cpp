@@ -1,4 +1,5 @@
 #include <ast/ast_builder.h>
+#include <assert.h>
 #include <ast/stored_definition.h>
 #include <ast/class.h>
 #include <ast/composition.h>
@@ -181,7 +182,7 @@ AST_DeclarationList newAST_DeclarationList(AST_Declaration d) {
 }
 
 AST_CompositionElement newAST_CompositionElement(AST_EquationList el) {
-  return new AST_CompositionElement_(el);
+  //return new AST_CompositionElement_(el);
 }
 
 AST_CompositionElement newAST_CompositionElement(AST_ElementList el) {
@@ -247,6 +248,7 @@ AST_Expression_ComponentReference newAST_Expression_ComponentReference(AST_Strin
 
 
 ostream & operator<<(ostream &os , const AST_CompositionElement &ce) {
+  assert(ce!=NULL);
   os << *ce;
   return os;
 }
@@ -548,8 +550,8 @@ AST_CompositionEqsAlgs newAST_CompositionInitialEquations(AST_EquationList) {
   return NULL;
 }
 
-AST_CompositionEqsAlgs newAST_CompositionEquations(AST_EquationList) {
-  return NULL;
+AST_CompositionEqsAlgs newAST_CompositionEquations(AST_EquationList eqlist) {
+  return new AST_CompositionEqsAlgs_(eqlist);
 }
 
 AST_CompositionEqsAlgs newAST_CompositionInitialAlgorithms(AST_StatementList) {
@@ -583,8 +585,8 @@ AST_Modification newAST_Modification(AST_ArgumentList,AST_Expression) {
   return NULL;
 }
 
-AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs) {
-  return NULL;
+AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs comp_eq_algs) {
+  return new AST_CompositionElement_(comp_eq_algs);
 }
 
 AST_Class newAST_ClassExtends(AST_String, AST_Composition) {

@@ -8,23 +8,16 @@
 class AST_CompositionElement_: public AST_Node
 {
 public:
-  AST_CompositionElement_(AST_EquationList eqs): _eqs(eqs) { 
+  AST_CompositionElement_(AST_CompositionEqsAlgs eqs_algs): _eqs_algs(eqs_algs) { 
     _el = newAST_ElementList();
   };
   AST_CompositionElement_(AST_ElementList el): _el(el) { 
-    _eqs = newAST_EquationList();
+    //_eqs_algs = newAST_EquationList();
   };
   
-  friend ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce ) 
-  { 
-    AST_EquationListIterator it;
-    os << "equation" << endl;
-    foreach (it,ce._eqs) 
-        os << current(it); 
-    return os;
-  } 
-  AST_EquationList getEquations();
-  AST_EquationList _eqs;
+  friend ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce ) ;
+  AST_CompositionEqsAlgs getEquations();
+  AST_CompositionEqsAlgs _eqs_algs;
   AST_ElementList _el;
 };
 
@@ -39,5 +32,14 @@ public:
   AST_EquationList getEquations();
   AST_ComponentList getComponents();
  
+};
+
+class AST_CompositionEqsAlgs_: public AST_Node {
+public:
+  AST_CompositionEqsAlgs_(AST_EquationList eq);
+  friend ostream & operator<<(ostream &os , const AST_CompositionEqsAlgs &ceqa ) ;
+  AST_EquationList getEquations() { return _eq; }
+private:
+  AST_EquationList _eq;
 };
 #endif
