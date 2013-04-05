@@ -1,29 +1,29 @@
 CXXFLAGS = -DYY_MCC_Parser_DEBUG -I. -g
-OBJS := parser/mcc_parser.o main.o parser/mcc_scanner.o ast/ast_builder.o  ast/class.o  ast/composition.o  ast/element.o  ast/equation.o  ast/expression.o \
+OBJS := parser/mocc_parser.o main.o parser/mocc_scanner.o ast/ast_builder.o  ast/class.o  ast/composition.o  ast/element.o  ast/equation.o  ast/expression.o \
         ast/modification.o ast/statement.o ast/stored_definition.o  parser/parse.o # flatten/flatten.o flatten/symbol_table.o
 
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
 
 all:mocc 
-	./mocc examples/mcc.mo
+	./mocc examples/mocc.mo
 
 doc:
 	doxygen 
 test: mocc
-	./mocc examples/mcc.mo
+	./mocc examples/mocc.mo
 
-parser/mcc_parser.cpp: parser/mcc.y
-	@BISONXX@ -t -d -v -hparser/mcc_parser.h -o parser/mcc_parser.cpp parser/mcc.y
+parser/mocc_parser.cpp: parser/mocc.y
+	@BISONXX@ -t -d -v -hparser/mocc_parser.h -o parser/mocc_parser.cpp parser/mocc.y
 
-parser/mcc_scanner.cpp: parser/mcc.lex parser/mcc_parser.h
-	@FLEXXX@ -d -oparser/mcc_scanner.cpp parser/mcc.lex
+parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.h
+	@FLEXXX@ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
 mocc: $(OBJS)
 	@CXX@ $(CXXFLAGS) -o mocc $(OBJS)
 
 clean:
-	rm -rf $(OBJS) mocc parser/mcc_parser.cpp parser/mcc_scanner.cpp parser/mcc_parser.h
+	rm -rf $(OBJS) mocc parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h
 
 
 
