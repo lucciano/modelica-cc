@@ -32,7 +32,8 @@ int main(int argc, char ** argv)
     return -1;
   }
   AST_StoredDefinition sd = parseFile(argv[1],&r);
-  if (r==0) // Parsed ok
+  if (r==0) { // Parsed ok
     cerr << sd;
+  }
   return 0;
 }

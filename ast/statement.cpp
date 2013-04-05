@@ -18,3 +18,20 @@
 
 ******************************************************************************/
 
+#include <ast/statement.h>
+
+using namespace std;
+
+ostream & operator<<(ostream &os , const AST_Statement_ &s ) {
+  os << s.print();  
+  return os;
+}
+
+string AST_Statement_Return_::print() const { 
+  return "return"; 
+}
+
+string AST_Statement_Break_::print() const { 
+  return "return"; 
+}
+

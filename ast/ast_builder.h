@@ -207,6 +207,7 @@ AST_Composition newAST_Composition();
 AST_Composition newAST_Composition(AST_ElementList );
 AST_Composition newAST_Composition(AST_ElementList el, AST_CompositionElementList cl);
 AST_Composition newAST_Composition(AST_CompositionElementList cl);
+AST_CompositionEqsAlgs newAST_NullCompositionEquations();
 AST_CompositionEqsAlgs newAST_CompositionInitialEquations(AST_EquationList);
 AST_CompositionEqsAlgs newAST_CompositionEquations(AST_EquationList);
 AST_CompositionEqsAlgs newAST_CompositionInitialAlgorithms(AST_StatementList);

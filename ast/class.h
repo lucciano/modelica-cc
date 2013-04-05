@@ -58,6 +58,7 @@ public:
   void setFinal() { _final=true; }
   void setEncapsulated() { _encapsulated=true; }
   void setPrefixes(AST_ClassPrefix cp) { _prefix=cp; }
+
 private:
   AST_EquationList  _equations; 
   AST_ComponentList _components;

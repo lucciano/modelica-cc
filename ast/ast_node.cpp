@@ -18,22 +18,24 @@
 
 ******************************************************************************/
 
-#ifndef AST_NODE
-#define AST_NODE
-#include <iostream>
-#include <parser/mcc_parser.h>
-#include <ast/ast_builder.h>
+#include <ast/ast_node.h>
 
 using namespace std;
 
-class AST_Node {
-public:
-  AST_Node();
-  friend ostream & operator<<(ostream &os , const AST_Node &n );
-  void setLineNum(int linenum);
-  int lineNum() const;
+AST_Node::AST_Node() {
+  _linenum = parser->lineno();
+}
 
-private:    
-  int _linenum;
+ostream & operator<<(ostream &os , const AST_Node &n ) { 
+  os << "Printing not implemented!!"<< endl; 
+  return os;
 };
-#endif
+
+void AST_Node::setLineNum(int linenum) { 
+    _linenum = linenum;
+} 
+
+int AST_Node::lineNum() const {
+  return _linenum;
+}
+

@@ -26,23 +26,16 @@
 class AST_Statement_: public AST_Node
 {
 public:
-  friend ostream & operator<<(ostream &os , const AST_Statement_ &s ){
-    os << s.print();  
-    return os;
-  };
+  friend ostream & operator<<(ostream &os , const AST_Statement_ &s );
   virtual string print() const =0;
-  //virtual EquationType equationType() = 0;
- // virtual AST_Equation duplicateEquation();
-  //AST_Equation_Equality getAsEquality();
-  //AST_Equation_Connect getAsConnect();
 };
 
 
 class AST_Statement_Return_: public AST_Statement_ {
-  string print() const { return "return"; }
+  string print() const;
 };
 
 class AST_Statement_Break_: public AST_Statement_ {
-  string print() const { return "return"; }
+  string print() const;
 };
 #endif

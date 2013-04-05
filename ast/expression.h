@@ -42,6 +42,7 @@ public:
   string print() const;
   virtual AST_Expression duplicateExpression();
   AST_Integer val();
+
 private:
   AST_Integer _i;
 };
@@ -162,7 +163,7 @@ private:
 
 class AST_Expression_End_: public AST_Expression_ {
 public:
-  virtual string print() const ;//{ return "end";};
+  virtual string print() const ;
   virtual ExpressionType expressionType() { return EXPEND; }
 };
 

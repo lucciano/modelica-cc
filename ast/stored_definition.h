@@ -30,6 +30,7 @@ public:
   friend ostream & operator<<(ostream &, const AST_StoredDefinition_ &) ;
   AST_ClassList models() const { return _model_list; }
   AST_String within() const { return _within; }
+
 private:
   AST_ClassList _model_list;
   AST_String _within;

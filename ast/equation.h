@@ -29,10 +29,7 @@
 class AST_Equation_: public AST_Node
 {
 public:
-  friend ostream & operator<<(ostream &os , const AST_Equation_ &e ){
-    os << e.print();  
-    return os;
-  };
+  friend ostream & operator<<(ostream &os , const AST_Equation_ &e );
   virtual string print() const =0;
   virtual EquationType equationType() = 0;
   virtual AST_Equation duplicateEquation();
@@ -43,32 +40,27 @@ public:
 class AST_Equation_Equality_: public AST_Equation_
 {
 public:
-  AST_Equation_Equality_(AST_Expression left, AST_Expression right):_left(left), _right(right) {};
+  AST_Equation_Equality_(AST_Expression left, AST_Expression right);
   virtual EquationType equationType() { return EQEQUALITY; }
-  string print() const { 
-    stringstream ret(stringstream::out);
-    ret << left() << " = " << right() << ";" << endl;
-    return ret.str();
-  };
-
-  AST_Expression _left,_right;
+  string print() const ;
   AST_Expression left() const;
   AST_Expression right() const;
+
+private:
+  AST_Expression _left,_right;
 };
 
 class AST_Equation_Connect_: public AST_Equation_ {
 public:
-  AST_Equation_Connect_(AST_Expression_ComponentReference cr1, AST_Expression_ComponentReference cr2):_cr1(cr1), _cr2(cr2) {};
+  AST_Equation_Connect_(AST_Expression_ComponentReference cr1, AST_Expression_ComponentReference cr2);
 
-  string print() const { 
-    stringstream ret(stringstream::out);
-    ret << "CONNECT[" << _cr1 << "," << _cr2 <<"]" << endl;
-    return ret.str();
-  }
-  AST_Expression_ComponentReference _cr1, _cr2;
+  string print() const ;
   AST_Expression_ComponentReference left() { return _cr1; }
   AST_Expression_ComponentReference right() { return _cr2; }
   virtual EquationType equationType() { return EQCONNECT; }
+
+private:
+  AST_Expression_ComponentReference _cr1, _cr2;
 };
 
 class AST_Equation_Call_: public AST_Equation_ {

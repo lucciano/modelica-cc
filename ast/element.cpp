@@ -26,6 +26,7 @@ using namespace std;
 
 AST_Element_ClassWrapper_::AST_Element_ClassWrapper_(AST_Class_ *c): _c(c){
 };
+
 string AST_Element_ClassWrapper_::print() const { 
   stringstream ret(stringstream::out);
   if (_c==NULL) 
@@ -35,12 +36,6 @@ string AST_Element_ClassWrapper_::print() const {
 return ret.str();
 }
  
-bool AST_Component_::isFlat() {
-  cerr << "Checking if " << type() << " is flat= " << (type()=="Real") <<endl;
-  if (type()=="Real") return true;
-  return false;
-};
-
 AST_Component_ *AST_Element_::getAsComponent() {
  return dynamic_cast<AST_Component_*>(this); 
 }
@@ -61,4 +56,57 @@ ostream & operator<<(ostream &os , const AST_Component &c ){
 ostream & operator<<(ostream &os , const AST_Element &e ) {
   os << *e;
   return os;
+}
+
+ostream & operator<<(ostream &os , const AST_Element_ &e ){
+    os << e.print();  
+    return os;
+};
+
+string AST_ExtendsClause_::print() const { 
+    stringstream ret(stringstream::out);
+    ret << "EXTENDS " << _name  ;
+    return ret.str();
+}
+
+string AST_ImportClause_::print() const { 
+    stringstream ret(stringstream::out);
+    ret << "IMPORT[" << _name << "]";
+    return ret.str();
+}
+AST_ImportClause_::AST_ImportClause_(string name):_name(name) {
+}
+
+AST_ExtendsClause_ ::AST_ExtendsClause_ (string name):_name(name) {
+}
+
+AST_Declaration_::AST_Declaration_(string name):_name(name) {}
+;
+string AST_Declaration_::print() const { 
+    stringstream ret(stringstream::out);
+    ret << _name;
+    return ret.str();
+}
+
+AST_Component_::AST_Component_ (AST_DeclarationList decl_list, string type, AST_TypePrefix tp):_decl_list(decl_list), 
+                                                                                          _type(type), 
+                                                                                          _inherited(false), 
+                                                                                          _origin(NULL),
+                                                                                          _tp(tp) {
+}
+ 
+string AST_Component_::print() const {
+  stringstream ret(stringstream::out);
+    AST_DeclarationListIterator it,itt;
+    ret << "  "; 
+    if (isParameter()) 
+      ret << "parameter "; 
+    ret << _type << " "; 
+    for (it=_decl_list->begin();it!=_decl_list->end();it++) {
+      itt=it;
+      itt++;
+      ret << current(it) << (itt==_decl_list->end() ? "" : ",");
+    }
+    ret << ";"; 
+    return ret.str();
 }

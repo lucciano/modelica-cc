@@ -625,3 +625,7 @@ AST_Class newAST_ClassDerivation(AST_String, AST_String, AST_StringList) {
 AST_Class newAST_ClassModification(AST_String, AST_TypePrefix, AST_String, AST_ExpressionList,AST_ArgumentList) {
   return NULL;
 }
+
+AST_CompositionEqsAlgs newAST_NullCompositionEquations() {
+  return NULL;
+}

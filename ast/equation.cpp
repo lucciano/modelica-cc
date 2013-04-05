@@ -88,3 +88,26 @@ string AST_Equation_For_::print() const {
 
   return ret.str();
 }
+
+ostream & operator<<(ostream &os , const AST_Equation_ &e ){
+    os << e.print();  
+    return os;
+}
+
+string AST_Equation_Equality_::print() const {
+    stringstream ret(stringstream::out);
+    ret << left() << " = " << right() << ";" << endl;
+    return ret.str();
+}
+
+AST_Equation_Equality_::AST_Equation_Equality_ (AST_Expression left, AST_Expression right):_left(left), _right(right) {
+}
+
+AST_Equation_Connect_::AST_Equation_Connect_(AST_Expression_ComponentReference cr1, AST_Expression_ComponentReference cr2):_cr1(cr1), _cr2(cr2) {
+
+}
+string AST_Equation_Connect_::print() const {
+    stringstream ret(stringstream::out);
+    ret << "CONNECT[" << _cr1 << "," << _cr2 <<"]" << endl;
+    return ret.str();
+  }

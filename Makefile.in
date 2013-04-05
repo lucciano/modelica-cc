@@ -1,6 +1,18 @@
 CXXFLAGS = -DYY_MCC_Parser_DEBUG -I. -g
-OBJS := parser/mocc_parser.o main.o parser/mocc_scanner.o ast/ast_builder.o  ast/class.o  ast/composition.o  ast/element.o  ast/equation.o  ast/expression.o \
-        ast/modification.o ast/statement.o ast/stored_definition.o  parser/parse.o # flatten/flatten.o flatten/symbol_table.o
+OBJS := parser/mocc_parser.o \
+        main.o \
+        parser/mocc_scanner.o \
+        ast/ast_builder.o \
+        ast/ast_node.o \
+        ast/class.o  \
+        ast/composition.o \
+        ast/element.o \
+        ast/equation.o \
+        ast/expression.o \
+        ast/modification.o \
+        ast/statement.o \
+        ast/stored_definition.o  \
+        parser/parse.o 
 
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
@@ -16,7 +28,7 @@ test: mocc
 parser/mocc_parser.cpp: parser/mocc.y
 	@BISONXX@ -t -d -v -hparser/mocc_parser.h -o parser/mocc_parser.cpp parser/mocc.y
 
-parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.h
+parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
 	@FLEXXX@ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
 mocc: $(OBJS)

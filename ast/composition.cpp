@@ -24,6 +24,16 @@
 #include <ast/element.h>
 
 
+AST_CompositionElement_::AST_CompositionElement_(AST_CompositionEqsAlgs eqs_algs): _eqs_algs(eqs_algs), _el(newAST_ElementList()) {
+}
+
+AST_CompositionElement_::AST_CompositionElement_(AST_ElementList el): _el(el), _eqs_algs(newAST_NullCompositionEquations()) { 
+}
+
+
+AST_Composition_ :: AST_Composition_ (AST_ElementList el,AST_CompositionElementList cl): _composition_list(cl), _element_list(el) {
+}
+
 list<AST_Equation_*> *AST_Composition_::getEquations() {
   list<AST_Equation_*> *ret= new list<AST_Equation_*>();
   list<AST_CompositionElement_*>::iterator it;
