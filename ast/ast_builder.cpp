@@ -19,13 +19,13 @@
 ******************************************************************************/
 
 #include <ast/ast_builder.h>
-#include <assert.h>
 #include <ast/stored_definition.h>
 #include <ast/class.h>
 #include <ast/composition.h>
 #include <ast/expression.h>
 #include <ast/equation.h>
 #include <ast/statement.h>
+#include <cassert>
 
 class MCC_Parser;
 MCC_Parser *parser;

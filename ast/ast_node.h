@@ -21,7 +21,6 @@
 #ifndef AST_NODE
 #define AST_NODE
 #include <iostream>
-#include <parser/mcc_parser.h>
 #include <ast/ast_builder.h>
 
 using namespace std;

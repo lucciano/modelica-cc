@@ -21,7 +21,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <parser/parse.h>
-#include <parser/mcc_parser.h>
+#include <parser/mocc_parser.h>
 
 using namespace std;
 

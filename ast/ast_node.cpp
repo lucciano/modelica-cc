@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include <ast/ast_node.h>
+#include <parser/mocc_parser.h>
 
 using namespace std;
 
