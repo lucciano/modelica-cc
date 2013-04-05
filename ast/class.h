@@ -37,9 +37,10 @@ public:
   AST_ComponentList getComponents();
   void addComponent(AST_Component c);
 
-  AST_EquationList  getEquations();
+  /*
   void addEquation(AST_Equation e);
   void removeEquation(AST_Equation e);
+  */
 
   void addClass(AST_Class c);
   AST_ClassList getClasses();
@@ -60,7 +61,6 @@ public:
   void setPrefixes(AST_ClassPrefix cp) { _prefix=cp; }
 
 private:
-  AST_EquationList  _equations; 
   AST_ComponentList _components;
   AST_StringList    _extends_list;
   AST_Composition   _composition;

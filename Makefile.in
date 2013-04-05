@@ -20,8 +20,9 @@ OBJS := parser/mocc_parser.o \
 all:mocc 
 	./mocc examples/mocc.mo
 
-doc:
+docs:
 	doxygen 
+
 test: mocc
 	./mocc examples/mocc.mo
 

@@ -65,7 +65,7 @@ AST_Expression_Real_::AST_Expression_Real_(double d):_d(d) {
 
 string AST_Expression_Real_::print() const { 
   stringstream ret(stringstream::out);
-  ret << "REAL[" << _d << "]";
+  ret <<  _d;
   return ret.str();
 }
 

@@ -19,13 +19,20 @@
 ******************************************************************************/
 
 #include <fstream>
-using namespace std;
+#include <cstdlib>
 #include <parser/parse.h>
 #include <parser/mcc_parser.h>
+
+using namespace std;
+
 AST_StoredDefinition parseFile(string filename, int *r) {
   fstream in;   
   parser = new MCC_Parser(false);
   in.open(filename.c_str(),fstream::in);
+  if (in.fail()) {
+    cerr << "Could not open file " << filename.c_str() << endl;
+    exit(-1);
+  }
   int ret = parser->parseFile(&in);
   if (ret==0) {
     *r=0;

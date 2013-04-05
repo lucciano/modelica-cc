@@ -25,6 +25,22 @@
 #include <ast/equation.h>
 #include <stdlib.h>
 
+class AST_CompositionElement_;
+
+class AST_Composition_: public AST_Node {
+public:
+  AST_Composition_ (AST_ElementList el,AST_CompositionElementList cl);
+  friend ostream & operator<<(ostream &os , const AST_Composition_ &cm ) ;
+  AST_CompositionElementList compositionList() const;
+  AST_ElementList elementList() const;
+  AST_ComponentList getComponents();
+
+private:
+  AST_ElementList _element_list;
+  AST_CompositionElementList _composition_list;
+ 
+};
+
 class AST_CompositionElement_: public AST_Node
 {
 public:
@@ -38,20 +54,6 @@ private:
   AST_ElementList _el;
 };
 
-class AST_Composition_: public AST_Node {
-public:
-  AST_Composition_ (AST_ElementList el,AST_CompositionElementList cl);
-  friend ostream & operator<<(ostream &os , const AST_Composition_ &cm ) ;
-  AST_CompositionElementList compositionList() const;
-  AST_ElementList elementList() const;
-  AST_EquationList getEquations();
-  AST_ComponentList getComponents();
-
-private:
-  AST_ElementList _element_list;
-  AST_CompositionElementList _composition_list;
- 
-};
 
 class AST_CompositionEqsAlgs_: public AST_Node {
 public:

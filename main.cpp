@@ -21,6 +21,9 @@
 #include <iostream>
 
 #include <parser/parse.h>
+#include <ast/ast_builder.h>
+#include <ast/stored_definition.h>
+#include <ast/class.h>
 
 using namespace std;
 
@@ -33,7 +36,8 @@ int main(int argc, char ** argv)
   }
   AST_StoredDefinition sd = parseFile(argv[1],&r);
   if (r==0) { // Parsed ok
-    cerr << sd;
+    AST_Class c = sd->models()->front();
+    cerr << c;
   }
   return 0;
 }

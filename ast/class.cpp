@@ -62,18 +62,13 @@ ostream & operator<<(ostream &os , const AST_Class_ &cl )  {
     os<<"end " << cl.name() << ";" << endl;
 }
 
-
-AST_EquationList AST_Class_::getEquations(){ 
-  return _equations; 
-}
-
+/*
 void AST_Class_::addEquation(AST_Equation e) { 
-  _equations->push_back(e); 
 }
 
 void AST_Class_::removeEquation(AST_Equation e) { 
-  _equations->remove(e); 
 }
+*/
 
 void AST_Class_::addClass(AST_Class c) { 
   _sub_classes->push_back(c); 

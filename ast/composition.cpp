@@ -34,19 +34,9 @@ AST_CompositionElement_::AST_CompositionElement_(AST_ElementList el): _el(el), _
 AST_Composition_ :: AST_Composition_ (AST_ElementList el,AST_CompositionElementList cl): _composition_list(cl), _element_list(el) {
 }
 
-list<AST_Equation_*> *AST_Composition_::getEquations() {
-  list<AST_Equation_*> *ret= new list<AST_Equation_*>();
-  list<AST_CompositionElement_*>::iterator it;
-  /*
-  for (it=_composition_list->begin();it!=_composition_list->end();it++) {
-    if ((*it)->_eqs_algs!=NULL)  
-      ret->insert(ret->end(),(*it)->_eqs_algs->begin(),(*it)->_eqs_algs->end());
-  }
-  */
-  return ret;
+AST_CompositionEqsAlgs AST_CompositionElement_::getEquations() { 
+  return _eqs_algs; 
 }
-
-AST_CompositionEqsAlgs AST_CompositionElement_::getEquations() { return _eqs_algs; }
 
 AST_CompositionElementList AST_Composition_::compositionList() const { 
   return _composition_list; 
