@@ -499,8 +499,9 @@ AST_Expression newAST_Expression_Range(AST_Expression, AST_Expression) {
   return newAST_Expression_Null();
 }
 
-AST_Expression newAST_Expression_OutputExpressions(AST_ExpressionList) {
-  return newAST_Expression_Null();
+AST_Expression newAST_Expression_OutputExpressions(AST_ExpressionList exp_list) { 
+  /* For now just one element supported */
+  return exp_list->front();
 }
 
 AST_Expression newAST_Expression_FunctionArguments(AST_ExpressionList) {
