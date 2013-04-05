@@ -31,7 +31,7 @@ ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce )
   AST_EquationListIterator it;
   os << "equation" << endl;
   foreach (it,ce._eqs_algs->getEquations())  {
-      os << current(it); 
+      os << "  " << current(it); 
   }
   return os;
 } 
@@ -51,7 +51,6 @@ ostream & operator<<(ostream &os , const AST_Composition_ &cm )  {
       os << current(it);
     }
     return os;
-
 }
 
 

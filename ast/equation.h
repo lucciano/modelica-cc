@@ -27,7 +27,7 @@ public:
   virtual EquationType equationType() { return EQEQUALITY; }
   string print() const { 
     stringstream ret(stringstream::out);
-    ret << "" << left() << "=" << right() <<";" << endl;
+    ret << left() << " = " << right() << ";" << endl;
     return ret.str();
   };
 

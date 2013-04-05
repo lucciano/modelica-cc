@@ -75,6 +75,7 @@ public:
   string print() const { 
     stringstream ret(stringstream::out);
     AST_DeclarationListIterator it,itt;
+    ret << "  "; 
     if (isParameter()) 
       ret << "parameter "; 
     ret << _type << " "; 

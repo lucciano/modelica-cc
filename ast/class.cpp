@@ -38,7 +38,7 @@ ostream & operator<<(ostream &os , const AST_Class &c ) {
 
 ostream & operator<<(ostream &os , const AST_Class_ &cl )  {
     os << "class " << cl.name() << endl; 
-    os << cl.composition() << endl;
+    os << cl.composition();
     os<<"end " << cl.name() << ";" << endl;
 }
 
