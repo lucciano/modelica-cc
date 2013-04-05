@@ -5,8 +5,11 @@ OBJS := parser/mcc_parser.o main.o parser/mcc_scanner.o ast/ast_builder.o  ast/c
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
 
-all:mocc
+all:mocc 
+	./mocc examples/mcc.mo
 
+doc:
+	doxygen 
 test: mocc
 	./mocc examples/mcc.mo
 
