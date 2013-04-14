@@ -14,10 +14,26 @@ OBJS := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
+OBJS_MMO := parser/mocc_parser.o \
+            mmo/main.o \
+        parser/mocc_scanner.o \
+        ast/ast_builder.o \
+        ast/ast_node.o \
+        ast/class.o  \
+        ast/composition.o \
+        ast/element.o \
+        ast/equation.o \
+        ast/expression.o \
+        ast/modification.o \
+        ast/statement.o \
+        ast/stored_definition.o  \
+        parser/parse.o 
+
+
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
 
-all:mocc 
+all:mocc mmo
 	./mocc examples/mocc.mo
 
 docs:
@@ -35,6 +51,8 @@ parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
 mocc: $(OBJS)
 	@CXX@ $(CXXFLAGS) -o mocc $(OBJS)
 
+mmo: $(OBJS_MMO)
+	@CXX@ $(CXXFLAGS) -o mmo/mmo $(OBJS_MMO)
 clean:
 	rm -rf $(OBJS) mocc parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h
 
