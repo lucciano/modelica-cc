@@ -33,7 +33,9 @@ MMO_Class::MMO_Class(AST_Class c):_class(c) {
 	foreach(it,cel) {
 		AST_EquationListIterator eqit;
 		AST_CompositionElement e = current(it);
-		AST_EquationList eqs = e->getEquations()->getEquations();
+                if (e->getEquationsAlgs()==NULL) 
+                  continue;
+		AST_EquationList eqs = e->getEquationsAlgs()->getEquations();
 		foreach(eqit,eqs) 
 			addEquation(current(eqit)); 
 	}

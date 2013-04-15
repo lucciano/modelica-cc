@@ -567,20 +567,20 @@ AST_Equation newAST_Equation_When(AST_Expression,AST_EquationList, AST_Equation_
   return NULL;
 }
 
-AST_CompositionEqsAlgs newAST_CompositionInitialEquations(AST_EquationList) {
-  return NULL;
+AST_CompositionEqsAlgs newAST_CompositionInitialEquations(AST_EquationList eqlist) {
+  return new AST_CompositionEqsAlgs_(eqlist,true);
 }
 
 AST_CompositionEqsAlgs newAST_CompositionEquations(AST_EquationList eqlist) {
   return new AST_CompositionEqsAlgs_(eqlist);
 }
 
-AST_CompositionEqsAlgs newAST_CompositionInitialAlgorithms(AST_StatementList) {
-  return NULL;
+AST_CompositionEqsAlgs newAST_CompositionInitialAlgorithms(AST_StatementList stlist) {
+  return new AST_CompositionEqsAlgs_(stlist,true);
 }
 
-AST_CompositionEqsAlgs newAST_CompositionAlgorithms(AST_StatementList) {
-  return NULL;
+AST_CompositionEqsAlgs newAST_CompositionAlgorithms(AST_StatementList stlist) {
+  return new AST_CompositionEqsAlgs_(stlist);
 }
 
 AST_ShortClassExp newAST_ShortClassExp(AST_TypePrefix, AST_String, AST_ExpressionList, AST_ArgumentList) {

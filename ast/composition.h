@@ -33,7 +33,6 @@ public:
   friend ostream & operator<<(ostream &os , const AST_Composition_ &cm ) ;
   AST_CompositionElementList compositionList() const;
   AST_ElementList elementList() const;
-  AST_ComponentList getComponents();
 
 private:
   AST_ElementList _element_list;
@@ -47,7 +46,7 @@ public:
   AST_CompositionElement_(AST_CompositionEqsAlgs eqs_algs);
   AST_CompositionElement_(AST_ElementList el);
   friend ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce ) ;
-  AST_CompositionEqsAlgs getEquations();
+  AST_CompositionEqsAlgs getEquationsAlgs();
 
 private:
   AST_CompositionEqsAlgs _eqs_algs;
@@ -58,10 +57,16 @@ private:
 class AST_CompositionEqsAlgs_: public AST_Node {
 public:
   AST_CompositionEqsAlgs_(AST_EquationList eq);
+  AST_CompositionEqsAlgs_(AST_StatementList st);
+  AST_CompositionEqsAlgs_(AST_StatementList st, bool initial);
+  AST_CompositionEqsAlgs_(AST_EquationList eq, bool initial);
   friend ostream & operator<<(ostream &os , const AST_CompositionEqsAlgs &ceqa ) ;
   AST_EquationList getEquations() { return _eq; }
+  AST_StatementList getAlgorithms() { return _st; }
 
 private:
   AST_EquationList _eq;
+  AST_StatementList _st;
+  bool _initial;
 };
 #endif

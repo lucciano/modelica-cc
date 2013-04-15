@@ -34,7 +34,7 @@ AST_CompositionElement_::AST_CompositionElement_(AST_ElementList el): _el(el), _
 AST_Composition_ :: AST_Composition_ (AST_ElementList el,AST_CompositionElementList cl): _composition_list(cl), _element_list(el) {
 }
 
-AST_CompositionEqsAlgs AST_CompositionElement_::getEquations() { 
+AST_CompositionEqsAlgs AST_CompositionElement_::getEquationsAlgs() { 
   return _eqs_algs; 
 }
 
@@ -49,9 +49,11 @@ AST_ElementList AST_Composition_::elementList() const {
 ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce ) 
 { 
   AST_EquationListIterator it;
-  os << "equation" << endl;
-  foreach (it,ce._eqs_algs->getEquations())  {
-      os << "  " << current(it); 
+  if (ce._eqs_algs!=NULL) {
+    if (ce._eqs_algs->getEquations()->size()>0)
+      os << "equation" << endl;
+    foreach (it,ce._eqs_algs->getEquations())  
+        os << "  " << current(it); 
   }
   return os;
 } 
@@ -74,9 +76,17 @@ ostream & operator<<(ostream &os , const AST_Composition_ &cm )  {
 }
 
 
-AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_EquationList eq): _eq(eq) {
+AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_EquationList eq): _eq(eq), _initial(false) , _st(newAST_StatementList()){
 }
 
+AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_EquationList eq, bool i): _eq(eq), _initial(i), _st(newAST_StatementList()) {
+}
+
+AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_StatementList st, bool i): _st(st), _initial(i), _eq(newAST_EquationList()) {
+}
+
+AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_StatementList st): _st(st), _initial(false), _eq(newAST_EquationList()) {
+}
 ostream & operator<<(ostream &os , const AST_CompositionEqsAlgs &ceqa ) 
 {
   assert(ceqa!=NULL);

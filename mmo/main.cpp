@@ -33,13 +33,6 @@ int main(int argc, char ** argv)
 {
   int r;
   ReplaceSum rep_sum;
-  /*
-	AST_Expression e = newAST_Expression_BinOp(newAST_Expression_Integer(3),
-      newAST_Expression_If(newAST_Expression_Boolean(true),newAST_Expression_Integer(31),newAST_ExpressionList(),newAST_Expression_Integer(3)),
-      BINOPADD);
-  cerr << rep_sum.mapTraverse(e) << endl;
-  */
-  
   if (argc<2) {
     cerr << "Usage:\n\tmcc file.mo\n";
     return -1;
