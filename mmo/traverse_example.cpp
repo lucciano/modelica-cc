@@ -18,26 +18,26 @@
 
 ******************************************************************************/
 
-#include <ast/ast_node.h>
-#include <parser/mocc_parser.h>
+#include <ast/ast_builder.h>
+#include <ast/expression.h>
+#include <mmo/traverse_example.h>
 
-using namespace std;
-
-AST_Node::AST_Node() {
-  if (parser!=NULL)
-    _linenum = parser->lineno();
+AST_Expression ReplaceSum::mapTraverseElement(AST_Expression e) {
+  switch (e->expressionType()) {
+    case EXPBINOP:
+      {
+        AST_Expression_BinOp b = e->getAsBinOp();
+        switch (b->binopType()) {
+          case BINOPADD:
+            return newAST_Expression_BinOp(b->left(),b->right(),BINOPMULT);
+        }
+      }
+    case EXPIF: 
+      {
+        AST_Expression_If i = e->getAsIf();
+        return newAST_Expression_BinOp(newAST_Expression_Integer(3),newAST_Expression_Integer(4), BINOPMULT);
+      }
+  }
+  // No modification
+  return e;
 }
-
-ostream & operator<<(ostream &os , const AST_Node &n ) { 
-  os << "Printing not implemented!!"<< endl; 
-  return os;
-};
-
-void AST_Node::setLineNum(int linenum) { 
-    _linenum = linenum;
-} 
-
-int AST_Node::lineNum() const {
-  return _linenum;
-}
-

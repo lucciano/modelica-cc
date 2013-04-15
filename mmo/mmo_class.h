@@ -18,26 +18,21 @@
 
 ******************************************************************************/
 
-#include <ast/ast_node.h>
-#include <parser/mocc_parser.h>
+#include <ast/ast_builder.h>
+#include <ast/class.h>
 
-using namespace std;
+typedef AST_Equation MMO_Equation;   // For now the same
+typedef AST_Statement MMO_Statement;  // For now the same
+typedef list<MMO_Equation> *MMO_EquationList;
+typedef list<MMO_Statement> *MMO_StatementList;
 
-AST_Node::AST_Node() {
-  if (parser!=NULL)
-    _linenum = parser->lineno();
-}
-
-ostream & operator<<(ostream &os , const AST_Node &n ) { 
-  os << "Printing not implemented!!"<< endl; 
-  return os;
+/* AST_Class Wrapper */
+class MMO_Class {
+public:
+  MMO_Class(AST_Class);
+  void addEquation(MMO_Equation);
+  MMO_EquationList getEquations();
+private:
+  MMO_EquationList _eqs;
+  AST_Class _class;
 };
-
-void AST_Node::setLineNum(int linenum) { 
-    _linenum = linenum;
-} 
-
-int AST_Node::lineNum() const {
-  return _linenum;
-}
-

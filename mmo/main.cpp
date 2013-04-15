@@ -20,24 +20,18 @@
 
 #include <iostream>
 
-#include <parser/parse.h>
 #include <ast/ast_builder.h>
-#include <ast/stored_definition.h>
-#include <ast/class.h>
+#include <mmo/traverse_example.h>
 
 using namespace std;
 
 int main(int argc, char ** argv)
 {
   int r;
-  if (argc<2) {
-    cerr << "Usage:\n\tmmo file.mo\n";
-    return -1;
-  }
-  AST_StoredDefinition sd = parseFile(argv[1],&r);
-  if (r==0) { // Parsed ok
-    AST_Class c = sd->models()->front();
-    cerr << c;
-  }
+  ReplaceSum rep_sum;
+  AST_Expression e = newAST_Expression_BinOp(newAST_Expression_Integer(3),
+      newAST_Expression_If(newAST_Expression_Boolean(true),newAST_Expression_Integer(31),newAST_ExpressionList(),newAST_Expression_Integer(3)),
+      BINOPADD);
+  cerr << rep_sum.mapTraverse(e) << endl;
   return 0;
 }

@@ -62,7 +62,10 @@ class AST_Expression_Real_;
 class AST_Expression_BinOp_;
 class AST_Expression_Derivative_;
 class AST_Expression_Null_;
+class AST_Expression_If_;
 class AST_Expression_ComponentReference_;
+class AST_Expression_ComponentReference_;
+class AST_Expression_UMinus_;
 class AST_Expression_End_;
 class AST_Expression_Call_;
 class AST_Expression_BooleanNot_;
@@ -105,7 +108,9 @@ typedef AST_Expression_Call_                *AST_Expression_Call;
 typedef AST_Expression_End_                 *AST_Expression_End;
 typedef AST_Expression_BooleanNot_          *AST_Expression_BooleanNot;
 typedef AST_Expression_Null_                *AST_Expression_Null;
+typedef AST_Expression_If_                  *AST_Expression_If;
 typedef AST_Expression_String_              *AST_Expression_String; 
+typedef AST_Expression_UMinus_              *AST_Expression_UMinus; 
 typedef AST_Expression_ComponentReference_  *AST_Expression_ComponentReference;
 typedef AST_Element_                        *AST_Element;
 typedef AST_Element_ClassWrapper_           *AST_Element_ClassWrapper;
@@ -151,7 +156,7 @@ extern AST_StoredDefinition root;
 /* Enums */
 enum ElementType { ELNONE, COMPONENT, IMPORT, EXTENDS, ELCLASS };
 enum EquationType { EQNONE, EQEQUALITY, EQCONNECT,EQCALL, EQFOR, EQWHEN, EQIF };
-enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALL, EXPELSEIF, EXPCOLON };
+enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT };
 enum BinOpType {BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINOPGREATEREQ, BINOPCOMPNE, BINOPCOMPEQ, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPADD, BINOPELADD,
                 BINOPSUB, BINOPELSUB, BINOPEXP, BINOPELEXP, BINOPAND, BINOPOR };
 

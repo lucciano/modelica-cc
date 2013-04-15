@@ -18,26 +18,13 @@
 
 ******************************************************************************/
 
-#include <ast/ast_node.h>
-#include <parser/mocc_parser.h>
+#include <ast/ast_builder.h>
 
-using namespace std;
-
-AST_Node::AST_Node() {
-  if (parser!=NULL)
-    _linenum = parser->lineno();
-}
-
-ostream & operator<<(ostream &os , const AST_Node &n ) { 
-  os << "Printing not implemented!!"<< endl; 
-  return os;
+class AST_Expression_Traverse {
+public:
+  AST_Expression mapTraverse(AST_Expression);
+private:
+  virtual AST_Expression mapTraverseElement(AST_Expression) = 0;
 };
 
-void AST_Node::setLineNum(int linenum) { 
-    _linenum = linenum;
-} 
-
-int AST_Node::lineNum() const {
-  return _linenum;
-}
 

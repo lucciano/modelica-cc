@@ -18,26 +18,28 @@
 
 ******************************************************************************/
 
-#include <ast/ast_node.h>
-#include <parser/mocc_parser.h>
+#include <util/ast_util.h>
+#include <ast/ast_builder.h>
+#include <ast/expression.h>
 
-using namespace std;
-
-AST_Node::AST_Node() {
-  if (parser!=NULL)
-    _linenum = parser->lineno();
+AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) { 
+  AST_Expression e2 = mapTraverseElement(e);
+  switch (e2->expressionType()) {
+    case EXPBINOP:
+      {
+        AST_Expression_BinOp b = e2->getAsBinOp();
+        return newAST_Expression_BinOp(mapTraverseElement(b->left()),mapTraverseElement(b->right()), b->binopType());
+      }
+    case EXPUMINUS: 
+      {
+        AST_Expression_UMinus m = e2->getAsUMinus();
+        return newAST_Expression_UnaryMinus(mapTraverseElement(m->exp()));
+      }
+    case EXPIF:
+      {
+        AST_Expression_If i = e2->getAsIf();
+        return newAST_Expression_If(mapTraverseElement(i->condition()), mapTraverseElement(i->then()), i->elseif_list(), mapTraverseElement(i->else_exp()));
+      }
+  }
+  return e2;
 }
-
-ostream & operator<<(ostream &os , const AST_Node &n ) { 
-  os << "Printing not implemented!!"<< endl; 
-  return os;
-};
-
-void AST_Node::setLineNum(int linenum) { 
-    _linenum = linenum;
-} 
-
-int AST_Node::lineNum() const {
-  return _linenum;
-}
-

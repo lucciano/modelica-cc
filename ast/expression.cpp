@@ -141,21 +141,45 @@ AST_Expression_ComponentReference AST_Expression_::getAsComponentRef() {
   return dynamic_cast<AST_Expression_ComponentReference>(this);
 }
 
+AST_Expression_If AST_Expression_::getAsIf() {
+  return dynamic_cast<AST_Expression_If>(this);
+}
+
+AST_Expression_UMinus AST_Expression_::getAsUMinus() {
+  return dynamic_cast<AST_Expression_UMinus>(this);
+}
+
 
 void AST_Expression_ComponentReference_::setName(string name) { _name=name; }
 
-ExpressionType AST_Expression_::expressionType() { return EXPNONE; }
-
-AST_Expression AST_Expression_::duplicateExpression() {
-  return NULL;
+ExpressionType AST_Expression_BooleanNot_::expressionType() { 
+  return EXPBOOLEANNOT; 
 }
 
-AST_Expression AST_Expression_ComponentReference_::duplicateExpression() { 
-  return newAST_Expression_ComponentReference(newAST_String(name()));
+ExpressionType AST_Expression_::expressionType() { 
+  return EXPNONE; 
 }
-AST_Expression AST_Expression_Integer_::duplicateExpression() {
-  return newAST_Expression_Integer(val());
+
+ExpressionType AST_Expression_UMinus_::expressionType() { 
+  return EXPUMINUS;
 }
+
+ExpressionType AST_Expression_Boolean_::expressionType() { 
+  return EXPBOOLEAN;
+}
+
+ExpressionType AST_Expression_Integer_::expressionType() { 
+  return EXPINTEGER;
+}
+
+ExpressionType AST_Expression_Real_::expressionType() { 
+  return EXPREAL;
+}
+
+ExpressionType AST_Expression_String_::expressionType() { 
+  return EXPSTRING;
+}
+
 AST_Integer AST_Expression_Integer_::val() {
   return _i;
 }
@@ -164,21 +188,11 @@ AST_Expression_Derivative AST_Expression_::getAsDerivative() {
   return dynamic_cast<AST_Expression_Derivative>(this);
 };
 
-AST_Expression AST_Expression_Derivative_::duplicateExpression() {
-  AST_ExpressionList new_el = newAST_ExpressionList();
-  AST_ExpressionList el     = arguments();
-  AST_ExpressionListIterator it;
-  foreach (it,el) 
-    AST_ListAppend(new_el,current(it)->duplicateExpression());
-    
-  return newAST_Expression_Derivative(new_el);
-
-}
-
 /* If expression */
-AST_Expression_If_::AST_Expression_If_(AST_Expression cond, AST_Expression then, AST_Expression else_exp): _cond(cond), 
+AST_Expression_If_::AST_Expression_If_(AST_Expression cond, AST_Expression then, AST_Expression else_exp, AST_ExpressionList elseif_list): _cond(cond), 
                                                                                                            _then(then), 
-                                                                                                           _else_exp(else_exp) {
+                                                                                                           _else_exp(else_exp),
+                                                                                                           _elseif_list(elseif_list) {
 }
 
 string AST_Expression_If_::print () const {
@@ -197,4 +211,9 @@ ExpressionType AST_Expression_Call_::expressionType() {
 
 string AST_Expression_End_::print() const { 
   return "end";
+}
+
+
+AST_Expression_BinOp AST_Expression_::getAsBinOp() {
+  dynamic_cast<AST_Expression_BinOp>(this);
 }

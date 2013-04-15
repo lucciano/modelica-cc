@@ -32,7 +32,6 @@ public:
   friend ostream & operator<<(ostream &os , const AST_Equation_ &e );
   virtual string print() const =0;
   virtual EquationType equationType() = 0;
-  virtual AST_Equation duplicateEquation();
   AST_Equation_Equality getAsEquality();
   AST_Equation_Connect getAsConnect();
 };

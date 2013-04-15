@@ -16,31 +16,33 @@ OBJS := parser/mocc_parser.o \
 
 OBJS_MMO := parser/mocc_parser.o \
             mmo/main.o \
-        parser/mocc_scanner.o \
-        ast/ast_builder.o \
-        ast/ast_node.o \
-        ast/class.o  \
-        ast/composition.o \
-        ast/element.o \
-        ast/equation.o \
-        ast/expression.o \
-        ast/modification.o \
-        ast/statement.o \
-        ast/stored_definition.o  \
-        parser/parse.o 
+            mmo/traverse_example.o \
+            mmo/mmo_class.o \
+            parser/mocc_scanner.o \
+            ast/ast_builder.o \
+            ast/ast_node.o \
+            ast/class.o  \
+            ast/composition.o \
+            ast/element.o \
+            ast/equation.o \
+            ast/expression.o \
+            ast/modification.o \
+            ast/statement.o \
+            ast/stored_definition.o  \
+            parser/parse.o \
+            util/ast_util.o
 
 
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
 
 all:mocc mmo
+
+test: all
 	./mocc examples/mocc.mo
 
 docs:
 	doxygen 
-
-test: mocc
-	./mocc examples/mocc.mo
 
 parser/mocc_parser.cpp: parser/mocc.y
 	@BISONXX@ -t -d -v -hparser/mocc_parser.h -o parser/mocc_parser.cpp parser/mocc.y
@@ -54,7 +56,7 @@ mocc: $(OBJS)
 mmo: $(OBJS_MMO)
 	@CXX@ $(CXXFLAGS) -o mmo/mmo $(OBJS_MMO)
 clean:
-	rm -rf $(OBJS) mocc parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h
+	rm -rf $(OBJS) mocc parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h mmo/mmo
 
 
 

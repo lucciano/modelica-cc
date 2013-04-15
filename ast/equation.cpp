@@ -38,14 +38,6 @@ AST_Expression AST_Equation_Equality_::right() const {
 }
 
 
-AST_Equation AST_Equation_::duplicateEquation() { 
-  switch (this->equationType()) {
-    case EQEQUALITY:
-      AST_Equation_Equality eq = this->getAsEquality(); 
-      return newAST_Equation_Equality(eq->left()->duplicateExpression(),eq->right()->duplicateExpression());
-  }
-}
-
 string AST_Equation_If_::print() const {
   stringstream ret(stringstream::out);
   AST_EquationList eql = equationList();

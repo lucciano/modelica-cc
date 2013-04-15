@@ -28,7 +28,7 @@
 #include <cassert>
 
 class MCC_Parser;
-MCC_Parser *parser;
+MCC_Parser *parser = NULL;
 AST_StoredDefinition root;
 
 AST_StoredDefinition newAST_StoredDefinition(AST_ClassList cl, AST_String within) { 
@@ -299,7 +299,7 @@ AST_Expression newAST_Expression_UnaryMinus(AST_Expression e) {
 }
 
 AST_Expression newAST_Expression_If(AST_Expression cond, AST_Expression then, AST_ExpressionList else_list, AST_Expression else_exp) {
-  return new AST_Expression_If_(cond,then,else_exp);
+  return new AST_Expression_If_(cond,then,else_exp,else_list);
 };
 
 AST_Equation newAST_Equation_If(AST_Expression e, AST_EquationList eql, AST_Equation_ElseList elseif, AST_EquationList elseeqs) {

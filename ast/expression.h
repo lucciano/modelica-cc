@@ -30,18 +30,21 @@ public:
   friend ostream & operator<<(ostream &os , const AST_Expression_ &e );
   virtual string print() const =0;
   virtual ExpressionType expressionType();
-  AST_Expression_ComponentReference getAsComponentRef();
+
+  /* Dynamic casts */
   AST_Expression_BinOp getAsBinOp();
+  AST_Expression_If getAsIf();
+  AST_Expression_ComponentReference getAsComponentRef();
   AST_Expression_Derivative getAsDerivative(); 
-  virtual AST_Expression duplicateExpression();
+  AST_Expression_UMinus getAsUMinus();
 };
 
 class AST_Expression_Integer_: public AST_Expression_ {
 public:
   AST_Expression_Integer_(AST_Integer i);
   string print() const;
-  virtual AST_Expression duplicateExpression();
   AST_Integer val();
+  virtual ExpressionType expressionType();
 
 private:
   AST_Integer _i;
@@ -51,6 +54,7 @@ class AST_Expression_Real_: public AST_Expression_ {
 public:
   AST_Expression_Real_(double d);
   string print() const ;
+  virtual ExpressionType expressionType();
   double val();
 private:
 
@@ -62,6 +66,7 @@ public:
   AST_Expression_String_(string s);
   string print() const;
 
+  virtual ExpressionType expressionType();
 private:
   string _s;
 };
@@ -71,6 +76,7 @@ public:
   AST_Expression_Boolean_(bool b);
   string print() const ;
   bool value();
+  virtual ExpressionType expressionType();
 
 private:
   bool _b;
@@ -80,7 +86,6 @@ class AST_Expression_Derivative_: public AST_Expression_ {
 public:
   AST_Expression_Derivative_(AST_ExpressionList el);
   virtual ExpressionType expressionType() { return EXPDERIVATIVE; }
-  virtual AST_Expression duplicateExpression();
   AST_ExpressionList arguments() { return _el; }
   string print() const;
 
@@ -93,6 +98,7 @@ public:
   AST_Expression_UMinus_(AST_Expression e);
   string print() const ;
   AST_Expression exp() const { return _e; }
+  virtual ExpressionType expressionType();
 private:
   AST_Expression _e;
 };
@@ -100,6 +106,7 @@ private:
 class AST_Expression_BooleanNot_: public AST_Expression_ {
 public:
   AST_Expression_BooleanNot_(AST_Expression e);
+  virtual ExpressionType expressionType();
   string print() const;
   AST_Expression exp() const { return _e; }
 
@@ -130,7 +137,6 @@ public:
   void setName(string name);
   string name() const { return _name; }
   virtual ExpressionType expressionType() { return EXPCOMPREF; }
-  virtual AST_Expression duplicateExpression();
 
 private:
   string _name;
@@ -151,14 +157,16 @@ private:
 
 class AST_Expression_If_: public AST_Expression_ {
 public:
-  AST_Expression_If_(AST_Expression cond, AST_Expression then, AST_Expression else_exp);
+  AST_Expression_If_(AST_Expression cond, AST_Expression then, AST_Expression else_exp, AST_ExpressionList elseif_list);
   virtual string print() const;
   AST_Expression condition() const { return _cond; }
   AST_Expression then()  const{ return _then; }
   AST_Expression else_exp()  const{ return _else_exp; }
+  AST_ExpressionList elseif_list()  const{ return _elseif_list; }
   virtual ExpressionType expressionType();
 private:
   AST_Expression _cond, _then, _else_exp;
+  AST_ExpressionList _elseif_list;
 };
 
 class AST_Expression_End_: public AST_Expression_ {
