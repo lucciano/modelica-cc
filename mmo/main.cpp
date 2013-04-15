@@ -22,6 +22,10 @@
 
 #include <ast/ast_builder.h>
 #include <mmo/traverse_example.h>
+#include <mmo/mmo_class.h>
+#include <parser/parse.h>
+#include <ast/stored_definition.h>
+#include <ast/class.h>
 
 using namespace std;
 
@@ -29,9 +33,35 @@ int main(int argc, char ** argv)
 {
   int r;
   ReplaceSum rep_sum;
-  AST_Expression e = newAST_Expression_BinOp(newAST_Expression_Integer(3),
+  /*
+	AST_Expression e = newAST_Expression_BinOp(newAST_Expression_Integer(3),
       newAST_Expression_If(newAST_Expression_Boolean(true),newAST_Expression_Integer(31),newAST_ExpressionList(),newAST_Expression_Integer(3)),
       BINOPADD);
   cerr << rep_sum.mapTraverse(e) << endl;
+  */
+  
+  if (argc<2) {
+    cerr << "Usage:\n\tmcc file.mo\n";
+    return -1;
+  }
+  AST_StoredDefinition sd = parseFile(argv[1],&r);
+  if (r==0) { // Parsed ok
+    AST_Class c = sd->models()->front();
+    cerr << c << "---------------------" << endl;
+    MMO_Class * d = new MMO_Class(c);
+
+    AST_EquationListIterator eqit;
+    foreach(eqit,d->getEquations()) {
+		 cerr << current(eqit);
+		 AST_Equation_Equality r = current(eqit)->getAsEquality();
+		 cerr << rep_sum.mapTraverse(r->right()) << endl;
+	}
+    
+    AST_ComponentListIterator cit;
+    foreach(cit,d->getComponents()) {
+		cerr << current(cit);	
+	}
+  }
+  
   return 0;
 }
