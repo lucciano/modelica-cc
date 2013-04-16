@@ -1,6 +1,6 @@
 CXXFLAGS = -DYY_MCC_Parser_DEBUG -I. -g
-OBJS := parser/mocc_parser.o \
-        main.o \
+
+OBJS_COMMON := parser/mocc_parser.o \
         parser/mocc_scanner.o \
         ast/ast_builder.o \
         ast/ast_node.o \
@@ -14,32 +14,13 @@ OBJS := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
-OBJS_MMO := parser/mocc_parser.o \
-            mmo/main.o \
-            mmo/traverse_example.o \
-            mmo/mmo_class.o \
-            parser/mocc_scanner.o \
-            ast/ast_builder.o \
-            ast/ast_node.o \
-            ast/class.o  \
-            ast/composition.o \
-            ast/element.o \
-            ast/equation.o \
-            ast/expression.o \
-            ast/modification.o \
-            ast/statement.o \
-            ast/stored_definition.o  \
-            parser/parse.o \
-            util/ast_util.o
-
+include mmo/Makefile.include
+include causalize/Makefile.include
 
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
 
-all:mocc mmo
-
-test: all
-	./mocc examples/mocc.mo
+all:mmo/mmo causalize/causalize
 
 docs:
 	doxygen 
@@ -50,13 +31,8 @@ parser/mocc_parser.cpp: parser/mocc.y
 parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
 	@FLEXXX@ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
-mocc: $(OBJS)
-	@CXX@ $(CXXFLAGS) -o mocc $(OBJS)
-
-mmo: $(OBJS_MMO)
-	@CXX@ $(CXXFLAGS) -o mmo/mmo $(OBJS_MMO)
 clean:
-	rm -rf $(OBJS) mocc parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h mmo/mmo
+	rm -rf $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h mmo/mmo casusalize/causalize
 
 
 

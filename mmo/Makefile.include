@@ -1,0 +1,12 @@
+OBJS_MMO := $(OBJS_COMMON) \
+            mmo/main.o \
+            mmo/traverse_example.o \
+            mmo/mmo_class.o \
+            util/ast_util.o
+
+mmo/mmo: $(OBJS_MMO)
+	$(CXX) $(CXXFLAGS) -o mmo/mmo $(OBJS_MMO)
+
+
+
+	

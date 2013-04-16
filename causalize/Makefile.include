@@ -1,0 +1,9 @@
+OBJS_CAUSALIZE := $(OBJS_COMMON) \
+            causalize/main.o 
+
+causalize/causalize: $(OBJS_CAUSALIZE)
+	$(CXX) $(CXXFLAGS) -o causalize/causalize $(OBJS_CAUSALIZE)
+
+
+
+	
