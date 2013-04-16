@@ -18,28 +18,29 @@
 
 ******************************************************************************/
 
-#include <iostream>
+#include <map>
+#include <string>
 
-#include <parser/parse.h>
-#include <ast/stored_definition.h>
-#include <ast/class.h>
-#include <util/symbol_table.h>
 
-using namespace std;
+typedef std::string VarName;
+typedef int Type;
 
-int main(int argc, char ** argv)
+template<class Key,class Value>
+class SymbolTable {
+public:
+  void insert(Key k, Value v);
+  Value lookup(Key k);
+private:
+  std::map<Key,Value> _st;
+};
+
+class VarInfo {
+  bool isParameter();
+  bool isState();
+  Type type();
+};
+
+class VarSymbolTable: public SymbolTable<VarName, VarInfo> 
 {
-  int r;
-  if (argc<2) {
-    cerr << "Usage:\n\tmcc file.mo\n";
-    return -1;
-  }
-  VarSymbolTable vars;
-  AST_StoredDefinition sd = parseFile(argv[1],&r);
-  if (r==0) { // Parsed ok
-    AST_Class c = sd->models()->front();
-    cerr << c << "---------------------" << endl;
-  }
-  
-  return 0;
-}
+
+};
