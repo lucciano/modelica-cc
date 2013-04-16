@@ -14,13 +14,14 @@ OBJS_COMMON := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
+all:mmo/mmo causalize/causalize
+
 include mmo/Makefile.include
 include causalize/Makefile.include
 
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
 
-all:mmo/mmo causalize/causalize
 
 docs:
 	doxygen 
