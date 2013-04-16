@@ -9,16 +9,19 @@ model RLC
   Real i1;
   Real iL;
   Real uC;
+  parameter Real R1;
   parameter Real R2;
   parameter Real L;
   parameter Real C;
 equation
+  u0 = sin(time);
+  u1 = R1 * i1;
   u2 = R2 * i2;
   uL = L * der(iL);
   iC = C *der(uC);
   u0 = u1 + uC;
   uL = u1 + u2;
   uC = u2;
-  u0 = i1 + iL;
+  i0 = i1 + iL;
   i1 = i2 + iC;
 end RLC;
