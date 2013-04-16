@@ -33,7 +33,7 @@ parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
 	@FLEXXX@ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
 clean:
-	rm -rf $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h mmo/mmo casusalize/causalize
+	rm -rf $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h mmo/mmo casusalize/causalize 
 
 
 

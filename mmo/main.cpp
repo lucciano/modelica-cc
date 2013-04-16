@@ -29,10 +29,56 @@
 
 using namespace std;
 
+/*
+AST_Expression ReplaceIf(AST_Expression e) {
+  cerr << e->expressionType() << endl;	
+  switch (e->expressionType()) {
+	case EXPOUTPUT :
+	{
+		AST_Expression_Output b = e->getAsOutput();
+        AST_ExpressionList ls = new list < AST_Expression > ();
+        ls->push_back(  ReplaceIf ( b->getExpressionList()->front() )   )	;
+        return newAST_Expression_OutputExpressions(ls);
+	}
+	case EXPBINOP:
+      {
+        AST_Expression_BinOp b = e->getAsBinOp();
+        return newAST_Expression_BinOp ( ReplaceIf(b->left()) , ReplaceIf(b->right() ), b->binopType() ) ;
+	  }
+    case EXPIF: 
+      {
+        AST_Expression_If i = e->getAsIf();
+        ExpressionType cond = i->condition()->expressionType();
+        if (cond != EXPCOMPREF)
+			throw "Not suported yet!!";
+		
+		// For now here	
+		#define ADD(l,r) 	newAST_Expression_BinOp(l, r, BINOPADD )
+		#define MULT(l,r) 	newAST_Expression_BinOp(l, r, BINOPMULT )
+		#define SUB(l,r) 	newAST_Expression_BinOp(l, r, BINOPSUB )
+		#define I(n) 		newAST_Expression_Integer(n)
+		#define PA(e)       newAST_Expression_OutputExpressions(e) 
+			
+		AST_ExpressionList ls = new list < AST_Expression > ();
+		ls->push_back(SUB( I(1) , i->condition() ))	;
+			
+		AST_Expression l = MULT(i->condition() , ReplaceIf(i->then()) );
+        AST_Expression r = MULT(   PA ( ls ) ,   ReplaceIf(i->else_exp()) );
+        
+        
+        return ADD(l,r);
+      }
+  }
+  // No modification
+  return e;
+}
+*/
+
+
 int main(int argc, char ** argv)
 {
   int r;
-  ReplaceSum rep_sum;
+  ReplaceIf rep_sum;
   if (argc<2) {
     cerr << "Usage:\n\tmcc file.mo\n";
     return -1;
@@ -41,18 +87,20 @@ int main(int argc, char ** argv)
   if (r==0) { // Parsed ok
     AST_Class c = sd->models()->front();
     cerr << c << "---------------------" << endl;
+    
     MMO_Class * d = new MMO_Class(c);
 
+	cerr << " Primera aproximacion  " << endl;
     AST_EquationListIterator eqit;
     foreach(eqit,d->getEquations()) {
-		 cerr << current(eqit);
 		 AST_Equation_Equality r = current(eqit)->getAsEquality();
 		 cerr << rep_sum.mapTraverse(r->right()) << endl;
 	}
-    
+	
+    cerr << "----------------------" << endl << " Variables: " << endl;
     AST_ComponentListIterator cit;
     foreach(cit,d->getComponents()) {
-		cerr << current(cit);	
+		cerr << current(cit) << endl;	
 	}
   }
   

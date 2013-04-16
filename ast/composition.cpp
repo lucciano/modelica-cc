@@ -38,6 +38,10 @@ AST_CompositionEqsAlgs AST_CompositionElement_::getEquationsAlgs() {
   return _eqs_algs; 
 }
 
+AST_ElementList AST_CompositionElement_::getElementList() { 
+  return _el; 
+}
+
 AST_CompositionElementList AST_Composition_::compositionList() const { 
   return _composition_list; 
 }
@@ -55,6 +59,14 @@ ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce )
     foreach (it,ce._eqs_algs->getEquations())  
         os << "  " << current(it); 
   }
+  AST_ElementListIterator et;
+  if (ce._el != NULL) {
+	if (ce._el->size() > 0)
+		os << "public" << endl;
+	foreach (et,ce._el )  
+        os << "  " << current(et) << endl; 
+  }
+  
   return os;
 } 
  

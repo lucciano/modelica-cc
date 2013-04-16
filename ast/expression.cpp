@@ -46,7 +46,7 @@ AST_Expression_BinOp_::AST_Expression_BinOp_(AST_Expression e1,AST_Expression e2
 
 string AST_Expression_BinOp_::print() const { 
     stringstream ret(stringstream::out);
-    ret << left() << BinOpTypeName[binopType()] << right();
+    ret  << left() << BinOpTypeName[binopType()] << right() ;
     return ret.str();
 }
 
@@ -149,6 +149,10 @@ AST_Expression_UMinus AST_Expression_::getAsUMinus() {
   return dynamic_cast<AST_Expression_UMinus>(this);
 }
 
+AST_Expression_Output AST_Expression_::getAsOutput() {
+  return dynamic_cast<AST_Expression_Output>(this);
+}
+
 
 void AST_Expression_ComponentReference_::setName(string name) { _name=name; }
 
@@ -230,4 +234,9 @@ string AST_Expression_Output_::print () const {
   ret << ")";
   return ret.str();
   
+}
+
+AST_ExpressionList AST_Expression_Output_::getExpressionList()
+{
+	return _list;
 }

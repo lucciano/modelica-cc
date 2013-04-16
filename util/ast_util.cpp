@@ -22,24 +22,37 @@
 #include <ast/ast_builder.h>
 #include <ast/expression.h>
 
+#include <iostream>
+using namespace std;
+
 AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) { 
   AST_Expression e2 = mapTraverseElement(e);
   switch (e2->expressionType()) {
     case EXPBINOP:
       {
         AST_Expression_BinOp b = e2->getAsBinOp();
-        return newAST_Expression_BinOp(mapTraverseElement(b->left()),mapTraverseElement(b->right()), b->binopType());
+        return newAST_Expression_BinOp(mapTraverse(b->left()),mapTraverse(b->right()), b->binopType());
+        
       }
     case EXPUMINUS: 
       {
         AST_Expression_UMinus m = e2->getAsUMinus();
-        return newAST_Expression_UnaryMinus(mapTraverseElement(m->exp()));
+        return newAST_Expression_UnaryMinus(mapTraverse(m->exp()));
       }
+    
+    case EXPOUTPUT :
+	{
+		AST_Expression_Output b = e2->getAsOutput();
+        AST_ExpressionList ls = new list < AST_Expression > ();
+        ls->push_back(   mapTraverse( b->getExpressionList()->front() )    )	;
+        return newAST_Expression_OutputExpressions(ls);
+	}  
+      
     case EXPIF:
-      {
+      {   
         AST_Expression_If i = e2->getAsIf();
-        return newAST_Expression_If(mapTraverseElement(i->condition()), mapTraverseElement(i->then()), i->elseif_list(), mapTraverseElement(i->else_exp()));
+        return newAST_Expression_If(mapTraverse(i->condition()), mapTraverse(i->then()), i->elseif_list(), mapTraverse(i->else_exp()));
       }
-  }
+  }  
   return e2;
 }

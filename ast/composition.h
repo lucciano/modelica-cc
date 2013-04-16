@@ -47,6 +47,7 @@ public:
   AST_CompositionElement_(AST_ElementList el);
   friend ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce ) ;
   AST_CompositionEqsAlgs getEquationsAlgs();
+  AST_ElementList getElementList();
 
 private:
   AST_CompositionEqsAlgs _eqs_algs;

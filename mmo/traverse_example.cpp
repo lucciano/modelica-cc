@@ -22,6 +22,9 @@
 #include <ast/expression.h>
 #include <mmo/traverse_example.h>
 
+#include <iostream>
+using namespace std;
+
 AST_Expression ReplaceSum::mapTraverseElement(AST_Expression e) {
   switch (e->expressionType()) {
     case EXPBINOP:
@@ -41,3 +44,51 @@ AST_Expression ReplaceSum::mapTraverseElement(AST_Expression e) {
   // No modification
   return e;
 }
+
+AST_Expression ReplaceIf::mapTraverseElement(AST_Expression e) {
+
+  switch (e->expressionType()) {
+	/*case EXPOUTPUT :
+	{
+		AST_Expression_Output b = e->getAsOutput();
+        AST_ExpressionList ls = new list < AST_Expression > ();
+        ls->push_back(  ReplaceIf ( b->getExpressionList()->front() )   )	;
+        return newAST_Expression_OutputExpressions(ls);
+	}
+	case EXPBINOP:
+      {
+        AST_Expression_BinOp b = e->getAsBinOp();
+        return newAST_Expression_BinOp ( ReplaceIf(b->left()) , ReplaceIf(b->right() ), b->binopType() ) ;
+	  }
+	*/
+    case EXPIF: 
+      {
+        AST_Expression_If i = e->getAsIf();
+        ExpressionType cond = i->condition()->expressionType();
+        if (cond != EXPCOMPREF)
+			throw "Not suported yet!!";
+		
+		// For now here	
+		#define ADD(l,r) 	newAST_Expression_BinOp(l, r, BINOPADD )
+		#define MULT(l,r) 	newAST_Expression_BinOp(l, r, BINOPMULT )
+		#define SUB(l,r) 	newAST_Expression_BinOp(l, r, BINOPSUB )
+		#define I(n) 		newAST_Expression_Integer(n)
+		#define PA(e)       newAST_Expression_OutputExpressions(e) 
+			
+
+			
+		AST_ExpressionList ls = new list < AST_Expression > ();
+		ls->push_back( SUB( I(1) , i->condition() ))	;
+			
+		AST_Expression l = MULT(i->condition() , i->then() );
+        AST_Expression r = MULT(   PA ( ls ) ,   i->else_exp() );
+        
+        
+        return ADD(l,r);
+      }
+  }
+  // No modification
+  return e;
+}
+
+

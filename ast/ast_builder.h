@@ -69,6 +69,7 @@ class AST_Expression_UMinus_;
 class AST_Expression_End_;
 class AST_Expression_Call_;
 class AST_Expression_BooleanNot_;
+class AST_Expression_Output_;
 
 class AST_Modification_;
 
@@ -112,6 +113,7 @@ typedef AST_Expression_If_                  *AST_Expression_If;
 typedef AST_Expression_String_              *AST_Expression_String; 
 typedef AST_Expression_UMinus_              *AST_Expression_UMinus; 
 typedef AST_Expression_ComponentReference_  *AST_Expression_ComponentReference;
+typedef AST_Expression_Output_              *AST_Expression_Output;
 typedef AST_Element_                        *AST_Element;
 typedef AST_Element_ClassWrapper_           *AST_Element_ClassWrapper;
 typedef AST_ExtendsClause_                  *AST_ExtendsClause;

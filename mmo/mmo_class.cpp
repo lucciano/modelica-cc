@@ -28,34 +28,48 @@ MMO_Class::MMO_Class(AST_Class c):_class(c) {
 	_comps = new list<MMO_Component>();
 	
 	AST_Composition comp = c->composition();
-	AST_CompositionElementList cel = comp->compositionList();
-	AST_CompositionElementListIterator it;
-	foreach(it,cel) {
-		AST_EquationListIterator eqit;
-		AST_CompositionElement e = current(it);
-                if (e->getEquationsAlgs()==NULL) 
-                  continue;
-		AST_EquationList eqs = e->getEquationsAlgs()->getEquations();
-		foreach(eqit,eqs) 
-			addEquation(current(eqit)); 
-	}
 	
+	// First elements
 	AST_ElementList el = comp->elementList();
 	AST_ElementListIterator elit;
 	foreach(elit,el) {
 		switch (current(elit)->elementType()) {
 			case COMPONENT:
-				addComponent(current(elit)->getAsComponent());
+				_comps->push_back(current(elit)->getAsComponent());
 				break;
 			default:
 				break;
 		}
 	}
 	
+	
+	AST_CompositionElementList cel = comp->compositionList();
+	AST_CompositionElementListIterator it;
+	
+	foreach(it,cel) {
+		AST_EquationListIterator eqit;
+		AST_ElementListIterator  elit;
+		
+		// Equations 
+		AST_CompositionElement e = current(it);
+        if (e->getEquationsAlgs() != NULL) {
+			AST_EquationList eqs = e->getEquationsAlgs()->getEquations();
+			foreach(eqit,eqs) {
+				_eqs->push_back(current(eqit)); 
+			}
+		}
+		
+		// Elements 
+		foreach(elit,e->getElementList()) {
+			_comps->push_back(current(elit)->getAsComponent()); 	
+		}
+	}	
 }
 
 void MMO_Class::addEquation(MMO_Equation e) {
-	_eqs->push_back(e);
+	_eqs->push_front(e);
+	// For now
+	_class->composition()->compositionList()->front()->getEquationsAlgs()->getEquations()->push_back(e); 
 }
 
 MMO_EquationList MMO_Class::getEquations() {
@@ -64,6 +78,8 @@ MMO_EquationList MMO_Class::getEquations() {
 
 void MMO_Class::addComponent(MMO_Component c) {
 	_comps->push_back(c);
+	_class->composition()->elementList()->push_back(c);
+	
 }
 
 MMO_ComponentList MMO_Class::getComponents() {

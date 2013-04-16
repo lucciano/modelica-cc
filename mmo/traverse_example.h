@@ -23,3 +23,10 @@
 class ReplaceSum: public AST_Expression_Traverse {
   virtual AST_Expression mapTraverseElement(AST_Expression);
 };
+
+
+//Another Example
+class ReplaceIf: public AST_Expression_Traverse {
+  virtual AST_Expression mapTraverseElement(AST_Expression);
+};
+

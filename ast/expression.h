@@ -37,6 +37,7 @@ public:
   AST_Expression_ComponentReference getAsComponentRef();
   AST_Expression_Derivative getAsDerivative(); 
   AST_Expression_UMinus getAsUMinus();
+  AST_Expression_Output getAsOutput();
 };
 
 class AST_Expression_Integer_: public AST_Expression_ {
@@ -203,6 +204,7 @@ public:
 
   virtual ExpressionType expressionType() { return EXPOUTPUT; }
   virtual string print() const;
+  AST_ExpressionList getExpressionList();
 private:
   AST_ExpressionList _list;
 };
