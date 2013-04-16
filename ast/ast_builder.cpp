@@ -521,7 +521,7 @@ AST_Expression newAST_Expression_Range(AST_Expression, AST_Expression) {
 
 AST_Expression newAST_Expression_OutputExpressions(AST_ExpressionList exp_list) { 
   /* For now just one element supported */
-  return exp_list->front();
+  return new AST_Expression_Output_(exp_list);
 }
 
 AST_Expression newAST_Expression_FunctionArguments(AST_ExpressionList) {

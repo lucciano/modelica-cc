@@ -217,3 +217,17 @@ string AST_Expression_End_::print() const {
 AST_Expression_BinOp AST_Expression_::getAsBinOp() {
   dynamic_cast<AST_Expression_BinOp>(this);
 }
+
+AST_Expression_Output_::AST_Expression_Output_(AST_ExpressionList l): _list(l) {
+}
+
+string AST_Expression_Output_::print () const {
+  AST_ExpressionListIterator it;
+  stringstream ret;
+  ret << "(";
+  foreach (it,_list)
+    ret << current(it);
+  ret << ")";
+  return ret.str();
+  
+}

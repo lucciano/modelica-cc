@@ -190,11 +190,23 @@ private:
   AST_Expression _cond;
   AST_Expression _then;
 } ;
+
 class AST_Expression_Colon_: public AST_Expression_ {
 public:
   virtual string print() const { return ":";};
   virtual ExpressionType expressionType() { return EXPCOLON; }
 };
+
+class AST_Expression_Output_: public AST_Expression_ {
+public:
+  AST_Expression_Output_(AST_ExpressionList);
+
+  virtual ExpressionType expressionType() { return EXPOUTPUT; }
+  virtual string print() const;
+private:
+  AST_ExpressionList _list;
+};
+
 
 
 #endif
