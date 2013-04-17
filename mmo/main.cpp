@@ -26,6 +26,7 @@
 #include <parser/parse.h>
 #include <ast/stored_definition.h>
 #include <ast/class.h>
+#include <util/type.h>
 
 using namespace std;
 
@@ -90,18 +91,39 @@ int main(int argc, char ** argv)
     
     MMO_Class * d = new MMO_Class(c);
 
-	cerr << " Primera aproximacion  " << endl;
+	//cerr << " Primera aproximacion  " << endl;
     AST_EquationListIterator eqit;
     foreach(eqit,d->getEquations()) {
-		 AST_Equation_Equality r = current(eqit)->getAsEquality();
-		 cerr << rep_sum.mapTraverse(r->right()) << endl;
+		AST_Equation_Equality r = current(eqit)->getAsEquality();
+		AST_Equation _r = newAST_Equation_Equality( r->left() , rep_sum.mapTraverse(r->right()) );
+		 
+		current(eqit) =  _r ;
+		 //cerr << rep_sum.mapTraverse(r->right()) << endl;
 	}
+
+	
+	//cerr << c << "---------------------" << endl;
 	
     cerr << "----------------------" << endl << " Variables: " << endl;
     AST_ComponentListIterator cit;
     foreach(cit,d->getComponents()) {
 		cerr << current(cit) << endl;	
 	}
+	
+	
+	cerr << "----------------------" << endl << " Pruebas con Tipos: " << endl;
+	Type_String s = new Type_String_;
+	Type_Real i = new Type_Real_;
+	Type_Array  rr = new Type_Array_(i);
+	Type_Array  rs = new Type_Array_(s);
+	
+	Type_Array  ar = new Type_Array_(rr);
+	
+	cerr << rr << endl;
+	cerr << rs << endl;
+	if (*rs == *rr) cerr << "Yes!" << endl;
+	else cerr << "No!" << endl;
+	
   }
   
   return 0;

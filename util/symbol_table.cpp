@@ -18,43 +18,28 @@
 
 ******************************************************************************/
 
-#include <map>
-#include <string>
-#include <util/type.h>
+#include <util/symbol_table.h>
 
 
-#ifndef SymbolTable_H
-#define SymbolTable_H
+VarInfo::VarInfo (bool p , bool s , Type t):_p(p) , _s(s) , _t(t) {};
 
-typedef std::string VarName;
-//typedef int Type;
+bool VarInfo::isParameter() {return _p;};
+
+bool VarInfo::isState() {return _s;};
+
+Type VarInfo::type() {return _t;};
+
+
+template <class Key, class Value>  
+void SymbolTable::insert(Key k, Value v) {
+  _st[k]=v;
+};
 
 template<class Key,class Value>
-class SymbolTable {
-public:
-  void insert(Key k, Value v)   ;
-  Value lookup(Key k);
-private:
-  std::map<Key,Value> _st;
+Value SymbolTable::lookup(Key k) {
+
+  map<Key, Value>::iterator it;
+  it = _st.find(k);
+  if (it==_st.end()) return null;
+  else               return it->second;
 };
-
-
-class VarInfo {
-public:  
-  VarInfo(bool p , bool s , Type t);
-  bool isParameter();
-  bool isState();
-  Type type();
-private:
-  bool _p,_s;
-  Type _t;
-};
-
-/*
-class VarSymbolTable: public SymbolTable<VarName, VarInfo> 
-{
-
-};*/
-
-
-#endif

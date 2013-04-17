@@ -70,6 +70,8 @@ class AST_Expression_End_;
 class AST_Expression_Call_;
 class AST_Expression_BooleanNot_;
 class AST_Expression_Output_;
+class AST_Expression_If_ElseIf_;
+class AST_Expression_Colon_;
 
 class AST_Modification_;
 
@@ -110,7 +112,12 @@ typedef AST_Expression_End_                 *AST_Expression_End;
 typedef AST_Expression_BooleanNot_          *AST_Expression_BooleanNot;
 typedef AST_Expression_Null_                *AST_Expression_Null;
 typedef AST_Expression_If_                  *AST_Expression_If;
+
+typedef AST_Expression_If_ElseIf_           *AST_Expression_If_ElseIf;
+typedef AST_Expression_Colon_               *AST_Expression_Colon;
+
 typedef AST_Expression_String_              *AST_Expression_String; 
+typedef AST_Expression_Real_                *AST_Expression_Real; 
 typedef AST_Expression_UMinus_              *AST_Expression_UMinus; 
 typedef AST_Expression_ComponentReference_  *AST_Expression_ComponentReference;
 typedef AST_Expression_Output_              *AST_Expression_Output;
@@ -161,6 +168,8 @@ enum EquationType { EQNONE, EQEQUALITY, EQCONNECT,EQCALL, EQFOR, EQWHEN, EQIF };
 enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT };
 enum BinOpType {BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINOPGREATEREQ, BINOPCOMPNE, BINOPCOMPEQ, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPADD, BINOPELADD,
                 BINOPSUB, BINOPELSUB, BINOPEXP, BINOPELEXP, BINOPAND, BINOPOR };
+
+
 
 /* Constructors */
 

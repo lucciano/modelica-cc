@@ -30,7 +30,7 @@ public:
   friend ostream & operator<<(ostream &os , const AST_Expression_ &e );
   virtual string print() const =0;
   virtual ExpressionType expressionType();
-
+   
   /* Dynamic casts */
   AST_Expression_BinOp getAsBinOp();
   AST_Expression_If getAsIf();
@@ -46,7 +46,6 @@ public:
   string print() const;
   AST_Integer val();
   virtual ExpressionType expressionType();
-
 private:
   AST_Integer _i;
 };
