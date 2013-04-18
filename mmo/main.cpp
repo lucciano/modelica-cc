@@ -27,6 +27,7 @@
 #include <ast/stored_definition.h>
 #include <ast/class.h>
 #include <util/type.h>
+#include <util/symbol_table.h>
 
 using namespace std;
 
@@ -123,6 +124,10 @@ int main(int argc, char ** argv)
 	cerr << rs << endl;
 	if (*rs == *rr) cerr << "Yes!" << endl;
 	else cerr << "No!" << endl;
+	
+	TypeSymbolTable tyEnv;
+	cerr << "Desde la tabla! "<< tyEnv.lookup("String") << endl;
+	
 	
   }
   

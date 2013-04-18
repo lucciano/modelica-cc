@@ -42,3 +42,11 @@ Value SymbolTable<Key,Value>::lookup(Key k) {
   if (it==_st.end()) return NULL;
   else               return it->second;
 };
+
+
+TypeSymbolTable::TypeSymbolTable(){
+	insert("String", new Type_String_() );
+	insert("Real", new Type_Real_() );
+	insert("Integer", new Type_Integer_() );
+	insert("Boolean", new Type_Boolean_() );
+}

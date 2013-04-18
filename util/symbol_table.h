@@ -27,6 +27,7 @@
 #define SymbolTable_H
 
 typedef std::string VarName;
+typedef std::string TypeName;
 //typedef int Type;
 
 template<class Key,class Value>
@@ -50,11 +51,17 @@ private:
   Type _t;
 };
 
-/*
-class VarSymbolTable: public SymbolTable<VarName, VarInfo> 
+
+class VarSymbolTable: public SymbolTable<VarName, VarInfo * > 
 {
 
-};*/
+};
+
+class TypeSymbolTable: public SymbolTable<TypeName, Type > 
+{
+public:
+	TypeSymbolTable();
+};
 
 
 #endif
