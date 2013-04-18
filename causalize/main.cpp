@@ -34,7 +34,6 @@ int main(int argc, char ** argv)
     cerr << "Usage:\n\tmcc file.mo\n";
     return -1;
   }
-  VarSymbolTable vars;
   AST_StoredDefinition sd = parseFile(argv[1],&r);
   if (r==0) { // Parsed ok
     AST_Class c = sd->models()->front();
