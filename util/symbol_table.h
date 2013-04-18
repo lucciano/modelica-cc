@@ -33,8 +33,16 @@ typedef std::string TypeName;
 template<class Key,class Value>
 class SymbolTable {
 public:
-  void insert(Key k, Value v)   ;
-  Value lookup(Key k);
+  void insert(Key k, Value v) {
+    _st[k]=v;
+  }
+  Value lookup(Key k) {
+    typename std::map<Key, Value>::iterator it;
+    it = _st.find(k);
+    if (it==_st.end()) return NULL;
+    else               return it->second;
+  }
+
 private:
   std::map<Key,Value> _st;
 };
