@@ -35,3 +35,5 @@ TypeSymbolTable::TypeSymbolTable(){
 	insert("Integer", new Type_Integer_() );
 	insert("Boolean", new Type_Boolean_() );
 }
+
+

@@ -55,7 +55,10 @@ public:
 	friend ostream & operator<<(ostream &os , const Type &e );
 	
 	friend int operator==( Type_ &e1 ,  Type_ &e2 );
-	//friend int operator==( Type &e1 ,  Type &e2 );
+	friend int operator==( Type_ &e1 ,  Type e2 );
+	
+	friend int operator!=( Type_ &e1 ,  Type_ &e2 );
+	friend int operator!=( Type_ &e1 ,  Type e2 );
 	
 	Type_Array getAsArray();
 };

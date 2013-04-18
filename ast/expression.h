@@ -38,6 +38,7 @@ public:
   AST_Expression_Derivative getAsDerivative(); 
   AST_Expression_UMinus getAsUMinus();
   AST_Expression_Output getAsOutput();
+  AST_Expression_BooleanNot getAsBooleanNot();
 };
 
 class AST_Expression_Integer_: public AST_Expression_ {

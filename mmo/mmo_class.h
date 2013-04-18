@@ -20,6 +20,7 @@
 
 #include <ast/ast_builder.h>
 #include <ast/class.h>
+#include <util/symbol_table.h>
 
 typedef AST_Equation MMO_Equation;   // For now the same
 typedef AST_Statement MMO_Statement;  // For now the same
@@ -27,6 +28,9 @@ typedef AST_Component MMO_Component;  // For now the same
 typedef list<MMO_Equation>  *MMO_EquationList;
 typedef list<MMO_Statement> *MMO_StatementList;
 typedef list<MMO_Component>   *MMO_ComponentList;
+
+
+
 /* AST_Class Wrapper */
 class MMO_Class {
 public:
@@ -35,9 +39,14 @@ public:
   MMO_EquationList getEquations();
   void addComponent(MMO_Component);
   MMO_ComponentList getComponents();
+  VarSymbolTable getVarSymbolTable();
   
 private:
+  void addVariable(MMO_Component); 
   MMO_EquationList _eqs;
   MMO_ComponentList _comps;
   AST_Class _class;
+public:  
+  VarSymbolTable  varEnv;
+  TypeSymbolTable tyEnv;
 };

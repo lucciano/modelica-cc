@@ -73,8 +73,22 @@ int operator==( Type_ &e1 ,  Type_ &e2 ){
     if (e1.getType() == e2.getType()) {
 		if (e1.getType() == TYARRAY)
 			return (e1.getAsArray()->arrayOf() == e2.getAsArray()->arrayOf() );
+		else return 1;	
 	} else return 0; 
 }
+
+int operator==( Type_ &e1  ,  Type e2 ){
+    return ( e1 == *e2);
+}
+
+int operator!=( Type_ &e1 ,  Type_ &e2 ){
+    return !(e1 == e2);
+}
+
+int operator!=( Type_ &e1 ,  Type e2 ){
+    return !(e1 == *e2);
+}
+
 
 /*
 int operator==( Type &e1 ,  Type &e2 ){

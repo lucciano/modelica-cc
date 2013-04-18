@@ -154,6 +154,9 @@ AST_Expression_Output AST_Expression_::getAsOutput() {
   return dynamic_cast<AST_Expression_Output>(this);
 }
 
+AST_Expression_BooleanNot AST_Expression_::getAsBooleanNot() {
+  return dynamic_cast<AST_Expression_BooleanNot>(this);
+}
 
 void AST_Expression_ComponentReference_::setName(string name) { _name=name; }
 

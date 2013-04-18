@@ -1,7 +1,11 @@
 model Prueba
 	Real b;
+	String hola;
+	Integer m;
+	Boolean f;
+	Boolean j;
 equation
-    b = if f  then 1 else (if j then 5 else 6 ) ;
+    b = if f then 1 + m < 10 else j;
 public
     Real c;   
 end Prueba;     

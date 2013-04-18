@@ -31,50 +31,107 @@
 
 using namespace std;
 
-/*
-AST_Expression ReplaceIf(AST_Expression e) {
-  cerr << e->expressionType() << endl;	
-  switch (e->expressionType()) {
-	case EXPOUTPUT :
-	{
-		AST_Expression_Output b = e->getAsOutput();
-        AST_ExpressionList ls = new list < AST_Expression > ();
-        ls->push_back(  ReplaceIf ( b->getExpressionList()->front() )   )	;
-        return newAST_Expression_OutputExpressions(ls);
-	}
-	case EXPBINOP:
-      {
-        AST_Expression_BinOp b = e->getAsBinOp();
-        return newAST_Expression_BinOp ( ReplaceIf(b->left()) , ReplaceIf(b->right() ), b->binopType() ) ;
-	  }
-    case EXPIF: 
-      {
-        AST_Expression_If i = e->getAsIf();
-        ExpressionType cond = i->condition()->expressionType();
-        if (cond != EXPCOMPREF)
-			throw "Not suported yet!!";
+
+
+Type checkType_Expresion(AST_Expression e, VarSymbolTable varEnv , TypeSymbolTable * tyEnv )
+{
+	#define T(s) tyEnv->lookup(s)
+	Type ct,t1,t2,t;
+	switch (e->expressionType()) {
+		case EXPBINOP:
+		{
+			AST_Expression_BinOp b = e->getAsBinOp();	
+			t1 = checkType_Expresion(b->left() ,varEnv,tyEnv);
+			t2 = checkType_Expresion(b->right() ,varEnv,tyEnv);
+			
+			switch (b->binopType()) {
+				case BINOPLOWER: 
+				case BINOPLOWEREQ: 
+				case BINOPGREATER: 
+				case BINOPGREATEREQ: 
+				case BINOPCOMPNE: 
+				case BINOPCOMPEQ: 
+					cerr << t1 << "  " << t2 << endl; 
+					if (t1 == t2 ) return T("Boolean");
+					else throw "Type Error (1)"; /* Faltaria chequear que no sean bool */	
+					break;
+				case BINOPDIV: 
+				case BINOPELDIV:
+				case BINOPMULT:
+				case BINOPELMULT: 
+				case BINOPADD: 
+				case BINOPELADD:
+				case BINOPSUB: 
+				case BINOPELSUB: 
+				case BINOPEXP: 
+				case BINOPELEXP:
+					if ( *t1 != t2)  throw "Type Error (2)"; 
+					if ( *t1 != T("Real") and *t1 != T("Integer")) throw "Type Error (3)"; 
+					return t1;
+					break;
+				case BINOPAND:
+				case BINOPOR:
+					if ( *t1 != t2 or *t1 != T("Boolean") ) throw "Type Error (4)"; 
+					return t1;
+					break;
+			}
+			
+		}
+		case EXPUMINUS: 
+		{
+			AST_Expression_UMinus b = e->getAsUMinus();
+			t = checkType_Expresion(b->exp() ,varEnv,tyEnv);
+			if ( *t != T("Real")  and *t != T("Integer") ) throw "Type Error (5)"; 
+			return t;
+		}
 		
-		// For now here	
-		#define ADD(l,r) 	newAST_Expression_BinOp(l, r, BINOPADD )
-		#define MULT(l,r) 	newAST_Expression_BinOp(l, r, BINOPMULT )
-		#define SUB(l,r) 	newAST_Expression_BinOp(l, r, BINOPSUB )
-		#define I(n) 		newAST_Expression_Integer(n)
-		#define PA(e)       newAST_Expression_OutputExpressions(e) 
+		case EXPOUTPUT :
+		{
+			AST_Expression_Output b = e->getAsOutput();
+			return checkType_Expresion(b->getExpressionList()->front() , varEnv , tyEnv );
+		}  
+		  
+		case EXPIF:
+		{   
+			AST_Expression_If b = e->getAsIf();
+			ct = checkType_Expresion(b->condition() ,varEnv,tyEnv);
+			t1 = checkType_Expresion(b->then() ,varEnv,tyEnv);
+			t2 = checkType_Expresion(b->else_exp() ,varEnv,tyEnv); // Falta el elseIF
+			if ( *ct != T("Boolean") ) throw "Type Error (6)"; 
+			if ( *t1 != t2) throw "Type Error (7)"; 
+			return t1;
 			
-		AST_ExpressionList ls = new list < AST_Expression > ();
-		ls->push_back(SUB( I(1) , i->condition() ))	;
-			
-		AST_Expression l = MULT(i->condition() , ReplaceIf(i->then()) );
-        AST_Expression r = MULT(   PA ( ls ) ,   ReplaceIf(i->else_exp()) );
-        
-        
-        return ADD(l,r);
-      }
-  }
-  // No modification
-  return e;
+		}
+		
+		case EXPCOMPREF: 
+		{
+			AST_Expression_ComponentReference b = e->getAsComponentRef();
+			VarInfo * tt = varEnv->lookup(b->name());
+			if (tt == NULL)  throw "Variable no existe"; 
+			return tt->type();
+			break;
+		}
+		case EXPDERIVATIVE: 
+			return T("Real");
+		case EXPBOOLEAN:
+			return T("Boolean");
+		case EXPSTRING: 
+			return T("String");
+		case EXPREAL: 
+			return T("Real");
+		case EXPINTEGER:
+			return T("Integer");
+		case EXPBOOLEANNOT:	
+		{
+			AST_Expression_BooleanNot b = e->getAsBooleanNot();
+			t = checkType_Expresion(b->exp() ,varEnv,tyEnv);
+			if ( *t != T("Boolean") ) throw "Type Error"; 
+			return t;
+		}
+	}
 }
-*/
+
+
 
 
 int main(int argc, char ** argv)
@@ -85,6 +142,7 @@ int main(int argc, char ** argv)
     cerr << "Usage:\n\tmcc file.mo\n";
     return -1;
   }
+  TypeSymbolTable tyEnv;
   AST_StoredDefinition sd = parseFile(argv[1],&r);
   if (r==0) { // Parsed ok
     AST_Class c = sd->models()->front();
@@ -96,10 +154,11 @@ int main(int argc, char ** argv)
     AST_EquationListIterator eqit;
     foreach(eqit,d->getEquations()) {
 		AST_Equation_Equality r = current(eqit)->getAsEquality();
-		AST_Equation _r = newAST_Equation_Equality( r->left() , rep_sum.mapTraverse(r->right()) );
-		 
-		current(eqit) =  _r ;
-		 //cerr << rep_sum.mapTraverse(r->right()) << endl;
+		//AST_Equation _r = newAST_Equation_Equality( r->left() , rep_sum.mapTraverse(r->right()) );
+		//current(eqit) =  _r ;
+		try {
+		 cerr << "Tipo:" <<  checkType_Expresion(r->right(),d->getVarSymbolTable() , &tyEnv  )  << endl;
+		} catch(char const * s) {cerr << s << endl;}
 	}
 
 	
@@ -108,7 +167,7 @@ int main(int argc, char ** argv)
     cerr << "----------------------" << endl << " Variables: " << endl;
     AST_ComponentListIterator cit;
     foreach(cit,d->getComponents()) {
-		cerr << current(cit) << endl;	
+		cerr << "-> " << current(cit)->name() << ":" <<  d->getVarSymbolTable()->lookup(current(cit)->name())->type() << endl;	
 	}
 	
 	
@@ -125,8 +184,14 @@ int main(int argc, char ** argv)
 	if (*rs == *rr) cerr << "Yes!" << endl;
 	else cerr << "No!" << endl;
 	
-	TypeSymbolTable tyEnv;
+	VarSymbolTable varEnv =  new VarSymbolTable_;
+	
+	varEnv->insert("Hola" , NULL);
 	cerr << "Desde la tabla! "<< tyEnv.lookup("String") << endl;
+	
+	//string str;
+	//cin >> str;
+	//cerr << "Desde la clase: " <<  d->getVarSymbolTable()->lookup(str)->type() << endl;
 	
 	
   }
