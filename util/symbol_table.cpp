@@ -29,17 +29,16 @@ bool VarInfo::isState() {return _s;};
 
 Type VarInfo::type() {return _t;};
 
-
-template <class Key, class Value>  
-void SymbolTable::insert(Key k, Value v) {
+template <class Key, class Value> 
+void SymbolTable<Key,Value>::insert(Key k, Value v) {
   _st[k]=v;
 };
 
 template<class Key,class Value>
-Value SymbolTable::lookup(Key k) {
+Value SymbolTable<Key,Value>::lookup(Key k) {
 
-  map<Key, Value>::iterator it;
+  typename std::map<Key, Value>::iterator it;
   it = _st.find(k);
-  if (it==_st.end()) return null;
+  if (it==_st.end()) return NULL;
   else               return it->second;
 };
