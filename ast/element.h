@@ -83,6 +83,7 @@ public:
   string type() { return _type; };
   virtual ElementType elementType() { return COMPONENT; }
   string name() { return _decl_list->front()->name(); }
+  AST_DeclarationList nameList() { return _decl_list; }
   AST_Class origin () { return _origin; }
   void setOrigin(AST_Class c) { if (_origin==NULL) _origin = c; }
   AST_TypePrefix typePrefix() { return _tp; }

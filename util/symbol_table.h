@@ -27,10 +27,13 @@
 #define SymbolTable_H
 
 class VarSymbolTable_;
+class TypeSymbolTable_;
+
 
 typedef std::string VarName;
 typedef std::string TypeName;
-typedef VarSymbolTable_   * VarSymbolTable;
+typedef VarSymbolTable_    * VarSymbolTable;
+typedef TypeSymbolTable_   * TypeSymbolTable;
 //typedef int Type;
 
 template<class Key,class Value>
@@ -53,13 +56,15 @@ private:
 
 class VarInfo {
 public:  
-  VarInfo(bool p , bool s , Type t);
+  VarInfo(bool p , bool s , Type t, AST_TypePrefix tp);
   bool isParameter();
   bool isState();
+  AST_TypePrefix typePrefix() {return _tp;};
   Type type();
 private:
   bool _p,_s;
   Type _t;
+  AST_TypePrefix _tp ;
 };
 
 
@@ -69,10 +74,10 @@ public:
 	VarSymbolTable_() {};
 };
 
-class TypeSymbolTable: public SymbolTable<TypeName, Type > 
+class TypeSymbolTable_: public SymbolTable<TypeName, Type > 
 {
 public:
-	TypeSymbolTable();
+	TypeSymbolTable_();
 };
 
 

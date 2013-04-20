@@ -1,5 +1,5 @@
 model Prueba
-	Real b;
+	Real b,c,d,e;
 	String hola;
 	Integer m;
 	Boolean f;

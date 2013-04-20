@@ -21,7 +21,7 @@
 #include <util/symbol_table.h>
 
 
-VarInfo::VarInfo (bool p , bool s , Type t):_p(p) , _s(s) , _t(t) {};
+VarInfo::VarInfo (bool p , bool s , Type t, AST_TypePrefix tp):_p(p) , _s(s) , _t(t) , _tp(tp) {};
 
 bool VarInfo::isParameter() {return _p;};
 
@@ -29,9 +29,9 @@ bool VarInfo::isState() {return _s;};
 
 Type VarInfo::type() {return _t;};
 
-TypeSymbolTable::TypeSymbolTable(){
-	insert("String", new Type_String_() );
-	insert("Real", new Type_Real_() );
+TypeSymbolTable_::TypeSymbolTable_(){
+	insert("String",  new Type_String_()  );
+	insert("Real",    new Type_Real_()    );
 	insert("Integer", new Type_Integer_() );
 	insert("Boolean", new Type_Boolean_() );
 }

@@ -23,20 +23,24 @@
 #include <iostream>
 using namespace std;
 
-MMO_Class::MMO_Class(AST_Class c):_class(c) {
+MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 	_eqs = new list<MMO_Equation>();
 	_comps = new list<MMO_Component>();
 	varEnv = new VarSymbolTable_;
+	tyEnv = ty;
 	
 	AST_Composition comp = c->composition();
-	
+
 	// First elements
 	AST_ElementList el = comp->elementList();
 	AST_ElementListIterator elit;
 	foreach(elit,el) {
 		switch (current(elit)->elementType()) {
 			case COMPONENT:
+				
 				_comps->push_back(current(elit)->getAsComponent());
+				
+				
 				addVariable(current(elit)->getAsComponent());
 				break;
 			default:
@@ -71,8 +75,6 @@ MMO_Class::MMO_Class(AST_Class c):_class(c) {
 
 void MMO_Class::addEquation(MMO_Equation e) {
 	_eqs->push_front(e);
-	// For now
-	_class->composition()->compositionList()->front()->getEquationsAlgs()->getEquations()->push_back(e); 
 }
 
 MMO_EquationList MMO_Class::getEquations() {
@@ -81,8 +83,6 @@ MMO_EquationList MMO_Class::getEquations() {
 
 void MMO_Class::addComponent(MMO_Component c) {
 	_comps->push_back(c);
-	_class->composition()->elementList()->push_back(c);
-	
 }
 
 MMO_ComponentList MMO_Class::getComponents() {
@@ -92,10 +92,14 @@ MMO_ComponentList MMO_Class::getComponents() {
 
 void MMO_Class::addVariable(MMO_Component c)
 {
-	Type t = tyEnv.lookup(c->type());
+	Type t = tyEnv->lookup(c->type());
 	if (t == NULL) cerr << "No existe el tipo(" << c->type() << ")!!" << endl;
-	VarInfo * v = new VarInfo(c->isParameter() , false , t );
-	varEnv->insert(c->name(), v);
+	
+	AST_DeclarationListIterator it;
+	foreach(it , c->nameList()) {
+		VarInfo * v = new VarInfo(c->isParameter() , false , t , c->typePrefix());
+		varEnv->insert(current(it)->name(), v);
+	}
 }
 
 VarSymbolTable  MMO_Class::getVarSymbolTable()

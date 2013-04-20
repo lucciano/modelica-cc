@@ -33,7 +33,7 @@ using namespace std;
 
 
 
-Type checkType_Expresion(AST_Expression e, VarSymbolTable varEnv , TypeSymbolTable * tyEnv )
+Type checkType_Expresion(AST_Expression e, VarSymbolTable varEnv , TypeSymbolTable  tyEnv )
 {
 	#define T(s) tyEnv->lookup(s)
 	Type ct,t1,t2,t;
@@ -142,13 +142,15 @@ int main(int argc, char ** argv)
     cerr << "Usage:\n\tmcc file.mo\n";
     return -1;
   }
-  TypeSymbolTable tyEnv;
+  TypeSymbolTable tyEnv = new TypeSymbolTable_;
+  
   AST_StoredDefinition sd = parseFile(argv[1],&r);
+  
   if (r==0) { // Parsed ok
     AST_Class c = sd->models()->front();
     cerr << c << "---------------------" << endl;
     
-    MMO_Class * d = new MMO_Class(c);
+    MMO_Class * d = new MMO_Class(c, tyEnv);
 
 	//cerr << " Primera aproximacion  " << endl;
     AST_EquationListIterator eqit;
@@ -157,7 +159,7 @@ int main(int argc, char ** argv)
 		//AST_Equation _r = newAST_Equation_Equality( r->left() , rep_sum.mapTraverse(r->right()) );
 		//current(eqit) =  _r ;
 		try {
-		 cerr << "Tipo:" <<  checkType_Expresion(r->right(),d->getVarSymbolTable() , &tyEnv  )  << endl;
+		 cerr << "Tipo:" <<  checkType_Expresion( r->right() , d->getVarSymbolTable() , tyEnv  )  << endl;
 		} catch(char const * s) {cerr << s << endl;}
 	}
 
@@ -169,30 +171,6 @@ int main(int argc, char ** argv)
     foreach(cit,d->getComponents()) {
 		cerr << "-> " << current(cit)->name() << ":" <<  d->getVarSymbolTable()->lookup(current(cit)->name())->type() << endl;	
 	}
-	
-	
-	cerr << "----------------------" << endl << " Pruebas con Tipos: " << endl;
-	Type_String s = new Type_String_;
-	Type_Real i = new Type_Real_;
-	Type_Array  rr = new Type_Array_(i);
-	Type_Array  rs = new Type_Array_(s);
-	
-	Type_Array  ar = new Type_Array_(rr);
-	
-	cerr << rr << endl;
-	cerr << rs << endl;
-	if (*rs == *rr) cerr << "Yes!" << endl;
-	else cerr << "No!" << endl;
-	
-	VarSymbolTable varEnv =  new VarSymbolTable_;
-	
-	varEnv->insert("Hola" , NULL);
-	cerr << "Desde la tabla! "<< tyEnv.lookup("String") << endl;
-	
-	//string str;
-	//cin >> str;
-	//cerr << "Desde la clase: " <<  d->getVarSymbolTable()->lookup(str)->type() << endl;
-	
 	
   }
   

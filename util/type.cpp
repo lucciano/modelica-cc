@@ -89,7 +89,6 @@ int operator!=( Type_ &e1 ,  Type e2 ){
     return !(e1 == *e2);
 }
 
-
 /*
 int operator==( Type &e1 ,  Type &e2 ){
     return (*e1 == * e2);
