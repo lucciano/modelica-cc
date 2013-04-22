@@ -42,6 +42,8 @@ string AST_Equation_If_::print() const {
   stringstream ret(stringstream::out);
   AST_EquationList eql = equationList();
   AST_EquationListIterator it;
+  for (int i=0;i<depth;i++)
+    ret << " ";
   ret << "if (" << condition() << ") " << endl;
   foreach(it,eql)
     ret << "\t" << current(it) << endl;
@@ -72,9 +74,15 @@ string AST_Equation_For_::print() const {
   stringstream ret(stringstream::out);
   AST_EquationList eql = equationList();
   AST_EquationListIterator it;
+  for (int i=0;i<depth;i++)
+    ret << " ";
   ret << "for loop" << endl;
+  depth+=2;
   foreach(it,eql)
-    ret << "\t" << current(it) << endl;
+    ret << current(it);
+  depth-=2;
+  for (int i=0;i<depth;i++)
+    ret << " ";
   ret << "end for;"<< endl;
   return ret.str();
 
@@ -88,6 +96,8 @@ ostream & operator<<(ostream &os , const AST_Equation_ &e ){
 
 string AST_Equation_Equality_::print() const {
     stringstream ret(stringstream::out);
+    for (int i=0;i<depth;i++)
+      ret << " ";
     ret << left() << " = " << right() << ";" << endl;
     return ret.str();
 }

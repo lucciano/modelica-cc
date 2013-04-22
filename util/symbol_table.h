@@ -22,7 +22,6 @@
 #include <string>
 #include <util/type.h>
 
-
 #ifndef SymbolTable_H
 #define SymbolTable_H
 

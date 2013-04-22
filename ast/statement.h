@@ -38,4 +38,27 @@ class AST_Statement_Return_: public AST_Statement_ {
 class AST_Statement_Break_: public AST_Statement_ {
   string print() const;
 };
+
+class AST_Statement_When_: public AST_Statement_ {
+public:
+  AST_Statement_When_(AST_Expression cond, AST_StatementList);
+  string print() const;
+  AST_Expression condition() const { return _cond; }
+  AST_StatementList statements() const { return _sts; }
+private:
+  AST_Expression _cond;
+  AST_StatementList _sts;
+};
+
+class AST_Statement_Assign_: public AST_Statement_ {
+public:
+  AST_Statement_Assign_(AST_Expression_ComponentReference cr, AST_Expression exp);
+  string print() const;
+  AST_Expression exp() const { return _exp; }
+  AST_Expression_ComponentReference lhs() const { return _lhs; }
+private:
+  AST_Expression _exp;
+  AST_Expression_ComponentReference _lhs;
+};
+
 #endif

@@ -28,13 +28,13 @@
 #include <cassert>
 
 class MCC_Parser;
+extern int depth=0;
 MCC_Parser *parser = NULL;
 AST_StoredDefinition root;
 
 AST_StoredDefinition newAST_StoredDefinition(AST_ClassList cl, AST_String within) { 
   return new AST_StoredDefinition_(cl,within);
 }
-
 
 AST_String newAST_String(string s) {
   return new string(s);
@@ -52,7 +52,6 @@ AST_String newAST_DotString(AST_String s) {
   delete s;
   return ret;
 }
-
 
 AST_String AST_StringDotAppend(AST_String ret, AST_String a) {
   if (ret==NULL) 
@@ -85,7 +84,6 @@ AST_Composition newAST_Composition(AST_ElementList el) {
 AST_Composition newAST_Composition(AST_ElementList el, AST_CompositionElementList cl) {
   return new AST_Composition_(el,cl);
 }
-
 
 AST_Composition newAST_Composition(AST_CompositionElementList cl)
 {
@@ -159,15 +157,18 @@ AST_Equation newAST_Equation_Connect(AST_Expression_ComponentReference cr1, AST_
 
 AST_Expression newAST_Expression_Real(AST_Real r){ 
   return new AST_Expression_Real_(r);
-};
+}
+
 AST_Expression newAST_Expression_String(AST_String s) {
   AST_Expression_String ret=new AST_Expression_String_(*s);
   delete s;
   return ret;
 }
+
 AST_Expression newAST_Expression_Boolean(AST_Boolean b) {
   return new AST_Expression_Boolean_(b);
 }
+
 AST_Expression newAST_Expression_Derivative(AST_ExpressionList el) {
   return new AST_Expression_Derivative_(el);
 }
@@ -180,14 +181,10 @@ AST_Class newAST_Class(AST_String s, AST_Composition comp) {
   return new AST_Class_(s,comp);
 }
 
-
-
-
 AST_Component newAST_Component(AST_DeclarationList cl, AST_String type, AST_TypePrefix tp) {
   AST_Component c= new AST_Component_(cl,*type,tp);
   delete type;
   return c;
-  
 }
 
 AST_Declaration newAST_Declaration(AST_String s) {
@@ -195,6 +192,7 @@ AST_Declaration newAST_Declaration(AST_String s) {
   delete s;
   return ret;
 }
+
 AST_DeclarationList newAST_DeclarationList(AST_Declaration d) {
   AST_DeclarationList dl = new list<AST_Declaration>();
   dl->push_back(d);
@@ -213,7 +211,6 @@ AST_Expression newAST_Expression_ComponentReferenceExp(AST_String s) {
   return newAST_Expression_ComponentReference(s);
 }
 
-
 AST_Expression newAST_Expression_ComponentReferenceExp(AST_String s, AST_String s2) {
   if (s2!=NULL) {
     s->append(*s2);
@@ -221,13 +218,13 @@ AST_Expression newAST_Expression_ComponentReferenceExp(AST_String s, AST_String 
   }
   return newAST_Expression_ComponentReference(s);
 }
+
 AST_Expression newAST_Expression_ComponentReferenceExpDot(AST_String s, AST_String rest) {
   s->insert(0,".");
   s->append(rest->c_str());
   delete rest;
   return newAST_Expression_ComponentReference(s);
 }
-
 
 AST_Expression_ComponentReference newAST_Expression_ComponentReference() {
   return new AST_Expression_ComponentReference_("");
@@ -242,6 +239,7 @@ AST_Expression_ComponentReference AST_Expression_ComponentReference_AddDot(AST_E
   delete s;
   return cr;
 }
+
 AST_Expression_ComponentReference AST_Expression_ComponentReference_Add(AST_Expression_ComponentReference cr, AST_String s, AST_ExpressionList subs) {
   string n = cr->name();
   if  (n!= "") 
@@ -251,6 +249,7 @@ AST_Expression_ComponentReference AST_Expression_ComponentReference_Add(AST_Expr
   delete s;
   return cr;
 }
+
 AST_Expression_ComponentReference AST_Expression_ComponentReference_Add2(AST_Expression_ComponentReference cr, AST_String s) {
   string n = cr->name();
   n.insert(0,*s);
@@ -259,19 +258,18 @@ AST_Expression_ComponentReference AST_Expression_ComponentReference_Add2(AST_Exp
   return cr;
 }
 
-
 AST_Expression_ComponentReference newAST_Expression_ComponentReference(AST_String s) {
   AST_Expression_ComponentReference cr = new AST_Expression_ComponentReference_(*s);
   delete s;
   return cr;
 }
 
-
 ostream & operator<<(ostream &os , const AST_CompositionElement &ce) {
   assert(ce!=NULL);
   os << *ce;
   return os;
 }
+
 ostream & operator<<(ostream &os , const AST_String &s) {
   os << *s;
   return os;
@@ -284,12 +282,15 @@ AST_ComponentList newAST_ComponentList() {
 AST_TypePrefix newAST_TypePrefix() {
   return 0;
 }
+
 AST_TypePrefix newAST_TypePrefix(AST_TypePrefix tp) {
   return tp;
 }
+
 AST_TypePrefix AST_TypePrefixAdd(AST_TypePrefix tp, AST_TypePrefix tpadd) {
   return tp | tpadd;
 }
+
 AST_Expression newAST_Expression_BinOp(AST_Expression left, AST_Expression right, BinOpType type) {
   return new AST_Expression_BinOp_(left,right,type);
 }
@@ -305,6 +306,7 @@ AST_Expression newAST_Expression_If(AST_Expression cond, AST_Expression then, AS
 AST_Equation newAST_Equation_If(AST_Expression e, AST_EquationList eql, AST_Equation_ElseList elseif, AST_EquationList elseeqs) {
   return new AST_Equation_If_(e,eql);
 }
+
 AST_StringList newAST_StringList() {
   return new list<AST_String>();
 }
@@ -325,7 +327,6 @@ AST_Expression newAST_Expression_DotCall(AST_String name, AST_String rest) {
   }
   return new AST_Expression_Call_(name);
 }
-
 
 AST_Expression newAST_Expression_Call(AST_String name, AST_String rest) {
   if (rest!=NULL) {
@@ -397,12 +398,12 @@ AST_ClassPrefix AST_ClassPrefix_Impure(AST_Boolean oper) {
   return CP_IMPURE;
 }
 
-
 AST_ClassPrefix AST_ClassPrefix_Pure(AST_Boolean oper) {
   if (oper)
     return CP_PURE | CP_OPERATOR;
   return CP_PURE;
 }
+
 AST_ClassPrefix AST_ClassPrefix_None() {
   return 0;
 }
@@ -416,12 +417,21 @@ AST_ClassPrefix AST_ClassPrefix_AddPartial(AST_Boolean partial, AST_ClassPrefix 
 AST_Equation newAST_EquationFor(AST_ForIndexList ind, AST_EquationList eql) {
   return new AST_Equation_For_(ind,eql);
 }
+
 AST_Expression newAST_Expression_Else(AST_Expression,AST_Expression) {
 }
 
-AST_ForIndex newAST_ForIndex(AST_String, AST_Expression) {}
-AST_ForIndexList newAST_ForIndexList() {}
-AST_Equation newAST_Equation_For(AST_ForIndexList, AST_EquationList eql) {}
+AST_ForIndex newAST_ForIndex(AST_String ident, AST_Expression exp) {
+  return new AST_ForIndex_(ident,exp);
+}
+
+AST_ForIndexList newAST_ForIndexList() {
+  return new list<AST_ForIndex>();
+}
+
+AST_Equation newAST_Equation_For(AST_ForIndexList ind, AST_EquationList eql) {
+  return new AST_Equation_For_(ind,eql);
+}
 
 AST_Class AST_Class_SetFinal(AST_Class c,AST_Boolean final) {
   if (final)  
@@ -453,14 +463,13 @@ AST_Expression AST_Expression_ComponentReferenceExpAdd(AST_Expression_ComponentR
 }
 
 AST_Expression newAST_Expression_NamedArgument(AST_String, AST_Expression) {
-
 }
+
 AST_Expression newAST_Expression_FunctionCallArgs(AST_ExpressionList) {
-
 }
+
 
 AST_Expression newAST_Expression_Function(AST_String, AST_ExpressionList) {
-
 }
 
 AST_Equation_ElseList newAST_Equation_ElseIfList() {
@@ -476,10 +485,10 @@ AST_StatementList  newAST_StatementList() {
 }
 
 AST_Statement newAST_Statement_Break() {
-  return new AST_Statement_Return_();
+  return new AST_Statement_Break_();
 }
 AST_Statement newAST_Statement_Return() {
-  return new AST_Statement_Break_();
+  return new AST_Statement_Return_();
 
 }
 AST_Modification newAST_ModificationNull() {
@@ -506,14 +515,12 @@ AST_Argument AST_ArgumentSetReplaceable(AST_Argument arg) {
   return arg;
 }
 
-
 AST_Modification newAST_ModificationEqual(AST_Expression) {
   return NULL;
 }
-AST_Modification newAST_ModificationAssing(AST_Expression) {
+AST_Modification newAST_ModificationAssign(AST_Expression) {
   return NULL;
 }
-
 
 AST_Expression newAST_Expression_Range(AST_Expression, AST_Expression) {
   return newAST_Expression_Null();
@@ -552,15 +559,15 @@ AST_Statement newAST_Statement_While(AST_Expression, AST_StatementList) {
   return NULL;
 }
 
-AST_Statement newAST_Statement_When(AST_Expression,AST_StatementList, AST_Statement_ElseList) {
-  return NULL;
+AST_Statement newAST_Statement_When(AST_Expression cond, AST_StatementList sts, AST_Statement_ElseList else_st) {
+  return new AST_Statement_When_(cond,sts);
 }
 
-AST_Statement newAST_Statement_OutputAssing(AST_ExpressionList, AST_Expression_ComponentReference, AST_ExpressionList) {
+AST_Statement newAST_Statement_OutputAssign(AST_ExpressionList, AST_Expression_ComponentReference, AST_ExpressionList) {
   return NULL;
 }
-AST_Statement newAST_Statement_Assing(AST_Expression_ComponentReference, AST_Expression) {
-  return NULL;
+AST_Statement newAST_Statement_Assign(AST_Expression_ComponentReference cr, AST_Expression exp) {
+  return new AST_Statement_Assign_(cr,exp);
 }
 
 AST_Equation newAST_Equation_When(AST_Expression,AST_EquationList, AST_Equation_ElseList) {

@@ -53,11 +53,19 @@ AST_ElementList AST_Composition_::elementList() const {
 ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce ) 
 { 
   AST_EquationListIterator it;
+  AST_StatementListIterator st_it;
   if (ce._eqs_algs!=NULL) {
     if (ce._eqs_algs->getEquations()->size()>0)
       os << "equation" << endl;
+    depth+=2;
     foreach (it,ce._eqs_algs->getEquations())  
-        os << "  " << current(it); 
+        os << current(it); 
+    depth-=2;
+    if (ce._eqs_algs->getAlgorithms()->size()>0)
+      os << "algorithm" << endl;
+    foreach (st_it,ce._eqs_algs->getAlgorithms())  
+        os << current(st_it); 
+
   }
   AST_ElementListIterator et;
   if (ce._el != NULL) {

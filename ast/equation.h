@@ -98,11 +98,12 @@ private:
 };
 
 class AST_ForIndex_: public AST_Node {
-  AST_ForIndex_(AST_String, AST_Expression) {}
+public:
+  AST_ForIndex_(AST_String var, AST_Expression exp):_var(var),_in(exp) {}
   
 private:
-  AST_String var;
-  AST_Expression in;
+  AST_String _var;
+  AST_Expression _in;
 };
 
 class AST_Equation_Else_: public AST_Node {

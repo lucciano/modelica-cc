@@ -149,7 +149,7 @@ int main(int argc, char ** argv)
   if (r==0) { // Parsed ok
     AST_Class c = sd->models()->front();
     cerr << c << "---------------------" << endl;
-    
+    return 0; 
     MMO_Class * d = new MMO_Class(c, tyEnv);
 
 	//cerr << " Primera aproximacion  " << endl;

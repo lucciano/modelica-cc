@@ -244,3 +244,9 @@ AST_ExpressionList AST_Expression_Output_::getExpressionList()
 {
 	return _list;
 }
+
+ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr) {
+  os << *cr;
+  return os;
+}
+

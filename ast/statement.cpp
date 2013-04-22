@@ -19,6 +19,9 @@
 ******************************************************************************/
 
 #include <ast/statement.h>
+#include <iostream>
+#include <sstream>
+
 
 using namespace std;
 
@@ -35,3 +38,28 @@ string AST_Statement_Break_::print() const {
   return "return"; 
 }
 
+string AST_Statement_Assign_::print() const { 
+  stringstream ret(stringstream::out);
+  ret << lhs() << ":=" << exp() << ";"<<endl;
+  return ret.str();
+}
+AST_Statement_Assign_::AST_Statement_Assign_(AST_Expression_ComponentReference lhs,AST_Expression exp): _lhs(lhs), _exp(exp) {
+}
+
+
+string AST_Statement_When_::print() const { 
+  stringstream ret(stringstream::out);
+  AST_StatementListIterator it;
+  ret << "when " << condition() << " then"<<endl;
+  foreach(it,statements())
+    ret << current(it);
+  ret << "  end when;" <<endl;
+  return ret.str();
+}
+AST_Statement_When_::AST_Statement_When_(AST_Expression cond, AST_StatementList sts): _cond(cond), _sts(sts) {
+}
+
+ostream & operator<<(ostream &os , const AST_Statement &s ) {
+  os << *s;
+  return os;
+}

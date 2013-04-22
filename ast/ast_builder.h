@@ -26,6 +26,7 @@
 
 class MCC_Parser;
 extern MCC_Parser *parser;
+extern int depth;
 
 using namespace std;
 
@@ -159,6 +160,7 @@ typedef std::list<AST_Element>::iterator             AST_ElementListIterator;
 typedef std::list<AST_Equation>::iterator            AST_EquationListIterator;
 typedef std::list<AST_Expression>::iterator          AST_ExpressionListIterator;
 typedef std::list<AST_String>::iterator              AST_StringListIterator;
+typedef std::list<AST_Statement>::iterator           AST_StatementListIterator;
 
 extern AST_StoredDefinition root;
 
@@ -298,7 +300,7 @@ AST_Equation_Else newAST_Equation_Else(AST_Expression, AST_EquationList);
 /* Modification */
 AST_Modification newAST_Modification(AST_ArgumentList,AST_Expression); 
 AST_Modification newAST_ModificationEqual(AST_Expression);
-AST_Modification newAST_ModificationAssing(AST_Expression); 
+AST_Modification newAST_ModificationAssign(AST_Expression); 
 AST_Modification newAST_ModificationNull();
 /* Statements */
 AST_Statement newAST_Statement_Break();
@@ -307,8 +309,8 @@ AST_Statement newAST_Statement_While(AST_Expression, AST_StatementList);
 AST_Statement newAST_Statement_When(AST_Expression,AST_StatementList, AST_Statement_ElseList);
 AST_Statement newAST_Statement_For(AST_ForIndexList , AST_StatementList);
 AST_Statement newAST_Statement_If(AST_Expression , AST_StatementList, AST_Statement_ElseList, AST_StatementList);
-AST_Statement newAST_Statement_Assing(AST_Expression_ComponentReference, AST_Expression);
-AST_Statement newAST_Statement_OutputAssing(AST_ExpressionList, AST_Expression_ComponentReference, AST_ExpressionList);
+AST_Statement newAST_Statement_Assign(AST_Expression_ComponentReference, AST_Expression);
+AST_Statement newAST_Statement_OutputAssign(AST_ExpressionList, AST_Expression_ComponentReference, AST_ExpressionList);
 AST_StatementList  newAST_StatementList();
 AST_Statement_Else newAST_Statement_Else(AST_Expression, AST_StatementList);
 AST_Statement_ElseList newAST_Statement_ElseList();
@@ -354,9 +356,9 @@ ostream & operator<<(ostream &os , const AST_Class &c ) ;
 ostream & operator<<(ostream &os , const AST_Expression &e ) ;
 ostream & operator<<(ostream &os , const AST_String &s ) ;
 ostream & operator<<(ostream &os , const AST_Equation &e ) ;
+ostream & operator<<(ostream &os , const AST_Statement &s ) ;
 ostream & operator<<(ostream &os , const AST_CompositionElement &ce ) ;
-
-
+ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr);
 /* List uitls */
 
 #define current(it) (*it)
