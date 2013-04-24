@@ -162,6 +162,8 @@ typedef std::list<AST_Expression>::iterator          AST_ExpressionListIterator;
 typedef std::list<AST_String>::iterator              AST_StringListIterator;
 typedef std::list<AST_Statement>::iterator           AST_StatementListIterator;
 
+typedef std::list<AST_Expression>::reverse_iterator  AST_ExpressionListReverseIterator;
+
 extern AST_StoredDefinition root;
 
 /* Enums */
@@ -189,9 +191,14 @@ AST_Argument AST_ArgumentSetReplaceable(AST_Argument);
 AST_String newAST_String(AST_String);
 AST_String newAST_StringNull();
 AST_String newAST_String(string s);
+AST_String newAST_String(char * s);
+AST_String newAST_String(const char * s);
+AST_String newAST_String(AST_String);
 AST_String newAST_DotString(AST_String);
 AST_String AST_StringDotAppend(AST_String,AST_String);
 AST_StringList newAST_StringList();
+#define _S(s) newAST_String(s)
+
 
 /* Classes */
 AST_Class newAST_Class(AST_String, AST_Composition);
@@ -363,6 +370,8 @@ ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr);
 
 #define current(it) (*it)
 #define foreach(it,list) for (it=list->begin();it!=list->end();it++)
+#define foreachReverse(it,list) for (it=list->rbegin();it!=list->rend();it++)
+
 template <typename T1>
 list<T1> * AST_ListAppend(list<T1> *l, T1 e) { l->push_back(e); return l; }
 template <typename T1>

@@ -5,7 +5,8 @@ OBJS_MMO := $(OBJS_COMMON) \
             util/ast_util.o \
             util/type.o \
             util/symbol_table.o \
-            util/type_check.o
+            util/type_check.o \
+            mmo/reduce_equation.o
       
 
 mmo/mmo: $(OBJS_MMO)

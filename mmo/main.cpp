@@ -18,7 +18,7 @@
 
 ******************************************************************************/
 
-#include <iostream>
+
 
 #include <ast/ast_builder.h>
 #include <mmo/traverse_example.h>
@@ -29,7 +29,8 @@
 #include <util/type.h>
 #include <util/symbol_table.h>
 #include <util/type_check.h>
-
+#include <mmo/reduce_equation.h>
+#include <iostream>
 using namespace std;
 
 
@@ -50,17 +51,21 @@ int main(int argc, char ** argv)
     cerr << c << "---------------------" << endl;
 
     MMO_Class * d = new MMO_Class(c, tyEnv);
-	TypeCheck_ * ct = new TypeCheck_(tyEnv , d->getVarSymbolTable());
+	//TypeCheck_ * ct = new TypeCheck_(tyEnv , d->getVarSymbolTable());
+	 
+	MMO_Reduce_Equation_ * re = new MMO_Reduce_Equation_(d);  
 	 
 	 cerr << " Primera aproximacion  " << endl;
+	 
     AST_EquationListIterator eqit;
     foreach(eqit,d->getEquations()) {
-		AST_Equation_Equality r = current(eqit)->getAsEquality();
-		//AST_Equation _r = newAST_Equation_Equality( r->left() , rep_sum.mapTraverse(r->right()) );
-		//current(eqit) =  _r ;
-		try {
-		 cerr << "Tipo:" <<  ct->check_expression( r->right() )  << endl;
-		} catch(char const * s) {cerr << s << endl;}   
+		//cerr << "eq: " <<  current(eqit) << endl;
+		current(eqit) =  re->simplify( current(eqit) ) ;
+		//cerr << "eq(new): " <<  current(eqit) << endl;
+	}
+	
+	foreach(eqit,d->getEquations()) {
+		cerr <<  current(eqit)  ;
 	}
 
 	

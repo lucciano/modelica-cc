@@ -196,16 +196,33 @@ AST_Expression_Derivative AST_Expression_::getAsDerivative() {
   return dynamic_cast<AST_Expression_Derivative>(this);
 };
 
+AST_Expression_If_ElseIf AST_Expression_::getAsElseIf() {
+  return dynamic_cast<AST_Expression_If_ElseIf>(this);
+};
+
 /* If expression */
 AST_Expression_If_::AST_Expression_If_(AST_Expression cond, AST_Expression then, AST_Expression else_exp, AST_ExpressionList elseif_list): _cond(cond), 
                                                                                                            _then(then), 
                                                                                                            _else_exp(else_exp),
                                                                                                            _elseif_list(elseif_list) {
 }
+AST_Expression_If_ElseIf_::AST_Expression_If_ElseIf_  (AST_Expression c, AST_Expression t) : _cond(c) , _then(t) {};
+
+
+string AST_Expression_If_ElseIf_::print() const {
+	stringstream ret;
+	ret << " elseif (" << _cond << ") then " << _then ;
+	return ret.str();
+}
 
 string AST_Expression_If_::print () const {
   stringstream ret;
-  ret << "if ("<< condition() << ") then " << then() << " else " << else_exp();
+  AST_ExpressionListIterator it;
+  ret << "if ("<< condition() << ") then " << then() ;
+  if (! elseif_list()->empty())
+  foreach(it , elseif_list() )
+	  ret << current(it)->getAsElseIf() ;
+  ret << " else " << else_exp() ;
   return ret.str();
 }
 

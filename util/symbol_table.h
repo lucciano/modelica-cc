@@ -55,13 +55,12 @@ private:
 
 class VarInfo {
 public:  
-  VarInfo(bool p , bool s , Type t, AST_TypePrefix tp);
-  bool isParameter();
+  VarInfo( bool s , Type t, AST_TypePrefix tp);
   bool isState();
   AST_TypePrefix typePrefix() {return _tp;};
   Type type();
 private:
-  bool _p,_s;
+  bool _s;
   Type _t;
   AST_TypePrefix _tp ;
 };

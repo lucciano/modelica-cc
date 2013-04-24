@@ -71,10 +71,12 @@ MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 			addVariable(current(elit)->getAsComponent());
 		}
 	}	
+	_ct = new TypeCheck_( tyEnv , varEnv );
 }
 
 void MMO_Class::addEquation(MMO_Equation e) {
-	_eqs->push_front(e);
+	_eqs->push_back(e);
+	//cerr << e << endl;
 }
 
 MMO_EquationList MMO_Class::getEquations() {
@@ -97,12 +99,34 @@ void MMO_Class::addVariable(MMO_Component c)
 	
 	AST_DeclarationListIterator it;
 	foreach(it , c->nameList()) {
-		VarInfo * v = new VarInfo(c->isParameter() , false , t , c->typePrefix());
+		VarInfo * v = new VarInfo( false , t , c->typePrefix());
 		varEnv->insert(current(it)->name(), v);
 	}
+}
+
+void MMO_Class::addVariable(AST_String name , AST_String tys)
+{
+	Type t = tyEnv->lookup(*tys);
+	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
+	VarInfo * v = new VarInfo(false , t , newAST_TypePrefix() );
+	varEnv->insert(*name, v);
 }
 
 VarSymbolTable  MMO_Class::getVarSymbolTable()
 {
 	return varEnv;
+}
+
+TypeSymbolTable  MMO_Class::getTypeSymbolTable()
+{
+	return tyEnv;
+}
+
+Type MMO_Class::getExpresionType(AST_Expression e) {
+	return _ct->check_expression(e);
+}
+
+Type MMO_Class::getVariableType(AST_String name)
+{
+	Type t = varEnv->lookup(*name)->type();
 }

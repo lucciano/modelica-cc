@@ -18,20 +18,28 @@
 
 ******************************************************************************/
 
-#include <util/symbol_table.h>
+#include <ast/ast_builder.h>
+#include <mmo/mmo_class.h>
+#include <ast/equation.h>
+#include <util/type.h>
 
 
-VarInfo::VarInfo ( bool s , Type t, AST_TypePrefix tp): _s(s) , _t(t) , _tp(tp) {};
-
-bool VarInfo::isState() {return _s;};
-
-Type VarInfo::type() {return _t;};
-
-TypeSymbolTable_::TypeSymbolTable_(){
-	insert("String",  new Type_String_()  );
-	insert("Real",    new Type_Real_()    );
-	insert("Integer", new Type_Integer_() );
-	insert("Boolean", new Type_Boolean_() );
-}
+#ifndef REDUCEEQUATIO_H
+#define REDUCEEQUATIO_H
 
 
+class MMO_Reduce_Equation_ {
+public:
+	MMO_Reduce_Equation_(MMO_Class * c );
+	AST_Equation  simplify( AST_Equation e );
+	
+	
+private:
+	MMO_Class * _c;
+	AST_Expression simplify_real(AST_Expression e);
+	AST_Expression simplify_bool(AST_Expression e, bool flag);
+	AST_String  new_label();
+};
+
+
+#endif

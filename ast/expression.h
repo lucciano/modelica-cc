@@ -39,6 +39,7 @@ public:
   AST_Expression_UMinus getAsUMinus();
   AST_Expression_Output getAsOutput();
   AST_Expression_BooleanNot getAsBooleanNot();
+  AST_Expression_If_ElseIf getAsElseIf();
 };
 
 class AST_Expression_Integer_: public AST_Expression_ {
@@ -185,8 +186,10 @@ public:
 class AST_Expression_If_ElseIf_: public AST_Expression_ {
 public:
   AST_Expression_If_ElseIf_(AST_Expression,AST_Expression);
-  virtual string print() const {};
+  virtual string print() const;
   virtual ExpressionType expressionType() { return EXPELSEIF; }
+  AST_Expression condition() {return _cond;}
+  AST_Expression then() {return _then;}
 private:
   AST_Expression _cond;
   AST_Expression _then;

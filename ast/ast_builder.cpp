@@ -40,6 +40,14 @@ AST_String newAST_String(string s) {
   return new string(s);
 }
 
+AST_String newAST_String(char * s) {
+  return new string(s);
+}
+
+AST_String newAST_String(const char * s) {
+  return new string(s);
+}
+
 AST_String newAST_String(AST_String s) {
   AST_String ret = new string(*s);
   delete s;
@@ -260,7 +268,7 @@ AST_Expression_ComponentReference AST_Expression_ComponentReference_Add2(AST_Exp
 
 AST_Expression_ComponentReference newAST_Expression_ComponentReference(AST_String s) {
   AST_Expression_ComponentReference cr = new AST_Expression_ComponentReference_(*s);
-  delete s;
+  //delete s;
   return cr;
 }
 
@@ -539,8 +547,8 @@ AST_Expression newAST_BracketExpList(AST_ExpressionListList) {
   return newAST_Expression_Null();
 }
 
-AST_Expression newAST_Expression_ElseIf(AST_Expression,AST_Expression) {
-  return newAST_Expression_Null();
+AST_Expression newAST_Expression_ElseIf(AST_Expression c ,AST_Expression t) {
+  return new AST_Expression_If_ElseIf_(c,t);
 }
 
 AST_Statement_Else newAST_Statement_Else(AST_Expression, AST_StatementList) {
