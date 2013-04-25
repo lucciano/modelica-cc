@@ -5,8 +5,8 @@ model Prueba
 	Boolean f;
 	Boolean j;
 equation
-	b = if e < 5  then 1 else m;
-
+	j = (10 + e ) < 50  and 5 < 60 or 9 < 10; 
+	j = if f then 5 < 60 else j;
 public
     Real c;   
 end Prueba;     

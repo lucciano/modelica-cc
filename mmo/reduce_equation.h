@@ -37,7 +37,8 @@ public:
 private:
 	MMO_Class * _c;
 	AST_Expression simplify_real(AST_Expression e);
-	AST_Expression simplify_bool(AST_Expression e, bool flag);
+	AST_Expression simplify_bool(AST_Expression e);
+	AST_Expression simplify_condition(AST_Expression e);
 	AST_String  new_label();
 };
 

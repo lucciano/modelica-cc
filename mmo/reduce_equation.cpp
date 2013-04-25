@@ -38,13 +38,13 @@ AST_Equation MMO_Reduce_Equation_::simplify( AST_Equation e) {
 			switch (t->getType()) {
 				case TYINTEGER:
 				case TYREAL:
-					ex = simplify_real(  _e->right() );
+					ex = simplify_real(_e->right());
 					break;
 				case TYSTRING:
 					return e;
 					
 				case TYBOOLEAN:
-					ex = simplify_bool(  _e->right() , true);
+					ex = simplify_bool(_e->right());
 					break;
 				default:
 					throw "This type is not suported";
@@ -103,7 +103,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_real(AST_Expression e)
 				i = iff->getAsIf();
 			}	
 			
-			return newAST_Expression_If( simplify_bool(i->condition(),false) , simplify_real(i->then()), i->elseif_list(), simplify_real(i->else_exp()));
+			return newAST_Expression_If( simplify_condition(i->condition()) , simplify_real(i->then()), i->elseif_list(), simplify_real(i->else_exp()));
 		  }
 		  
 		default:
@@ -114,15 +114,49 @@ AST_Expression MMO_Reduce_Equation_::simplify_real(AST_Expression e)
 
 AST_String MMO_Reduce_Equation_::new_label()
 {
-	static int n = 0;
+	static int n = 0 ;
 	stringstream ret;
 	ret << "z_" << n ;
+	n++;
 	return _S(ret.str());
 }
 
 bool simpleExpresion(AST_Expression e) {
 	switch (e->expressionType())
 	{
+		case EXPOUTPUT :
+		{
+			AST_Expression_Output b = e->getAsOutput();
+			return simpleExpresion( b->getExpressionList()->front()); 
+		}  
+		
+		case EXPBINOP:
+		{
+				AST_Expression_BinOp b = e->getAsBinOp();
+				switch (b->binopType()) {
+					case BINOPDIV:
+					case BINOPELDIV:
+					case BINOPMULT:
+					case BINOPELMULT:
+					case BINOPADD:
+					case BINOPELADD:
+					case BINOPSUB:
+					case BINOPELSUB:
+					case BINOPEXP:
+					case BINOPELEXP:
+					{
+						return simpleExpresion(b->left() ) && simpleExpresion(b->right() );
+					}
+					case BINOPAND:
+					case BINOPOR:
+					{
+						return simpleExpresion(b->left() ) && simpleExpresion(b->right() );
+					}	
+					default: 
+						return false;
+					
+				}
+		}		
 		case EXPBOOLEAN:
 		case EXPSTRING: 
 		case EXPREAL:
@@ -134,7 +168,47 @@ bool simpleExpresion(AST_Expression e) {
 	}
 }
 
-AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e, bool flag)
+AST_Expression MMO_Reduce_Equation_::simplify_condition(AST_Expression e)
+{
+	
+	switch (e->expressionType()) {
+		case EXPBINOP:
+		{
+			AST_Expression_BinOp b = e->getAsBinOp();
+			switch (b->binopType()) {
+				case BINOPAND:
+				case BINOPOR:
+						return newAST_Expression_BinOp(simplify_condition(b->left()),simplify_condition(b->right()), b->binopType());
+			}
+			break;
+		}
+		
+		case EXPCOMPREF:
+		{
+			return e;
+		}
+		
+		case EXPOUTPUT :
+		{
+			AST_Expression_Output b = e->getAsOutput();
+			AST_ExpressionList ls = new list < AST_Expression > ();
+			ls->push_back(   simplify_condition( b->getExpressionList()->front() )    )	;
+			return newAST_Expression_OutputExpressions(ls);
+		}  
+		
+	}
+	
+	AST_String name = _S(new_label());
+	_c->addVariable( name ,_S("Boolean"));	
+	_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name),e)  );
+	
+	return newAST_Expression_ComponentReferenceExp(name);
+	
+}
+
+
+
+AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 {
 		switch (e->expressionType()) {
 		case EXPBINOP:
@@ -147,20 +221,37 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e, bool flag)
 				case BINOPGREATEREQ: 
 				case BINOPCOMPNE: 
 				case BINOPCOMPEQ: 
+				case BINOPAND:
+				case BINOPOR:
 				{
-					
-					if ( simpleExpresion(b->left()) and simpleExpresion(b->right()) and flag )
-						return e;
+					bool bl = simpleExpresion(b->left());
+					bool br = simpleExpresion(b->right());
+					bool logic =  b->binopType() == BINOPAND || b->binopType() == BINOPOR ;
+					AST_Expression n1;
+					AST_Expression n2;
+					if ( bl and br)	return e;
+					if (!bl) {	
+						AST_String name = _S(new_label());
+						_c->addVariable( name , logic ? _S("Boolean") : _S("Real"));	
+						_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name), b->left() )  );
+						 n1 =  newAST_Expression_ComponentReferenceExp(name);
+					} else 
+						n1 = b->left();
 						
-					AST_String name = _S(new_label());
-					_c->addVariable( name ,_S("Boolean"));	
-					_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name),b)  );
-					
-					return newAST_Expression_ComponentReferenceExp(name);
+					if (!br) {	
+						AST_String name = _S(new_label());
+						_c->addVariable( name , logic ? _S("Boolean") : _S("Real"));	
+						_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name), b->right() )  );
+						 n2 =  newAST_Expression_ComponentReferenceExp(name);
+					} else 
+						n2 = b->right();	
 
-				}				
-				default:
-					return newAST_Expression_BinOp(simplify_bool(b->left(),flag),simplify_bool(b->right(),flag), b->binopType());
+
+					return newAST_Expression_BinOp(n1,n2, b->binopType());
+				}
+								
+				default: // ?
+					return newAST_Expression_BinOp(b->left(),b->right(), b->binopType());
 				
 			}
 			
@@ -169,14 +260,14 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e, bool flag)
 		case EXPUMINUS: 
 		  {
 			AST_Expression_UMinus m = e->getAsUMinus();
-			return newAST_Expression_UnaryMinus(simplify_bool(m->exp() , flag));
+			return newAST_Expression_UnaryMinus(simplify_bool(m->exp()));
 		  }
     
 		case EXPOUTPUT :
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			ls->push_back(   simplify_bool( b->getExpressionList()->front() ,flag)    )	;
+			ls->push_back(   simplify_bool( b->getExpressionList()->front())    )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}  
       
@@ -203,7 +294,28 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e, bool flag)
 				i = iff->getAsIf();
 			}	
 			
-			return newAST_Expression_If( simplify_bool(i->condition(),flag) , simplify_real(i->then()), i->elseif_list(), simplify_real(i->else_exp()));
+
+			AST_Expression n1;
+			AST_Expression n2;
+
+			if ( i->then()->expressionType() != EXPCOMPREF) {	
+				AST_String name = _S(new_label());
+				_c->addVariable( name , _S("Boolean"));	
+				_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name), i->then() )  );
+				 n1 =  newAST_Expression_ComponentReferenceExp(name);
+			} else 
+				n1 = i->then();
+				
+			if (( i->else_exp()->expressionType() != EXPCOMPREF)) {	
+				AST_String name = _S(new_label());
+				_c->addVariable( name , _S("Boolean") );	
+				_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name), i->else_exp() )  );
+				 n2 =  newAST_Expression_ComponentReferenceExp(name);
+			} else 
+				n2 = i->else_exp();
+						
+			
+			return newAST_Expression_If( simplify_condition(i->condition()) ,n1, i->elseif_list(), n2);
 		  }
 		  
 		default:
