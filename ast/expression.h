@@ -118,13 +118,15 @@ private:
 
 class AST_Expression_Call_: public AST_Expression_ {
 public:
-  AST_Expression_Call_(AST_String name);
+  AST_Expression_Call_(AST_String name, AST_ExpressionList args);
   string print() const ;
   AST_String name() const { return _name; }
+  AST_ExpressionList arguments() const { return _args; }
   virtual ExpressionType expressionType();
 
 private:
   AST_String _name;
+  AST_ExpressionList _args;
 };
 
 class AST_Expression_ComponentReference_: public AST_Expression_ {

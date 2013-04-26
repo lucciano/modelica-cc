@@ -41,13 +41,14 @@ class AST_Statement_Break_: public AST_Statement_ {
 
 class AST_Statement_When_: public AST_Statement_ {
 public:
-  AST_Statement_When_(AST_Expression cond, AST_StatementList);
+  AST_Statement_When_(AST_Expression cond, AST_StatementList,AST_Statement_ElseList);
   string print() const;
   AST_Expression condition() const { return _cond; }
   AST_StatementList statements() const { return _sts; }
 private:
   AST_Expression _cond;
   AST_StatementList _sts;
+  AST_Statement_ElseList _else_list;
 };
 
 class AST_Statement_Assign_: public AST_Statement_ {
@@ -60,5 +61,63 @@ private:
   AST_Expression _exp;
   AST_Expression_ComponentReference _lhs;
 };
+
+class AST_Statement_If_: public AST_Statement_ {
+public:
+  AST_Statement_If_(AST_Expression cond, AST_StatementList true_st, AST_Statement_ElseList, AST_StatementList false_st);
+  string print() const;
+  AST_Expression condition() const { return _cond; }
+  AST_StatementList statements() const { return _true_st; }
+  AST_StatementList else_statements()const  { return _false_st; }
+private:
+  AST_Expression _cond;
+  AST_StatementList _true_st, _false_st;
+  AST_Statement_ElseList _else_list;
+};
+
+class AST_Statement_While_: public AST_Statement_ {
+public:
+  AST_Statement_While_(AST_Expression cond, AST_StatementList);
+  string print() const;
+  AST_Expression condition() const { return _cond; }
+  AST_StatementList statements() const { return _sts; }
+private:
+  AST_Expression _cond;
+  AST_StatementList _sts;
+};
+
+class AST_Statement_For_: public AST_Statement_ {
+public:
+  AST_Statement_For_(AST_ForIndexList index, AST_StatementList);
+  string print() const;
+  AST_StatementList statements() const { return _sts; }
+private:
+  AST_StatementList _sts;
+};
+
+class AST_Statement_OutputAssigment_: public AST_Statement_ {
+public:
+  AST_Statement_OutputAssigment_(AST_ExpressionList, AST_Expression_ComponentReference, AST_ExpressionList);
+  string print() const;
+  AST_ExpressionList out_expressions() const { return _out_exps; }
+  AST_Expression_ComponentReference function() const { return _func; }
+  AST_ExpressionList arguments() const { return _args; }
+private:
+  AST_ExpressionList _out_exps;
+  AST_Expression_ComponentReference _func;
+  AST_ExpressionList _args;
+};
+
+class AST_Statement_Else_: public AST_Node {
+public:
+  AST_Statement_Else_ (AST_Expression cond, AST_StatementList sts): _cond(cond), _sts(sts) {}
+  AST_Expression condition() const { return _cond; }
+  AST_StatementList statements() const { return _sts; }
+  
+private:
+  AST_Expression _cond;
+  AST_StatementList  _sts;
+};
+
 
 #endif

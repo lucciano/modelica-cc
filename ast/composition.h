@@ -64,6 +64,7 @@ public:
   friend ostream & operator<<(ostream &os , const AST_CompositionEqsAlgs &ceqa ) ;
   AST_EquationList getEquations() { return _eq; }
   AST_StatementList getAlgorithms() { return _st; }
+  bool isInitial() { return _initial; }
 
 private:
   AST_EquationList _eq;

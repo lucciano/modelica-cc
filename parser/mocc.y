@@ -878,6 +878,6 @@ opt_comp_call:
   | TOKID more_comp_call                                    { $$ = newAST_Expression_ComponentReferenceExp($1,$2); }
   | TOKDOT TOKID more_comp_call array_subscripts more_cr    { $$ = AST_Expression_ComponentReferenceExpAddDot($5,$2,$3,$4);}
   | TOKID more_comp_call array_subscripts more_cr           { $$ = AST_Expression_ComponentReferenceExpAdd($4,$1,$2,$3);}
-  | TOKDOT TOKID more_comp_call function_call_args          { $$ = newAST_Expression_DotCall($2,$3); } 
-  | TOKID more_comp_call function_call_args                 { $$ = newAST_Expression_Call($1,$2); }
+  | TOKDOT TOKID more_comp_call function_call_args          { $$ = newAST_Expression_DotCall($2,$3,$4); } 
+  | TOKID more_comp_call function_call_args                 { $$ = newAST_Expression_Call($1,$2,$3); }
 ; 

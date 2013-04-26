@@ -38,15 +38,61 @@ AST_Expression AST_Equation_Equality_::right() const {
 }
 
 
-string AST_Equation_If_::print() const {
+string AST_Equation_When_::print() const {
   stringstream ret(stringstream::out);
   AST_EquationList eql = equationList();
   AST_EquationListIterator it;
-  for (int i=0;i<depth;i++)
-    ret << " ";
+  AST_Equation_ElseListIterator else_it;
+  MAKE_SPACE;
+  ret << "when " << condition() << " then" << endl;
+  BEGIN_BLOCK;
+  foreach(it,eql) 
+    ret << current(it);
+  END_BLOCK;
+  foreach(else_it,equationElseWhen()) {
+    MAKE_SPACE;
+    ret << "elsewhen " << current(else_it)->condition() << " then" << endl ;
+    BEGIN_BLOCK;
+    foreach(it, current(else_it)->equations())
+      ret << current(it);
+    END_BLOCK;
+  }
+ 
+  MAKE_SPACE;
+  ret << "end when;" << endl;
+  return ret.str();
+}
+
+
+string AST_Equation_If_::print() const {
+  stringstream ret(stringstream::out);
+  AST_EquationListIterator it;
+  AST_Equation_ElseListIterator else_it;
+  MAKE_SPACE;
   ret << "if (" << condition() << ") " << endl;
-  foreach(it,eql)
-    ret << "\t" << current(it) << endl;
+  BEGIN_BLOCK;
+  foreach(it,equationList())
+    ret << current(it);
+  END_BLOCK;
+  foreach(else_it,equationElseIf()) {
+    MAKE_SPACE;
+    ret << "elseif " << current(else_it)->condition() << " then" << endl ;
+    BEGIN_BLOCK;
+    foreach(it, current(else_it)->equations())
+      ret << current(it);
+    END_BLOCK;
+
+  }
+  if (equationElseList()->size()) { 
+    MAKE_SPACE;
+    ret << "else" << endl;
+    BEGIN_BLOCK;
+    foreach(it,equationElseList()) 
+      ret << current(it);
+    END_BLOCK;
+  }
+  MAKE_SPACE;
+  ret << "end if" << endl;
   return ret.str();
 }
 
@@ -57,7 +103,8 @@ ostream & operator<<(ostream &os , const AST_Equation &e ) {
 
 AST_Equation_Call_::AST_Equation_Call_(AST_Expression e):_call(e) {
 
-};
+}
+
 
 AST_Expression AST_Equation_Call_::call () const { 
   return _call;
@@ -65,7 +112,8 @@ AST_Expression AST_Equation_Call_::call () const {
 
 string AST_Equation_Call_::print () const {
   stringstream ret(stringstream::out);
-  ret << "EQCALL(" << call() << ") " << endl;
+  MAKE_SPACE;
+  ret << call() << ";" << endl;
   return ret.str();
 }
 
@@ -74,15 +122,13 @@ string AST_Equation_For_::print() const {
   stringstream ret(stringstream::out);
   AST_EquationList eql = equationList();
   AST_EquationListIterator it;
-  for (int i=0;i<depth;i++)
-    ret << " ";
+  MAKE_SPACE;
   ret << "for loop" << endl;
-  depth+=2;
+  BEGIN_BLOCK;
   foreach(it,eql)
     ret << current(it);
-  depth-=2;
-  for (int i=0;i<depth;i++)
-    ret << " ";
+  END_BLOCK;
+  MAKE_SPACE;
   ret << "end for;"<< endl;
   return ret.str();
 
@@ -95,11 +141,10 @@ ostream & operator<<(ostream &os , const AST_Equation_ &e ){
 }
 
 string AST_Equation_Equality_::print() const {
-    stringstream ret(stringstream::out);
-    for (int i=0;i<depth;i++)
-      ret << " ";
-    ret << left() << " = " << right() << ";" << endl;
-    return ret.str();
+  stringstream ret(stringstream::out);
+  MAKE_SPACE;
+  ret << left() << " = " << right() << ";" << endl;
+  return ret.str();
 }
 
 AST_Equation_Equality_::AST_Equation_Equality_ (AST_Expression left, AST_Expression right):_left(left), _right(right) {
@@ -109,7 +154,8 @@ AST_Equation_Connect_::AST_Equation_Connect_(AST_Expression_ComponentReference c
 
 }
 string AST_Equation_Connect_::print() const {
-    stringstream ret(stringstream::out);
-    ret << "CONNECT[" << _cr1 << "," << _cr2 <<"]" << endl;
-    return ret.str();
+  stringstream ret(stringstream::out);
+  MAKE_SPACE;
+  ret << "connect(" << _cr1 << "," << _cr2 <<");" << endl;
+  return ret.str();
   }

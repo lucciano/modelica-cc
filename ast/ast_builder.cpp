@@ -28,7 +28,7 @@
 #include <cassert>
 
 class MCC_Parser;
-extern int depth=0;
+int depth;
 MCC_Parser *parser = NULL;
 AST_StoredDefinition root;
 
@@ -207,10 +207,6 @@ AST_DeclarationList newAST_DeclarationList(AST_Declaration d) {
   return dl;
 }
 
-AST_CompositionElement newAST_CompositionElement(AST_EquationList el) {
-  //return new AST_CompositionElement_(el);
-}
-
 AST_CompositionElement newAST_CompositionElement(AST_ElementList el) {
   return new AST_CompositionElement_(el);
 }
@@ -268,7 +264,7 @@ AST_Expression_ComponentReference AST_Expression_ComponentReference_Add2(AST_Exp
 
 AST_Expression_ComponentReference newAST_Expression_ComponentReference(AST_String s) {
   AST_Expression_ComponentReference cr = new AST_Expression_ComponentReference_(*s);
-  //delete s;
+  delete s;
   return cr;
 }
 
@@ -312,7 +308,7 @@ AST_Expression newAST_Expression_If(AST_Expression cond, AST_Expression then, AS
 };
 
 AST_Equation newAST_Equation_If(AST_Expression e, AST_EquationList eql, AST_Equation_ElseList elseif, AST_EquationList elseeqs) {
-  return new AST_Equation_If_(e,eql);
+  return new AST_Equation_If_(e,eql,elseif,elseeqs);
 }
 
 AST_StringList newAST_StringList() {
@@ -327,21 +323,21 @@ AST_Expression newAST_Expression_Null() {
   return new AST_Expression_Null_();
 } 
 
-AST_Expression newAST_Expression_DotCall(AST_String name, AST_String rest) {
+AST_Expression newAST_Expression_DotCall(AST_String name, AST_String rest, AST_ExpressionList args) {
   name->insert(0,"."); 
   if (rest!=NULL) {
     name->append(rest->c_str());
     delete rest;
   }
-  return new AST_Expression_Call_(name);
+  return new AST_Expression_Call_(name,args);
 }
 
-AST_Expression newAST_Expression_Call(AST_String name, AST_String rest) {
+AST_Expression newAST_Expression_Call(AST_String name, AST_String rest, AST_ExpressionList args) {
   if (rest!=NULL) {
     name->append(rest->c_str());
     delete rest;
   }
-  return new AST_Expression_Call_(name);
+  return new AST_Expression_Call_(name,args);
 }
 
 AST_Expression newAST_Expression_Colon() {
@@ -524,9 +520,11 @@ AST_Argument AST_ArgumentSetReplaceable(AST_Argument arg) {
 }
 
 AST_Modification newAST_ModificationEqual(AST_Expression) {
+  /* TODO */
   return NULL;
 }
 AST_Modification newAST_ModificationAssign(AST_Expression) {
+  /* TODO */
   return NULL;
 }
 
@@ -535,7 +533,6 @@ AST_Expression newAST_Expression_Range(AST_Expression, AST_Expression) {
 }
 
 AST_Expression newAST_Expression_OutputExpressions(AST_ExpressionList exp_list) { 
-  /* For now just one element supported */
   return new AST_Expression_Output_(exp_list);
 }
 
@@ -551,35 +548,35 @@ AST_Expression newAST_Expression_ElseIf(AST_Expression c ,AST_Expression t) {
   return new AST_Expression_If_ElseIf_(c,t);
 }
 
-AST_Statement_Else newAST_Statement_Else(AST_Expression, AST_StatementList) {
-  return NULL;
+AST_Statement_Else newAST_Statement_Else(AST_Expression cond, AST_StatementList st) {
+  return new AST_Statement_Else_(cond,st);
 }
 
-AST_Statement newAST_Statement_If(AST_Expression , AST_StatementList, AST_Statement_ElseList, AST_StatementList) {
-  return NULL;
+AST_Statement newAST_Statement_If(AST_Expression cond, AST_StatementList true_st, AST_Statement_ElseList else_st, AST_StatementList false_st) {
+  return new AST_Statement_If_(cond,true_st,else_st,false_st);
 }
 
-AST_Statement newAST_Statement_For(AST_ForIndexList , AST_StatementList) {
-  return NULL;
+AST_Statement newAST_Statement_For(AST_ForIndexList index, AST_StatementList st) {
+  return new AST_Statement_For_(index,st);
 }
 
-AST_Statement newAST_Statement_While(AST_Expression, AST_StatementList) {
-  return NULL;
+AST_Statement newAST_Statement_While(AST_Expression cond, AST_StatementList st) {
+  return new AST_Statement_While_(cond,st);
 }
 
 AST_Statement newAST_Statement_When(AST_Expression cond, AST_StatementList sts, AST_Statement_ElseList else_st) {
-  return new AST_Statement_When_(cond,sts);
+  return new AST_Statement_When_(cond,sts,else_st);
 }
 
-AST_Statement newAST_Statement_OutputAssign(AST_ExpressionList, AST_Expression_ComponentReference, AST_ExpressionList) {
-  return NULL;
+AST_Statement newAST_Statement_OutputAssign(AST_ExpressionList out_vars, AST_Expression_ComponentReference funname, AST_ExpressionList args) {
+  return new AST_Statement_OutputAssigment_(out_vars,funname,args);
 }
 AST_Statement newAST_Statement_Assign(AST_Expression_ComponentReference cr, AST_Expression exp) {
   return new AST_Statement_Assign_(cr,exp);
 }
 
-AST_Equation newAST_Equation_When(AST_Expression,AST_EquationList, AST_Equation_ElseList) {
-  return NULL;
+AST_Equation newAST_Equation_When(AST_Expression cond,AST_EquationList eqs, AST_Equation_ElseList else_list) {
+  return new AST_Equation_When_(cond,eqs,else_list);
 }
 
 AST_CompositionEqsAlgs newAST_CompositionInitialEquations(AST_EquationList eqlist) {
@@ -599,25 +596,31 @@ AST_CompositionEqsAlgs newAST_CompositionAlgorithms(AST_StatementList stlist) {
 }
 
 AST_ShortClassExp newAST_ShortClassExp(AST_TypePrefix, AST_String, AST_ExpressionList, AST_ArgumentList) {
+  /* TODO */
   return NULL;
 }
 AST_ShortClassExp newAST_ShortClassExp_Enum(AST_StringList) {
+  /* TODO */
   return NULL;
 }
 
 AST_Argument newAST_Redeclaration(AST_Boolean, AST_Boolean, AST_Argument) {
+  /* TODO */
   return NULL;
 }
 
 AST_Argument newAST_ShortClass(AST_ClassPrefix,AST_String, AST_ShortClassExp) {
+  /* TODO */
   return NULL;
 }
 
 AST_Argument newAST_ElementModification(AST_String, AST_Modification) {
+  /* TODO */
   return NULL;
 }
 
 AST_Modification newAST_Modification(AST_ArgumentList,AST_Expression) {
+  /* TODO */
   return NULL;
 }
 
@@ -626,18 +629,22 @@ AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs comp_eq_
 }
 
 AST_Class newAST_ClassExtends(AST_String, AST_Composition) {
+  /* TODO */
   return NULL;
 }
 
 AST_Class newAST_ClassEnumeration(AST_String, AST_StringList) {
+  /* TODO */
   return NULL;
 }
 
 AST_Class newAST_ClassDerivation(AST_String, AST_String, AST_StringList) {
+  /* TODO */
   return NULL;
 }
 
 AST_Class newAST_ClassModification(AST_String, AST_TypePrefix, AST_String, AST_ExpressionList,AST_ArgumentList) {
+  /* TODO */
   return NULL;
 }
 

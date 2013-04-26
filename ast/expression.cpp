@@ -113,10 +113,19 @@ string AST_Expression_BooleanNot_::print() const {
   return ret.str();
 }
 
-AST_Expression_Call_::AST_Expression_Call_(AST_String name):_name(name){ };
+AST_Expression_Call_::AST_Expression_Call_(AST_String name, AST_ExpressionList args):_name(name), _args(args) { };
+
 string AST_Expression_Call_::print() const {
   stringstream ret;
-  ret << "CALL[" << name() << "]";
+  AST_ExpressionListIterator it;
+  ret << name() << "(" ;
+  int size = arguments()->size(),i=0;
+  foreach(it,arguments()) {   
+    i++;
+    ret << current(it);
+    ret << (i<size ? "," : "");
+  }
+  ret << ")";
   return ret.str();
 }
 
@@ -211,14 +220,14 @@ AST_Expression_If_ElseIf_::AST_Expression_If_ElseIf_  (AST_Expression c, AST_Exp
 
 string AST_Expression_If_ElseIf_::print() const {
 	stringstream ret;
-	ret << " elseif (" << _cond << ") then " << _then ;
+	ret << " elseif " << _cond << " then " << _then ;
 	return ret.str();
 }
 
 string AST_Expression_If_::print () const {
   stringstream ret;
   AST_ExpressionListIterator it;
-  ret << "if ("<< condition() << ") then " << then() ;
+  ret << "if "<< condition() << " then " << then() ;
   if (! elseif_list()->empty())
   foreach(it , elseif_list() )
 	  ret << current(it)->getAsElseIf() ;
@@ -250,8 +259,12 @@ string AST_Expression_Output_::print () const {
   AST_ExpressionListIterator it;
   stringstream ret;
   ret << "(";
-  foreach (it,_list)
+  int size=_list->size(),i=0;
+  foreach (it,_list) {
+    i++;
     ret << current(it);
+    ret << (i==size ? "" : ",");
+  }
   ret << ")";
   return ret.str();
   

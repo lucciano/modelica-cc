@@ -75,15 +75,20 @@ private:
 
 class AST_Equation_If_: public AST_Equation_ {
 public:
-  AST_Equation_If_(AST_Expression cond, AST_EquationList eql): _cond(cond), _eql(eql) {};
+  AST_Equation_If_(AST_Expression cond, AST_EquationList eql, AST_Equation_ElseList elseif, AST_EquationList else_eq): 
+      _cond(cond), _eql(eql),_else(else_eq),_else_if(elseif) {};
   string print() const;
   AST_Expression condition() const { return _cond; };
   AST_EquationList equationList() const { return _eql; };
+  AST_EquationList equationElseList() const { return _else; };
+  AST_Equation_ElseList equationElseIf() const { return _else_if;}
   virtual EquationType equationType() { return EQIF; }
 
 private:
   AST_Expression _cond;
   AST_EquationList _eql;
+  AST_EquationList _else;
+  AST_Equation_ElseList _else_if;
 };
 
 class AST_Equation_For_: public AST_Equation_ {
@@ -108,10 +113,30 @@ private:
 
 class AST_Equation_Else_: public AST_Node {
 public:
-  AST_Equation_Else_ (AST_Expression, AST_EquationList) {}
+  AST_Equation_Else_ (AST_Expression cond, AST_EquationList eqs): _cond(cond), _eqs(eqs) {}
+  AST_Expression condition() const { return _cond; }
+  AST_EquationList equations() const { return _eqs; }
   
 private:
   AST_Expression _cond;
   AST_EquationList _eqs;
 };
+
+class AST_Equation_When_: public AST_Equation_ {
+public:
+  AST_Equation_When_(AST_Expression cond, AST_EquationList eql, AST_Equation_ElseList elsewhen): _cond(cond), _eql(eql),_else_when(elsewhen) {};
+  string print() const;
+  AST_Expression condition() const { return _cond; };
+  AST_EquationList equationList() const { return _eql; };
+  virtual EquationType equationType() { return EQWHEN; }
+  AST_Equation_ElseList equationElseWhen() const { return _else_when;}
+
+private:
+  AST_Expression _cond;
+  AST_EquationList _eql;
+  AST_Equation_ElseList _else_when;
+};
+
+
 #endif
+

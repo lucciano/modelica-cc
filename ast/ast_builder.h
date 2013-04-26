@@ -24,6 +24,9 @@
 #include <list>
 #include <string>
 
+#define MAKE_SPACE for (int i=0;i<depth;i++) ret << " ";
+#define BEGIN_BLOCK depth+=2;
+#define END_BLOCK depth-=2;
 class MCC_Parser;
 extern MCC_Parser *parser;
 extern int depth;
@@ -161,6 +164,7 @@ typedef std::list<AST_Equation>::iterator            AST_EquationListIterator;
 typedef std::list<AST_Expression>::iterator          AST_ExpressionListIterator;
 typedef std::list<AST_String>::iterator              AST_StringListIterator;
 typedef std::list<AST_Statement>::iterator           AST_StatementListIterator;
+typedef std::list<AST_Equation_Else>::iterator       AST_Equation_ElseListIterator;
 
 typedef std::list<AST_Expression>::reverse_iterator  AST_ExpressionListReverseIterator;
 
@@ -279,8 +283,8 @@ AST_Expression newAST_Expression_If(AST_Expression, AST_Expression, AST_Expressi
 AST_Expression newAST_Expression_Null();
 AST_Expression newAST_Expression_Colon();
 AST_Expression newAST_Expression_End();
-AST_Expression newAST_Expression_Call(AST_String,AST_String);
-AST_Expression newAST_Expression_DotCall(AST_String,AST_String);
+AST_Expression newAST_Expression_Call(AST_String,AST_String,AST_ExpressionList);
+AST_Expression newAST_Expression_DotCall(AST_String,AST_String,AST_ExpressionList);
 AST_Expression newAST_Expression_BooleanNot(AST_Expression);
 AST_Expression newAST_Expression_ElseIf(AST_Expression,AST_Expression);
 AST_Expression newAST_Expression_NamedArgument(AST_String, AST_Expression);
@@ -298,7 +302,7 @@ AST_Equation newAST_Equation_Connect(AST_Expression_ComponentReference, AST_Expr
 AST_Equation newAST_Equation_If(AST_Expression e, AST_EquationList eql, AST_Equation_ElseList, AST_EquationList);
 AST_Equation newAST_Equation_For(AST_ForIndexList, AST_EquationList eql);
 AST_Equation newAST_Equation_When(AST_Expression,AST_EquationList, AST_Equation_ElseList);
-AST_Equation newAST_Equation_Call(AST_Expression e);
+AST_Equation newAST_Equation_Call(AST_Expression);
 AST_ForIndex newAST_ForIndex(AST_String, AST_Expression);
 AST_ForIndexList newAST_ForIndexList();
 AST_Equation_ElseList newAST_Equation_ElseList();

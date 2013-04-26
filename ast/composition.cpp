@@ -50,32 +50,39 @@ AST_ElementList AST_Composition_::elementList() const {
   return _element_list;
 }
 
-ostream & operator<<(ostream &os , const AST_CompositionElement_ &ce ) 
+ostream & operator<<(ostream &ret , const AST_CompositionElement_ &ce ) 
 { 
   AST_EquationListIterator it;
   AST_StatementListIterator st_it;
   if (ce._eqs_algs!=NULL) {
-    if (ce._eqs_algs->getEquations()->size()>0)
-      os << "equation" << endl;
-    depth+=2;
+    if (ce._eqs_algs->getEquations()->size()>0) {
+      MAKE_SPACE;
+      ret  << (ce._eqs_algs->isInitial() ? "initial " : "");
+      ret << "equation" << endl;
+    }
+    BEGIN_BLOCK;
     foreach (it,ce._eqs_algs->getEquations())  
-        os << current(it); 
-    depth-=2;
-    if (ce._eqs_algs->getAlgorithms()->size()>0)
-      os << "algorithm" << endl;
+        ret << current(it); 
+    END_BLOCK;
+    if (ce._eqs_algs->getAlgorithms()->size()>0) {
+      MAKE_SPACE;
+      ret  << (ce._eqs_algs->isInitial() ? "initial " : "");
+      ret << "algorithm" << endl;
+    }
+    BEGIN_BLOCK;
     foreach (st_it,ce._eqs_algs->getAlgorithms())  
-        os << current(st_it); 
-
+        ret << current(st_it); 
+    END_BLOCK;
   }
   AST_ElementListIterator et;
   if (ce._el != NULL) {
 	if (ce._el->size() > 0)
-		os << "public" << endl;
+		ret  << "public" << endl;
 	foreach (et,ce._el )  
-        os << "  " << current(et) << endl; 
+        ret << "  " << current(et) << endl; 
   }
   
-  return os;
+  return ret;
 } 
  
 ostream & operator<<(ostream &os , const AST_Composition &c ) {
