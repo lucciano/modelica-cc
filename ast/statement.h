@@ -45,6 +45,7 @@ public:
   string print() const;
   AST_Expression condition() const { return _cond; }
   AST_StatementList statements() const { return _sts; }
+  AST_Statement_ElseList else_when() const { return _else_list; } 
 private:
   AST_Expression _cond;
   AST_StatementList _sts;
@@ -69,6 +70,7 @@ public:
   AST_Expression condition() const { return _cond; }
   AST_StatementList statements() const { return _true_st; }
   AST_StatementList else_statements()const  { return _false_st; }
+  AST_Statement_ElseList else_if() const { return _else_list; } 
 private:
   AST_Expression _cond;
   AST_StatementList _true_st, _false_st;

@@ -7,6 +7,7 @@ model RLC
   Real u0;
   Real i0;
   Real i1;
+  Real x;
   Real iL;
   Real uC;
   parameter Real R1;
@@ -14,14 +15,17 @@ model RLC
   parameter Real L;
   parameter Real C;
 equation
+  uL = L * 4 + j* der(iL);
   u0 = sin(time);
   u1 = R1 * i1;
   u2 = R2 * i2;
-  uL = L * der(iL);
   iC = C *der(uC);
   u0 = u1 + uC;
   uL = u1 + u2;
   uC = u2;
   i0 = i1 + iL;
   i1 = i2 + iC;
+  when time < 43 then 
+    x=345;
+  end when;
 end RLC;

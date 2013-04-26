@@ -1,4 +1,8 @@
 OBJS_CAUSALIZE := $(OBJS_COMMON) \
+            mmo/mmo_class.o \
+            util/type.o \
+            util/type_check.o \
+            util/symbol_table.o \
             causalize/main.o 
 
 causalize/causalize: $(OBJS_CAUSALIZE)

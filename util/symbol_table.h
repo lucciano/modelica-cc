@@ -47,8 +47,21 @@ public:
     if (it==_st.end()) return NULL;
     else               return it->second;
   }
+  int count() { return _st.size(); }
+  Value val(int i) {
+    typename std::map<Key, Value>::iterator it;
+    it = _st.begin();
+    for (int j=0;j<i;j++) it++;
+    return it->second;
+  }
+  Key key(int i) {
+    typename std::map<Key, Value>::iterator it;
+    it = _st.begin();
+    for (int j=0;j<i;j++) it++;
+    return it->first;
+  }
 
-private:
+protected:
   std::map<Key,Value> _st;
 };
 
@@ -58,6 +71,8 @@ public:
   VarInfo( bool s , Type t, AST_TypePrefix tp);
   bool isState();
   AST_TypePrefix typePrefix() {return _tp;};
+  bool isParameter() { return _tp & TP_PARAMETER; }
+  void setState();
   Type type();
 private:
   bool _s;
@@ -70,6 +85,8 @@ class VarSymbolTable_: public SymbolTable<VarName, VarInfo * >
 {
 public:
 	VarSymbolTable_() {};
+  VarInfo *varInfo(int i) { return val(i); }
+  VarName varName(int i) { return key(i); }
 };
 
 class TypeSymbolTable_: public SymbolTable<TypeName, Type > 

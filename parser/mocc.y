@@ -27,7 +27,6 @@ public:
           int yyinput() { return lexer.yyinput(); };   \
           int lineno() { return lexer.lineno(); };    \
           int parseFile(std::istream* in) { lexer.setInput(in); return yyparse(); };    \
-          virtual void yyerror(char const *s) { cerr << "error encountered at line: "<<lexer.lineno()<<" last word parsed: "<<lexer.YYText()<<"\n";} \
           void setParsingSubscript() { parsing_subscript=true; } \
           void unsetParsingSubscript() { parsing_subscript=false; } \
           bool isParsingSubscript() { return parsing_subscript; } \

@@ -24,6 +24,7 @@
 #include <ast/stored_definition.h>
 #include <ast/class.h>
 #include <util/symbol_table.h>
+#include <mmo/mmo_class.h>
 
 using namespace std;
 
@@ -35,10 +36,19 @@ int main(int argc, char ** argv)
     return -1;
   }
   AST_StoredDefinition sd = parseFile(argv[1],&r);
-  if (r==0) { // Parsed ok
-    AST_Class c = sd->models()->front();
-    cerr << c << "---------------------" << endl;
-  }
+  if (r!=0) 
+    return -1;
+
+  TypeSymbolTable tyEnv = new TypeSymbolTable_;
+  MMO_Class *c = new MMO_Class(sd->models()->front(), tyEnv);
+  AST_Expression e= c->getEquations()->front()->getAsEquality()->right();
+  cerr << e << endl;
+  /*
+  cerr << "There are " << vars->count() << " variables" << endl;
+  for (int i=0;i<vars->count();i++) 
+    cerr << "Var " << i << "(" << vars->varName(i) << ") has type " << vars->varInfo(i)->type() << endl;
+  */
+
   
   return 0;
 }

@@ -165,6 +165,7 @@ typedef std::list<AST_Expression>::iterator          AST_ExpressionListIterator;
 typedef std::list<AST_String>::iterator              AST_StringListIterator;
 typedef std::list<AST_Statement>::iterator           AST_StatementListIterator;
 typedef std::list<AST_Equation_Else>::iterator       AST_Equation_ElseListIterator;
+typedef std::list<AST_Statement_Else>::iterator      AST_Statement_ElseListIterator;
 
 typedef std::list<AST_Expression>::reverse_iterator  AST_ExpressionListReverseIterator;
 

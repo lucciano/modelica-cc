@@ -74,12 +74,22 @@ string AST_Statement_For_::print() const {
 string AST_Statement_When_::print() const { 
   stringstream ret(stringstream::out);
   AST_StatementListIterator it;
+  AST_Statement_ElseListIterator else_it;
   MAKE_SPACE;
   ret << "when " << condition() << " then"<<endl;
   BEGIN_BLOCK;
   foreach(it,statements())
     ret << current(it);
   END_BLOCK;
+  foreach(else_it,else_when()) {
+    MAKE_SPACE;
+    ret << "elsewhen " << current(else_it)->condition() << " then" << endl ;
+    BEGIN_BLOCK;
+    foreach(it, current(else_it)->statements())
+      ret << current(it);
+    END_BLOCK;
+  }
+ 
   MAKE_SPACE;
   ret << "end when;" <<endl;
   return ret.str();
@@ -118,12 +128,22 @@ AST_Statement_If_::AST_Statement_If_(AST_Expression cond, AST_StatementList true
 string AST_Statement_If_::print() const {
   stringstream ret(stringstream::out);
   AST_StatementListIterator it;
+  AST_Statement_ElseListIterator else_it;
   MAKE_SPACE;
   ret << "if " << condition() << " then"<<endl;
   BEGIN_BLOCK;
   foreach(it,statements())
     ret << current(it);
   END_BLOCK;
+  foreach(else_it,else_if()) {
+    MAKE_SPACE;
+    ret << "elseif " << current(else_it)->condition() << " then" << endl ;
+    BEGIN_BLOCK;
+    foreach(it, current(else_it)->statements())
+      ret << current(it);
+    END_BLOCK;
+  }
+ 
   if (else_statements()->size()) {
     MAKE_SPACE;
     ret << "else" << endl;
