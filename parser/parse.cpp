@@ -21,6 +21,8 @@
 #include <fstream>
 #include <cstdlib>
 #include <parser/parse.h>
+#include <ast/stored_definition.h>
+#include <ast/class.h>
 #include <parser/mocc_parser.h>
 
 using namespace std;
@@ -39,6 +41,29 @@ AST_StoredDefinition parseFile(string filename, int *r) {
     delete parser;
     in.close();
     return root;
+  }
+  *r=-1;
+  delete parser;
+  in.close();
+  return NULL;
+}
+
+AST_Expression parseExpression(string exp, int *r) {
+  fstream in;   
+  parser = new MCC_Parser(false);
+  in.open("/tmp/t",fstream::out);
+  in << "model A equation x = " << exp << "; end A;";
+  in.close();
+  in.open("/tmp/t",fstream::in);
+  if (in.fail()) {
+    exit(-1);
+  }
+  int ret = parser->parseFile(&in);
+  if (ret==0) {
+    *r=0;
+    delete parser;
+    in.close();
+    return root->models()->front()->composition()->compositionList()->front()->getEquationsAlgs()->getEquations()->front()->getAsEquality()->right();
   }
   *r=-1;
   delete parser;
