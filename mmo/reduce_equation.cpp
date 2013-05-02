@@ -121,7 +121,7 @@ AST_String MMO_Reduce_Equation_::new_label()
 	return _S(ret.str());
 }
 
-bool simpleExpresion(AST_Expression e) {
+bool MMO_Reduce_Equation_::simpleExpresion(AST_Expression e) {
 	switch (e->expressionType())
 	{
 		case EXPOUTPUT :
@@ -198,11 +198,12 @@ AST_Expression MMO_Reduce_Equation_::simplify_condition(AST_Expression e)
 		
 	}
 	
-	AST_String name = _S(new_label());
+	AST_String name = new_label();
 	_c->addVariable( name ,_S("Boolean"));	
-	_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name),e)  );
+	AST_Expression cr = newAST_Expression_ComponentReference(name);	
+	_c->addEquation( newAST_Equation_Equality( cr,e)  );
 	
-	return newAST_Expression_ComponentReferenceExp(name);
+	return cr;
 	
 }
 
@@ -230,19 +231,22 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 					AST_Expression n1;
 					AST_Expression n2;
 					if ( bl and br)	return e;
+					
 					if (!bl) {	
-						AST_String name = _S(new_label());
+						AST_String name = new_label();
 						_c->addVariable( name , logic ? _S("Boolean") : _S("Real"));	
-						_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name), b->left() )  );
-						 n1 =  newAST_Expression_ComponentReferenceExp(name);
+						AST_Expression cr = newAST_Expression_ComponentReference(name);	
+						_c->addEquation( newAST_Equation_Equality( cr, b->left() )  );
+						 n1 =  cr;
 					} else 
 						n1 = b->left();
 						
 					if (!br) {	
-						AST_String name = _S(new_label());
-						_c->addVariable( name , logic ? _S("Boolean") : _S("Real"));	
-						_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name), b->right() )  );
-						 n2 =  newAST_Expression_ComponentReferenceExp(name);
+						AST_String name = new_label();
+						_c->addVariable( name , logic ? _S("Boolean") : _S("Real"));
+						AST_Expression cr = newAST_Expression_ComponentReference(name);		
+						_c->addEquation( newAST_Equation_Equality( cr, b->right() )  );
+						 n2 =  cr;
 					} else 
 						n2 = b->right();	
 
@@ -299,18 +303,20 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 			AST_Expression n2;
 
 			if ( i->then()->expressionType() != EXPCOMPREF) {	
-				AST_String name = _S(new_label());
+				AST_String name = new_label();
 				_c->addVariable( name , _S("Boolean"));	
-				_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name), i->then() )  );
-				 n1 =  newAST_Expression_ComponentReferenceExp(name);
+				AST_Expression cr = newAST_Expression_ComponentReference(name);
+				_c->addEquation( newAST_Equation_Equality( cr , i->then() )  );
+				 n1 =  cr;
 			} else 
 				n1 = i->then();
 				
 			if (( i->else_exp()->expressionType() != EXPCOMPREF)) {	
 				AST_String name = _S(new_label());
-				_c->addVariable( name , _S("Boolean") );	
-				_c->addEquation( newAST_Equation_Equality( newAST_Expression_ComponentReferenceExp(name), i->else_exp() )  );
-				 n2 =  newAST_Expression_ComponentReferenceExp(name);
+				_c->addVariable( name , _S("Boolean") );
+				AST_Expression cr = newAST_Expression_ComponentReference(name);	
+				_c->addEquation( newAST_Equation_Equality( cr, i->else_exp() )  );
+				 n2 =  cr;
 			} else 
 				n2 = i->else_exp();
 						

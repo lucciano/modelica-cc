@@ -24,25 +24,30 @@
 #include <util/type.h>
 
 
-#ifndef REDUCEEQUATIO_H
-#define REDUCEEQUATIO_H
+#ifndef REPLACE_H
+#define REPLACE_H
+
+#define ADD(l,r) 	newAST_Expression_BinOp(l, r, BINOPADD )
+#define MULT(l,r) 	newAST_Expression_BinOp(l, r, BINOPMULT )
+#define SUB(l,r) 	newAST_Expression_BinOp(l, r, BINOPSUB )
+#define I(n) 		newAST_Expression_Integer(n)
+#define PA(e)       newAST_Expression_OutputExpressions(e) 
 
 
-class MMO_Reduce_Equation_ {
+
+class MMO_Replace_Equation_ {
 public:
-	MMO_Reduce_Equation_(MMO_Class * c );
-	AST_Equation  simplify( AST_Equation e );
+	MMO_Replace_Equation_(MMO_Class * c );
+	void replace();
 	
 	
 private:
 	MMO_Class * _c;
-	AST_Expression simplify_real(AST_Expression e);
-	AST_Expression simplify_bool(AST_Expression e);
-	AST_Expression simplify_condition(AST_Expression e);
-	
-	bool simpleExpresion(AST_Expression e);
-	
-	AST_String  new_label();
+	AST_Expression reduce_real(AST_Expression e);
+	AST_Expression reduce_bool(AST_Expression_ComponentReference v , AST_Expression e);
+	AST_Expression reduce_condition ( AST_Expression , AST_Expression , AST_Expression  );
+	MMO_Statement make_when(AST_Expression cond , AST_Expression_ComponentReference var);
+	AST_Expression generate_condition( AST_Expression c );
 };
 
 

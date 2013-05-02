@@ -26,6 +26,7 @@ using namespace std;
 MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 	_eqs = new list<MMO_Equation>();
 	_comps = new list<MMO_Component>();
+	_stms = new list<MMO_Statement>();
 	varEnv = new VarSymbolTable_;
 	tyEnv = ty;
 	
@@ -76,11 +77,18 @@ MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 
 void MMO_Class::addEquation(MMO_Equation e) {
 	_eqs->push_back(e);
-	//cerr << e << endl;
 }
 
 MMO_EquationList MMO_Class::getEquations() {
   return _eqs;
+}
+
+void MMO_Class::addStatement(MMO_Statement e) {
+	_stms->push_back(e);
+}
+
+MMO_StatementList MMO_Class::getStatements() {
+  return _stms;
 }
 
 void MMO_Class::addComponent(MMO_Component c) {

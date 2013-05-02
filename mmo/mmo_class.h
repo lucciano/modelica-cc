@@ -38,10 +38,15 @@ typedef list<MMO_Component>   *MMO_ComponentList;
 class MMO_Class {
 public:
   MMO_Class(AST_Class, TypeSymbolTable ty);
+  
   void addEquation(MMO_Equation);
   MMO_EquationList getEquations();
+  
   void addComponent(MMO_Component);
   MMO_ComponentList getComponents();
+  
+  void addStatement(MMO_Statement);
+  MMO_StatementList getStatements();
   
   VarSymbolTable getVarSymbolTable();
   TypeSymbolTable getTypeSymbolTable();
@@ -53,6 +58,7 @@ private:
   void addVariable(MMO_Component); 
   MMO_EquationList _eqs;
   MMO_ComponentList _comps;
+  MMO_StatementList _stms;
   AST_Class _class;
   VarSymbolTable  varEnv;
   TypeSymbolTable tyEnv;

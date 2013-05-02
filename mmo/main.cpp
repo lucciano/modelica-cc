@@ -30,6 +30,7 @@
 #include <util/symbol_table.h>
 #include <util/type_check.h>
 #include <mmo/reduce_equation.h>
+#include <mmo/replace_equation.h>
 #include <iostream>
 using namespace std;
 
@@ -49,25 +50,40 @@ int main(int argc, char ** argv)
   if (r==0) { // Parsed ok
     AST_Class c = sd->models()->front();
     cerr << c << "---------------------" << endl;
-
     MMO_Class * d = new MMO_Class(c, tyEnv);
-	//TypeCheck_ * ct = new TypeCheck_(tyEnv , d->getVarSymbolTable());
+
 	 
 	MMO_Reduce_Equation_ * re = new MMO_Reduce_Equation_(d);  
 	 
-	 cerr << " Primera aproximacion  " << endl;
+	cerr << "Reduciendo Ecuaciones" << endl;
 	 
     AST_EquationListIterator eqit;
+    int a = 0;
     foreach(eqit,d->getEquations()) {
-		//cerr << "eq: " <<  current(eqit) << endl;
 		current(eqit) =  re->simplify( current(eqit) ) ;
-		//cerr << "eq(new): " <<  current(eqit) << endl;
 	}
 	
 	foreach(eqit,d->getEquations()) {
 		cerr <<  current(eqit)  ;
 	}
-
+	
+	
+	cerr << endl << "Reemplazando Ecuaciones" << endl;
+	MMO_Replace_Equation_ *   replace =  new MMO_Replace_Equation_(d);
+	try {
+		replace->replace();
+	} catch (char const * c) {  cerr << c << endl;}
+	
+	
+	foreach(eqit,d->getEquations()) {
+		cerr <<  current(eqit)  ;
+	}
+	
+	AST_StatementListIterator stit;
+	foreach(stit,d->getStatements()) {
+		cerr << current(stit) << endl;
+	}
+	
 	
 	//cerr << c << "---------------------" << endl;
 	
@@ -76,6 +92,8 @@ int main(int argc, char ** argv)
     foreach(cit,d->getComponents()) {
 		cerr << "-> " << current(cit)->name() << ":" <<  d->getVarSymbolTable()->lookup(current(cit)->name())->type() << endl;	
 	}
+	
+	
 	
   }
   
