@@ -65,17 +65,18 @@ private:
 
 class AST_Declaration_: public AST_Element_{
 public:
-  AST_Declaration_(string name);
+  AST_Declaration_(string name, AST_ExpressionList indexes);
   string print() const;
   string name() { return _name; }
 
 private:
   string _name;
+  AST_ExpressionList _indexes;
 };
 
 class AST_Component_: public AST_Element_ {
 public:
-  AST_Component_(AST_DeclarationList decl_list, string type, AST_TypePrefix tp);
+  AST_Component_(AST_DeclarationList decl_list, string type, AST_TypePrefix tp, AST_ExpressionList index);
   string print() const;
   bool isParameter() const { return _tp & TP_PARAMETER; }
   bool isInherited() const { return _inherited; }
@@ -93,6 +94,7 @@ private:
   AST_Class _origin;
   AST_TypePrefix _tp;
   AST_DeclarationList _decl_list;
+  AST_ExpressionList _indexes;
   string _type;
   
 };

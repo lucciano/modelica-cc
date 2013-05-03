@@ -244,7 +244,7 @@ AST_CompositionEqsAlgs newAST_CompositionInitialAlgorithms(AST_StatementList);
 AST_CompositionEqsAlgs newAST_CompositionAlgorithms(AST_StatementList);
 
 /* Components and elements */
-AST_Component newAST_Component(AST_DeclarationList cl, AST_String type, AST_TypePrefix);
+AST_Component newAST_Component(AST_DeclarationList cl, AST_String type, AST_TypePrefix, AST_ExpressionList );
 AST_ComponentList newAST_ComponentList(AST_DeclarationList);
 AST_ComponentList newAST_ComponentList();
 AST_ElementList newAST_ElementList();
@@ -255,7 +255,7 @@ AST_Element AST_ExtendsToElement(AST_ExtendsClause e);
 AST_ExtendsClause newAST_ExtendsClause(AST_String);
 AST_Element newAST_Element_ClassWrapper(AST_Class);
 AST_CompositionElementList newAST_CompositionElementList();
-AST_Declaration newAST_Declaration(AST_String);
+AST_Declaration newAST_Declaration(AST_String,AST_ExpressionList);
 AST_DeclarationList newAST_DeclarationList(AST_Declaration);
 AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs);
 AST_CompositionElement newAST_CompositionElement(AST_ElementList);

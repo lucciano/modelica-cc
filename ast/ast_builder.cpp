@@ -189,14 +189,14 @@ AST_Class newAST_Class(AST_String s, AST_Composition comp) {
   return new AST_Class_(s,comp);
 }
 
-AST_Component newAST_Component(AST_DeclarationList cl, AST_String type, AST_TypePrefix tp) {
-  AST_Component c= new AST_Component_(cl,*type,tp);
+AST_Component newAST_Component(AST_DeclarationList cl, AST_String type, AST_TypePrefix tp, AST_ExpressionList ind) {
+  AST_Component c= new AST_Component_(cl,*type,tp,ind);
   delete type;
   return c;
 }
 
-AST_Declaration newAST_Declaration(AST_String s) {
-  AST_Declaration ret = new AST_Declaration_(*s);
+AST_Declaration newAST_Declaration(AST_String s,AST_ExpressionList indexes) {
+  AST_Declaration ret = new AST_Declaration_(*s,indexes);
   delete s;
   return ret;
 }

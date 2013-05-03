@@ -80,16 +80,24 @@ AST_ImportClause_::AST_ImportClause_(string name):_name(name) {
 AST_ExtendsClause_ ::AST_ExtendsClause_ (string name):_name(name) {
 }
 
-AST_Declaration_::AST_Declaration_(string name):_name(name) {}
+AST_Declaration_::AST_Declaration_(string name, AST_ExpressionList indexes):_name(name), _indexes(indexes) {}
 ;
 string AST_Declaration_::print() const { 
     stringstream ret(stringstream::out);
+    AST_ExpressionListIterator it;
     ret << _name;
+    if (_indexes->size()) {
+      ret << "[";
+      foreach (it,_indexes) 
+        ret << current(it);
+      ret << "]";
+    }
     return ret.str();
 }
 
-AST_Component_::AST_Component_ (AST_DeclarationList decl_list, string type, AST_TypePrefix tp):_decl_list(decl_list), 
+AST_Component_::AST_Component_ (AST_DeclarationList decl_list, string type, AST_TypePrefix tp,AST_ExpressionList indexes):_decl_list(decl_list), 
                                                                                           _type(type), 
+                                                                                          _indexes(indexes), 
                                                                                           _inherited(false), 
                                                                                           _origin(NULL),
                                                                                           _tp(tp) {
