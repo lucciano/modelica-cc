@@ -380,7 +380,7 @@ element_option_1:
 ;
 
 component_clause:
-  type_prefix type_specifier opt_array_subscripts component_list { $$ = newAST_Component($4,$2,$1); }
+  type_prefix type_specifier opt_array_subscripts component_list { $$ = newAST_Component($4,$2,$1,$3); }
 ;
 
 type_prefix:
@@ -428,7 +428,7 @@ component_declaration:
 ;
 
 declaration:
-  TOKID opt_array_subscripts opt_modification  { $$ = newAST_Declaration($1); }
+  TOKID opt_array_subscripts opt_modification  { $$ = newAST_Declaration($1,$2); }
 ;
 
 opt_condition_attribute:
