@@ -43,11 +43,12 @@ public:
 	
 private:
 	MMO_Class * _c;
-	AST_Expression reduce_real(AST_Expression e);
-	AST_Expression reduce_bool(AST_Expression_ComponentReference v , AST_Expression e);
-	AST_Expression reduce_condition ( AST_Expression , AST_Expression , AST_Expression  );
+	AST_Expression replace_real(AST_Expression e);
+	AST_Expression replace_bool(AST_Expression_ComponentReference v , AST_Expression e);
+	AST_Expression replace_condition ( AST_Expression , AST_Expression , AST_Expression  );
 	MMO_Statement make_when(AST_Expression cond , AST_Expression_ComponentReference var);
 	AST_Expression generate_condition( AST_Expression c );
+	MMO_Statement  replace_when_eq( AST_Equation ); 
 };
 
 

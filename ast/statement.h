@@ -93,8 +93,10 @@ public:
   AST_Statement_For_(AST_ForIndexList index, AST_StatementList);
   string print() const;
   AST_StatementList statements() const { return _sts; }
+  AST_ForIndexList forIndexList() const { return _ind; }
 private:
   AST_StatementList _sts;
+  AST_ForIndexList _ind;
 };
 
 class AST_Statement_OutputAssigment_: public AST_Statement_ {

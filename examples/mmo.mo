@@ -6,7 +6,11 @@ model Prueba
 	Boolean j;
 equation
 	b = (if f and j then 50 else 30) + e;
-	f = 10 < 5 and j;
+	when b < 5 then 
+		if j then a = 10; else a = 30; end if ;
+	elsewhen b > 5 then 	
+		a = 50;
+	end when;	
 public
     Real c;   
 end Prueba;     

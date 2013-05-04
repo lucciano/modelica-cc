@@ -30,6 +30,18 @@ AST_Equation_Connect AST_Equation_::getAsConnect() {
   return dynamic_cast<AST_Equation_Connect_*>(this);
 }
 
+AST_Equation_When AST_Equation_::getAsWhen() {
+	return dynamic_cast<AST_Equation_When_*>(this);
+}
+
+AST_Equation_If AST_Equation_::getAsIf() {
+	return dynamic_cast<AST_Equation_If_*>(this);
+}
+
+AST_Equation_For AST_Equation_::getAsFor() {
+	return dynamic_cast<AST_Equation_For_*>(this);
+}
+
 AST_Expression AST_Equation_Equality_::left() const {
   return _left;
 }

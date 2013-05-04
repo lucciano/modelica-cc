@@ -34,6 +34,9 @@ public:
   virtual EquationType equationType() = 0;
   AST_Equation_Equality getAsEquality();
   AST_Equation_Connect getAsConnect();
+  AST_Equation_When getAsWhen();
+  AST_Equation_If getAsIf();
+  AST_Equation_For getAsFor();
 };
 
 class AST_Equation_Equality_: public AST_Equation_
@@ -93,13 +96,15 @@ private:
 
 class AST_Equation_For_: public AST_Equation_ {
 public:
-  AST_Equation_For_(AST_ForIndexList ind,AST_EquationList eql):  _eql(eql) {};
+  AST_Equation_For_(AST_ForIndexList ind,AST_EquationList eql):  _eql(eql) , _ind(ind) {};
   string print() const;
   AST_EquationList equationList() const { return _eql; };
+  AST_ForIndexList forIndexList() const { return _ind; };
   virtual EquationType equationType() { return EQFOR; }
 
 private:
   AST_EquationList _eql;
+  AST_ForIndexList _ind;
 };
 
 class AST_ForIndex_: public AST_Node {

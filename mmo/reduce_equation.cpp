@@ -53,7 +53,7 @@ AST_Equation MMO_Reduce_Equation_::simplify( AST_Equation e) {
 		}	
 			
 		default:
-			throw "Not implemented yet!!";
+			return e;
 	}
 }
 

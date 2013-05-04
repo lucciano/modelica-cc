@@ -74,11 +74,11 @@ int main(int argc, char ** argv)
 		replace->replace();
 	} catch (char const * c) {  cerr << c << endl;}
 	
-	
+	cerr << "equation " << endl;
 	foreach(eqit,d->getEquations()) {
 		cerr <<  current(eqit)  ;
 	}
-	
+	cerr << "algothrims " << endl;
 	AST_StatementListIterator stit;
 	foreach(stit,d->getStatements()) {
 		cerr << current(stit) << endl;

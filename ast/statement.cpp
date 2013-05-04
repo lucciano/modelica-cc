@@ -54,7 +54,7 @@ AST_Statement_Assign_::AST_Statement_Assign_(AST_Expression_ComponentReference l
 }
 
 
-AST_Statement_For_::AST_Statement_For_(AST_ForIndexList index, AST_StatementList sts): _sts(sts) {
+AST_Statement_For_::AST_Statement_For_(AST_ForIndexList index, AST_StatementList sts): _sts(sts),_ind(index) {
 }
 
 string AST_Statement_For_::print() const { 

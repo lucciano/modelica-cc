@@ -46,6 +46,7 @@ class AST_Equation_Call_;
 class AST_Equation_If_;
 class AST_Equation_For_;
 class AST_Equation_Else_;
+class AST_Equation_When_;
 class AST_ForIndex_;
 
 class AST_Component_ ;
@@ -107,6 +108,7 @@ typedef AST_Equation_Call_                  *AST_Equation_Call;
 typedef AST_Equation_If_                    *AST_Equation_If;
 typedef AST_Equation_For_                   *AST_Equation_For;
 typedef AST_Equation_Else_                  *AST_Equation_Else;
+typedef AST_Equation_When_                  *AST_Equation_When; 
 typedef AST_ForIndex_                       *AST_ForIndex;
 typedef AST_Expression_                     *AST_Expression;
 typedef AST_Expression_BinOp_               *AST_Expression_BinOp;
