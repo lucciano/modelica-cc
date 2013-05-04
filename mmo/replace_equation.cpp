@@ -263,9 +263,12 @@ MMO_Statement MMO_Replace_Equation_::replace_when_eq (AST_Equation eq)
 {
 	switch (eq->equationType()) {
 		case EQEQUALITY:
-		{
+		{ 
 			AST_Equation_Equality _e =  eq->getAsEquality();
-			return newAST_Statement_Assign(  _e->left()->getAsComponentRef() , _e->right() );
+			if (_e->left()->expressionType() == EXPCOMPREF)
+				return newAST_Statement_Assign(  _e->left()->getAsComponentRef() , _e->right() );
+			//if (_e->left()->expressionType() == EXPOUTPUT)	
+			//	return 
 		}
 	
 		case EQWHEN:

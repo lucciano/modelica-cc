@@ -68,7 +68,7 @@ public:
   AST_Declaration_(string name, AST_ExpressionList indexes);
   string print() const;
   string name() { return _name; }
-
+  AST_ExpressionList index() { return _indexes;}
 private:
   string _name;
   AST_ExpressionList _indexes;
@@ -88,6 +88,7 @@ public:
   AST_Class origin () { return _origin; }
   void setOrigin(AST_Class c) { if (_origin==NULL) _origin = c; }
   AST_TypePrefix typePrefix() { return _tp; }
+  AST_ExpressionList indexes() {return _indexes;}
 
 private:
   bool _inherited;
