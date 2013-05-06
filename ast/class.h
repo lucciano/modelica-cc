@@ -59,6 +59,7 @@ public:
   void setFinal() { _final=true; }
   void setEncapsulated() { _encapsulated=true; }
   void setPrefixes(AST_ClassPrefix cp) { _prefix=cp; }
+  AST_ClassPrefix prefix() const { return _prefix; }
 
 private:
   AST_ComponentList _components;

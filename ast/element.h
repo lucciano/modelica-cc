@@ -79,6 +79,12 @@ public:
   AST_Component_(AST_DeclarationList decl_list, string type, AST_TypePrefix tp, AST_ExpressionList index);
   string print() const;
   bool isParameter() const { return _tp & TP_PARAMETER; }
+  bool isInput() const { return _tp & TP_INPUT; }
+  bool isOutput() const { return _tp & TP_OUTPUT; }
+  bool isDiscrete() const { return _tp & TP_DISCRETE; }
+  bool isFlow() const { return _tp & TP_FLOW; }
+  bool isStream() const { return _tp & TP_STREAM; }
+  bool isConstant() const { return _tp & TP_CONSTANT; }
   bool isInherited() const { return _inherited; }
   void setInherited() { _inherited=true; }
   string type() { return _type; };

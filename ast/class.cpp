@@ -56,10 +56,26 @@ ostream & operator<<(ostream &os , const AST_Class &c ) {
   return os;
 }
 
-ostream & operator<<(ostream &os , const AST_Class_ &cl )  {
-    os << "class " << cl.name() << endl; 
-    os << cl.composition();
-    os<<"end " << cl.name() << ";" << endl;
+ostream & operator<<(ostream &ret , const AST_Class_ &cl )  {
+    
+    MAKE_SPACE;
+    switch (cl.prefix()) {
+      case CP_CLASS: 
+        ret << "class " ;
+        break;
+      case CP_MODEL: 
+        ret << "model " ;
+        break;
+      case CP_FUNCTION:
+        ret  << "function " ;
+        break;
+    }
+    ret << cl.name() << endl; 
+    BEGIN_BLOCK;
+    ret << cl.composition();
+    END_BLOCK;
+    MAKE_SPACE;
+    ret <<"end " << cl.name() << ";" << endl;
 }
 
 /*

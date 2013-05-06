@@ -110,9 +110,21 @@ AST_Component_::AST_Component_ (AST_DeclarationList decl_list, string type, AST_
 string AST_Component_::print() const {
   stringstream ret(stringstream::out);
     AST_DeclarationListIterator it,itt;
-    ret << "  "; 
+    MAKE_SPACE;
     if (isParameter()) 
       ret << "parameter "; 
+    if (isInput()) 
+      ret << "input "; 
+    if (isOutput()) 
+      ret << "output "; 
+    if (isDiscrete()) 
+      ret << "discrete "; 
+    if (isFlow()) 
+      ret << "flow "; 
+    if (isConstant()) 
+      ret << "constant "; 
+    if (isStream()) 
+      ret << "stream "; 
     ret << _type;
     AST_ExpressionListIterator exp_it;
     if (indexes()->size()) {
