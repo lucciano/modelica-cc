@@ -25,6 +25,7 @@
 #include <ast/class.h>
 #include <util/symbol_table.h>
 #include <mmo/mmo_class.h>
+#include <causalize/find_state.h>
 
 using namespace std;
 
@@ -32,7 +33,7 @@ int main(int argc, char ** argv)
 {
   int r;
   if (argc<2) {
-    cerr << "Usage:\n\tmcc file.mo\n";
+    cerr << "Usage:\n\causalize file.mo\n";
     return -1;
   }
   AST_StoredDefinition sd = parseFile(argv[1],&r);
@@ -41,14 +42,10 @@ int main(int argc, char ** argv)
 
   TypeSymbolTable tyEnv = new TypeSymbolTable_;
   MMO_Class *c = new MMO_Class(sd->models()->front(), tyEnv);
-  AST_Expression e= c->getEquations()->front()->getAsEquality()->right();
-  cerr << e << endl;
-  /*
-  cerr << "There are " << vars->count() << " variables" << endl;
-  for (int i=0;i<vars->count();i++) 
-    cerr << "Var " << i << "(" << vars->varName(i) << ") has type " << vars->varInfo(i)->type() << endl;
-  */
 
+  StateVariablesFinder *finder = new StateVariablesFinder(c);
+  cout << "Las siguientes variables son estados:" << endl;
+  finder->findStateVariables();
   
   return 0;
 }

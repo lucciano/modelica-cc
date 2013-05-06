@@ -25,6 +25,8 @@ VarInfo::VarInfo ( bool s , Type t, AST_TypePrefix tp): _s(s) , _t(t) , _tp(tp) 
 
 bool VarInfo::isState() {return _s;};
 
+void VarInfo::setState() { _s = true; };
+
 Type VarInfo::type() {return _t;};
 
 TypeSymbolTable_::TypeSymbolTable_(){

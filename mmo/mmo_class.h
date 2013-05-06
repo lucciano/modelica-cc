@@ -32,6 +32,8 @@ typedef list<MMO_Equation>  *MMO_EquationList;
 typedef list<MMO_Statement> *MMO_StatementList;
 typedef list<MMO_Component>   *MMO_ComponentList;
 
+typedef list<MMO_Equation>::iterator MMO_EquationListIterator;
+
 #ifndef MMOCLASS_H
 #define MMOCLASS_H
 /* AST_Class Wrapper */
