@@ -323,4 +323,11 @@ list<T1> * AST_ListPrepend(list<T1> *l, T1 e) { l->push_front(e); return l; }
 template <typename T1>
 T1 AST_ListFirst(list<T1> *l) {return l->front();}
 
+
+template <typename T1>
+list<T1> * AST_ListConcat(list<T1> *l1,list<T1> *l2) {
+	l1->insert(l1->end(), l2->begin() , l2->end());
+	return l1;
+}
+
 #endif
