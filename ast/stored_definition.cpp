@@ -25,6 +25,7 @@ AST_StoredDefinition_:: AST_StoredDefinition_(AST_ClassList ml, AST_String withi
 };
 
 ostream & operator<<(ostream &os , const AST_StoredDefinition &sd )  {
+  depth=0;
   os << *sd;
   return os;
 

@@ -5,7 +5,8 @@
 %define CONSTRUCTOR_PARAM bool debug
 %define CONSTRUCTOR_CODE \
   parsing_subscript = false;\
-  yydebug=debug;
+  yydebug=debug;\
+  lexer.setParser(this);
 
 %header{
 #include <FlexLexer.h>
@@ -17,6 +18,10 @@ public:
   int yyinput() { return yyFlexLexer::yyinput(); };
   int lineno() { return yyFlexLexer::lineno(); };
   void setInput(std::istream* in) { yyin = in; };
+  MCC_Parser *parser() { return _p; };
+  void setParser (MCC_Parser *p) { _p= p; }
+private:
+  MCC_Parser *_p;
 };
 %}
 
@@ -30,9 +35,12 @@ public:
           void setParsingSubscript() { parsing_subscript=true; } \
           void unsetParsingSubscript() { parsing_subscript=false; } \
           bool isParsingSubscript() { return parsing_subscript; } \
+          AST_StoredDefinition root() { return _root; }\
+          void setRoot(AST_StoredDefinition sd) { _root=sd; }\
           private: \
                 MCC_Lexer lexer; \
-                bool parsing_subscript;
+                bool parsing_subscript;\
+                AST_StoredDefinition _root;
 %define LEX_BODY { return lexer.yylex();}
 %define ERROR_BODY { cerr << "error encountered at line: "<<lexer.lineno()<<" last word parsed:"<<lexer.YYText()<<"\n";}
 
@@ -166,7 +174,7 @@ public:
 %% 
 
 input: 
-  stored_definition { root = $$; }
+  stored_definition { this->setRoot($$); }
 ;
 
 stored_definition: 

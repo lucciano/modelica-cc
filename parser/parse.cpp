@@ -29,28 +29,26 @@ using namespace std;
 
 AST_StoredDefinition parseFile(string filename, int *r) {
   fstream in;   
-  parser = new MCC_Parser(false);
+  MCC_Parser parser(false);
   in.open(filename.c_str(),fstream::in);
   if (in.fail()) {
     cerr << "Could not open file " << filename.c_str() << endl;
     exit(-1);
   }
-  int ret = parser->parseFile(&in);
+  int ret = parser.parseFile(&in);
   if (ret==0) {
     *r=0;
-    delete parser;
     in.close();
-    return root;
+    return parser.root();
   }
   *r=-1;
-  delete parser;
   in.close();
   return NULL;
 }
 
 AST_Expression parseExpression(string exp, int *r) {
   fstream in;   
-  parser = new MCC_Parser(false);
+  MCC_Parser parser(false);
   in.open("/tmp/t",fstream::out);
   in << "model A equation x = " << exp << "; end A;";
   in.close();
@@ -58,15 +56,13 @@ AST_Expression parseExpression(string exp, int *r) {
   if (in.fail()) {
     exit(-1);
   }
-  int ret = parser->parseFile(&in);
+  int ret = parser.parseFile(&in);
   if (ret==0) {
     *r=0;
-    delete parser;
     in.close();
-    return root->models()->front()->composition()->compositionList()->front()->getEquationsAlgs()->getEquations()->front()->getAsEquality()->right();
+    return parser.root()->models()->front()->composition()->compositionList()->front()->getEquationsAlgs()->getEquations()->front()->getAsEquality()->right();
   }
   *r=-1;
-  delete parser;
   in.close();
   return NULL;
 }

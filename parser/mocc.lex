@@ -16,7 +16,8 @@
 #define TOK(X) return MCC_Parser::TOK##X;
 #endif
 
-extern MCC_Parser *parser;
+#define parser (dynamic_cast<MCC_Lexer*>(this)->parser())
+
 char string_buf[MAX_STR_CONST];
 char *string_buf_ptr;
 

@@ -20,169 +20,102 @@
 
 #ifndef AST_BUILDER
 #define AST_BUILDER
+
 #include <iostream>
 #include <list>
 #include <string>
 
+#define DEFINE_TYPE(X) class X##_; typedef X##_ *X;
+#define DEFINE_LIST(X) typedef std::list<X>  *X##List; typedef std::list<X>::iterator X##ListIterator; typedef std::list<X>::reverse_iterator X##ListReverseIterator;
+#define _S(s) newAST_String(s)
 #define MAKE_SPACE for (int i=0;i<depth;i++) ret << " ";
 #define BEGIN_BLOCK depth+=2;
 #define END_BLOCK depth-=2;
-class MCC_Parser;
-extern MCC_Parser *parser;
 extern int depth;
+
+class MCC_Parser;
 
 using namespace std;
 
-
-class AST_Argument_;
-class AST_ShortClassExp_;
-
-class AST_Class_;
-
-class AST_Equation_;
-class AST_Equation_Equality_;
-class AST_Equation_Connect_;
-class AST_Equation_Call_;
-class AST_Equation_If_;
-class AST_Equation_For_;
-class AST_Equation_Else_;
-class AST_Equation_When_;
-class AST_ForIndex_;
-
-class AST_Component_ ;
-class AST_Composition_;
-class AST_CompositionElement_;
-class AST_CompositionEqsAlgs_;
-class AST_Declaration_;
-class AST_Element_;
-class AST_ExtendsClause_;
-class AST_Element_ClassWrapper_;
-class AST_ImportClause_ ;
-
-class AST_Expression_ ;
-class AST_Expression_String_;
-class AST_Expression_Boolean;
-class AST_Expression_Integer_;
-class AST_Expression_Real_;
-class AST_Expression_BinOp_;
-class AST_Expression_Derivative_;
-class AST_Expression_Null_;
-class AST_Expression_If_;
-class AST_Expression_ComponentReference_;
-class AST_Expression_ComponentReference_;
-class AST_Expression_UMinus_;
-class AST_Expression_End_;
-class AST_Expression_Call_;
-class AST_Expression_BooleanNot_;
-class AST_Expression_Output_;
-class AST_Expression_If_ElseIf_;
-class AST_Expression_Colon_;
-class AST_Expression_Range_;
-
-class AST_Modification_;
-
-class AST_Statement_;
-class AST_Statement_Return_;
-class AST_Statement_Break_;
-class AST_Statement_Else_;
-
-class AST_StoredDefinition_ ;
-
+/* Basic AST Types */
 typedef bool                                 AST_Boolean;
 typedef string                              *AST_String;
 typedef int                                  AST_Integer;
-typedef AST_Integer                          AST_Expression_Integer;
 typedef double                               AST_Real;
 typedef string                               AST_Type;
-typedef AST_Argument_                       *AST_Argument;
-typedef AST_ShortClassExp_                  *AST_ShortClassExp;
-typedef AST_Class_                          *AST_Class;
-typedef AST_Component_                      *AST_Component;
-typedef AST_Composition_                    *AST_Composition;
-typedef AST_CompositionElement_             *AST_CompositionElement;
-typedef AST_CompositionEqsAlgs_             *AST_CompositionEqsAlgs;
-typedef AST_Declaration_                    *AST_Declaration;
-typedef AST_Equation_                       *AST_Equation;
-typedef AST_Equation_Equality_              *AST_Equation_Equality;
-typedef AST_Equation_Connect_               *AST_Equation_Connect;
-typedef AST_Equation_Call_                  *AST_Equation_Call;
-typedef AST_Equation_If_                    *AST_Equation_If;
-typedef AST_Equation_For_                   *AST_Equation_For;
-typedef AST_Equation_Else_                  *AST_Equation_Else;
-typedef AST_Equation_When_                  *AST_Equation_When; 
-typedef AST_ForIndex_                       *AST_ForIndex;
-typedef AST_Expression_                     *AST_Expression;
-typedef AST_Expression_BinOp_               *AST_Expression_BinOp;
-typedef AST_Expression_Derivative_          *AST_Expression_Derivative;
-typedef AST_Expression_Call_                *AST_Expression_Call;
-typedef AST_Expression_End_                 *AST_Expression_End;
-typedef AST_Expression_BooleanNot_          *AST_Expression_BooleanNot;
-typedef AST_Expression_Null_                *AST_Expression_Null;
-typedef AST_Expression_If_                  *AST_Expression_If;
-
-typedef AST_Expression_If_ElseIf_           *AST_Expression_If_ElseIf;
-typedef AST_Expression_Colon_               *AST_Expression_Colon;
-typedef AST_Expression_Range_               *AST_Expression_Range;
-
-typedef AST_Expression_String_              *AST_Expression_String; 
-typedef AST_Expression_Real_                *AST_Expression_Real; 
-typedef AST_Expression_UMinus_              *AST_Expression_UMinus; 
-typedef AST_Expression_ComponentReference_  *AST_Expression_ComponentReference;
-typedef AST_Expression_Output_              *AST_Expression_Output;
-typedef AST_Element_                        *AST_Element;
-typedef AST_Element_ClassWrapper_           *AST_Element_ClassWrapper;
-typedef AST_ExtendsClause_                  *AST_ExtendsClause;
-typedef AST_ImportClause_                   *AST_ImportClause;
-typedef AST_Modification_                   *AST_Modification;
-typedef AST_StoredDefinition_               *AST_StoredDefinition; 
-typedef AST_Statement_                      *AST_Statement;
-typedef AST_Statement_Return_               *AST_Statement_Return;
-typedef AST_Statement_Break_                *AST_Statemnet_Break;
-typedef AST_Statement_Else_                 *AST_Statement_Else;
 typedef int                                  AST_TypePrefix;
 typedef int                                  AST_ClassPrefix;
 
+DEFINE_TYPE(AST_Argument);
+DEFINE_TYPE(AST_Class);
+DEFINE_TYPE(AST_Component) ;
+DEFINE_TYPE(AST_Composition);
+DEFINE_TYPE(AST_CompositionElement);
+DEFINE_TYPE(AST_CompositionEqsAlgs);
+DEFINE_TYPE(AST_Declaration);
+DEFINE_TYPE(AST_Element);
+DEFINE_TYPE(AST_Element_ClassWrapper);
+DEFINE_TYPE(AST_Equation);
+DEFINE_TYPE(AST_Equation_Call);
+DEFINE_TYPE(AST_Equation_Connect);
+DEFINE_TYPE(AST_Equation_Else);
+DEFINE_TYPE(AST_Equation_Equality);
+DEFINE_TYPE(AST_Equation_For);
+DEFINE_TYPE(AST_Equation_If);
+DEFINE_TYPE(AST_Equation_When);
+DEFINE_TYPE(AST_Expression);
+DEFINE_TYPE(AST_Expression_BinOp);
+DEFINE_TYPE(AST_Expression_Boolean);
+DEFINE_TYPE(AST_Expression_BooleanNot);
+DEFINE_TYPE(AST_Expression_Call);
+DEFINE_TYPE(AST_Expression_Colon);
+DEFINE_TYPE(AST_Expression_ComponentReference);
+DEFINE_TYPE(AST_Expression_ComponentReference);
+DEFINE_TYPE(AST_Expression_Derivative);
+DEFINE_TYPE(AST_Expression_End);
+DEFINE_TYPE(AST_Expression_If);
+DEFINE_TYPE(AST_Expression_If_ElseIf);
+DEFINE_TYPE(AST_Expression_Integer);
+DEFINE_TYPE(AST_Expression_Null);
+DEFINE_TYPE(AST_Expression_Output);
+DEFINE_TYPE(AST_Expression_Range);
+DEFINE_TYPE(AST_Expression_Real);
+DEFINE_TYPE(AST_Expression_String);
+DEFINE_TYPE(AST_Expression_UMinus);
+DEFINE_TYPE(AST_ExtendsClause);
+DEFINE_TYPE(AST_ForIndex);
+DEFINE_TYPE(AST_ImportClause);
+DEFINE_TYPE(AST_Modification);
+DEFINE_TYPE(AST_ShortClassExp);
+DEFINE_TYPE(AST_Statement);
+DEFINE_TYPE(AST_Statement_Break);
+DEFINE_TYPE(AST_Statement_Else);
+DEFINE_TYPE(AST_Statement_Return);
+DEFINE_TYPE(AST_StoredDefinition) ;
+
 /* Lists */
-typedef std::list<AST_String>               *AST_StringList;
-typedef std::list<AST_Class>                *AST_ClassList;
-typedef std::list<AST_Element>              *AST_ElementList;
-typedef std::list<AST_Equation>             *AST_EquationList;
-typedef std::list<AST_Expression>           *AST_ExpressionList;
-typedef std::list<AST_ExpressionList>       *AST_ExpressionListList;
-typedef std::list<AST_CompositionElement>   *AST_CompositionElementList;
-typedef std::list<AST_Declaration>          *AST_DeclarationList;
-typedef std::list<AST_Component>            *AST_ComponentList;
-typedef std::list<AST_ForIndex>             *AST_ForIndexList;
-typedef std::list<AST_Equation_Else>        *AST_Equation_ElseList;
-typedef std::list<AST_Statement>            *AST_StatementList;
-typedef std::list<AST_Statement_Else>       *AST_Statement_ElseList;
-typedef std::list<AST_Argument>             *AST_ArgumentList;
-
-/* Iterators */
-typedef std::list<AST_Class>::iterator               AST_ClassListIterator;
-typedef std::list<AST_CompositionElement>::iterator  AST_CompositionElementListIterator;
-typedef std::list<AST_Component>::iterator           AST_ComponentListIterator;
-typedef std::list<AST_Declaration>::iterator         AST_DeclarationListIterator;
-typedef std::list<AST_Element>::iterator             AST_ElementListIterator;
-typedef std::list<AST_Equation>::iterator            AST_EquationListIterator;
-typedef std::list<AST_Expression>::iterator          AST_ExpressionListIterator;
-typedef std::list<AST_String>::iterator              AST_StringListIterator;
-typedef std::list<AST_Statement>::iterator           AST_StatementListIterator;
-typedef std::list<AST_Equation_Else>::iterator       AST_Equation_ElseListIterator;
-typedef std::list<AST_Statement_Else>::iterator      AST_Statement_ElseListIterator;
-typedef std::list<AST_ForIndex>::iterator            AST_ForIndexListIterator;
-typedef std::list<AST_Expression>::reverse_iterator  AST_ExpressionListReverseIterator;
-
-extern AST_StoredDefinition root;
+DEFINE_LIST(AST_Argument);
+DEFINE_LIST(AST_Class);
+DEFINE_LIST(AST_Component);
+DEFINE_LIST(AST_CompositionElement);
+DEFINE_LIST(AST_Declaration);
+DEFINE_LIST(AST_Element);
+DEFINE_LIST(AST_Equation);
+DEFINE_LIST(AST_Equation_Else);
+DEFINE_LIST(AST_Expression);
+DEFINE_LIST(AST_ExpressionList);
+DEFINE_LIST(AST_ForIndex);
+DEFINE_LIST(AST_Statement);
+DEFINE_LIST(AST_Statement_Else);
+DEFINE_LIST(AST_String);
 
 /* Enums */
 enum ElementType { ELNONE, COMPONENT, IMPORT, EXTENDS, ELCLASS };
 enum EquationType { EQNONE, EQEQUALITY, EQCONNECT,EQCALL, EQFOR, EQWHEN, EQIF };
-enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT, EXPRANGE };
-enum BinOpType {BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINOPGREATEREQ, BINOPCOMPNE, BINOPCOMPEQ, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPADD, BINOPELADD,
-                BINOPSUB, BINOPELSUB, BINOPEXP, BINOPELEXP, BINOPAND, BINOPOR };
-
-
+enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, 
+                      EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT, EXPRANGE };
+enum BinOpType {BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINOPGREATEREQ, BINOPCOMPNE, BINOPCOMPEQ, BINOPDIV, BINOPELDIV, BINOPMULT,
+                BINOPELMULT, BINOPADD, BINOPELADD, BINOPSUB, BINOPELSUB, BINOPEXP, BINOPELEXP, BINOPAND, BINOPOR };
 
 /* Constructors */
 
@@ -206,7 +139,6 @@ AST_String newAST_String(AST_String);
 AST_String newAST_DotString(AST_String);
 AST_String AST_StringDotAppend(AST_String,AST_String);
 AST_StringList newAST_StringList();
-#define _S(s) newAST_String(s)
 
 
 /* Classes */

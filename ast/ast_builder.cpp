@@ -29,8 +29,6 @@
 
 class MCC_Parser;
 int depth;
-MCC_Parser *parser = NULL;
-AST_StoredDefinition root;
 
 AST_StoredDefinition newAST_StoredDefinition(AST_ClassList cl, AST_String within) { 
   return new AST_StoredDefinition_(cl,within);
