@@ -100,6 +100,17 @@ MMO_ComponentList MMO_Class::getComponents() {
 }
 
 
+Type make_array_type(AST_ExpressionList dims , Type r)
+{
+	Type _t = r;
+	AST_ExpressionListIterator exit;
+	foreach(exit, dims){
+		_t = new Type_Array_(_t , current(exit) );
+	}
+	return _t;
+}
+
+
 void MMO_Class::addVariable(MMO_Component c)
 {
 	Type t = tyEnv->lookup(c->type());
@@ -107,6 +118,14 @@ void MMO_Class::addVariable(MMO_Component c)
 	
 	AST_DeclarationListIterator it;
 	foreach(it , c->nameList()) {
+		
+		AST_ExpressionList dims = newAST_ExpressionList();
+		AST_ListConcat(dims, current(it)->index() );
+		AST_ListConcat(dims, c->indexes() );
+		
+		if (dims->size() > 0 ) 
+			t = make_array_type(  dims, t  );
+		
 		VarInfo * v = new VarInfo( false , t , c->typePrefix());
 		varEnv->insert(current(it)->name(), v);
 	}

@@ -89,11 +89,13 @@ public:
 
 class Type_Array_ : public Type_ {
 public:
-	Type_Array_(Type t); 
+	Type_Array_(Type t, AST_Expression dim); 
 	virtual TypesType getType() { return TYARRAY ;}
 	string print() const;
 	Type arrayOf();
+	AST_Expression dimension() { return _dim;}
 private:
 	Type _t;
+	AST_Expression _dim;
 };
 #endif

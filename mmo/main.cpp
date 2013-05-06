@@ -56,12 +56,14 @@ int main(int argc, char ** argv)
 	MMO_Reduce_Equation_ * re = new MMO_Reduce_Equation_(d);  
 	 
 	cerr << "Reduciendo Ecuaciones" << endl;
-	 
-    AST_EquationListIterator eqit;
-    int a = 0;
-    foreach(eqit,d->getEquations()) {
-		current(eqit) =  re->simplify( current(eqit) ) ;
-	}
+	 AST_EquationListIterator eqit;
+	try { 
+		
+		int a = 0;
+		foreach(eqit,d->getEquations()) {
+			current(eqit) =  re->simplify( current(eqit) ) ;
+		}
+	} catch (char const * c) {  cerr << c << endl; exit(-1);}
 	
 	foreach(eqit,d->getEquations()) {
 		cerr <<  current(eqit)  ;
@@ -92,7 +94,7 @@ int main(int argc, char ** argv)
     foreach(cit,d->getComponents()) {
 		cerr << "-> " << current(cit)->name() << ":" <<  d->getVarSymbolTable()->lookup(current(cit)->name())->type() << endl;	
 	}
-	
+	//cerr << "-> a:" <<  d->getVariableType(_S("a")) << endl;	
 	
 	
   }

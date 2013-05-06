@@ -56,11 +56,11 @@ string Type_String_ :: print() const{
 
 string Type_Array_ :: print() const{
 	stringstream ret(stringstream::out);
-    ret << "Array of " << _t->print() ;
+    ret << "Array [" <<  _dim <<  "]  of " << _t->print() ;
     return ret.str();
 }
 
-Type_Array_::Type_Array_(Type t): _t(t)  {}; 
+Type_Array_::Type_Array_(Type t, AST_Expression dim): _t(t) ,_dim(dim) {}; 
 
 Type Type_Array_ ::arrayOf() { return _t;}
 

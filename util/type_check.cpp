@@ -107,9 +107,23 @@ Type TypeCheck_::check_expression(AST_Expression e)
 		case EXPCOMPREF: 
 		{
 			AST_Expression_ComponentReference b = e->getAsComponentRef();
-			VarInfo * tt = varEnv->lookup(b->name());
-			if (tt == NULL)  throw "Variable no existe"; 
-			return tt->type();
+			
+			VarInfo * tt = varEnv->lookup( * (b->names()->front()) );
+						
+			if (tt == NULL)  throw "Variable no existe (8)"; 
+			if (b->indexes()->front()->size() == 0)	
+				return tt->type();
+			else {
+				cerr << "Aca!" << endl;
+				Type t = tt->type();
+				AST_ExpressionListIterator exit;
+				foreach(exit , b->indexes()->front() ) 
+					if (t->getType() == TYARRAY)
+						t = t->getAsArray()->arrayOf();
+					else throw "Type Error (7)";
+				return t;
+			}
+			
 			break;
 		}
 		case EXPDERIVATIVE: 
