@@ -298,26 +298,29 @@ enum ClassPrefix {
 };
 
 /* Printers */
-ostream & operator<<(ostream &os , const AST_StoredDefinition &sd ) ;
-ostream & operator<<(ostream &os , const AST_Composition &c ) ;
-ostream & operator<<(ostream &os , const AST_Class &c ) ;
-ostream & operator<<(ostream &os , const AST_Expression &e ) ;
-ostream & operator<<(ostream &os , const AST_String &s ) ;
-ostream & operator<<(ostream &os , const AST_Equation &e ) ;
-ostream & operator<<(ostream &os , const AST_Statement &s ) ;
-ostream & operator<<(ostream &os , const AST_CompositionElement &ce ) ;
-ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr);
-ostream & operator<<(ostream &os , const AST_String &s );
-/* List uitls */
+#define DEFINE_PRINTER(X) ostream & operator<<(ostream &os , const X &x ) ;
+DEFINE_PRINTER(AST_StoredDefinition);
+DEFINE_PRINTER(AST_Composition);
+DEFINE_PRINTER(AST_Class);
+DEFINE_PRINTER(AST_Expression);
+DEFINE_PRINTER(AST_String);
+DEFINE_PRINTER(AST_Equation);
+DEFINE_PRINTER(AST_Statement);
+DEFINE_PRINTER(AST_CompositionElement);
+DEFINE_PRINTER(AST_Expression_ComponentReference);
 
+/* List uitls */
 #define current(it) (*it)
 #define foreach(it,list) for (it=list->begin();it!=list->end();it++)
 #define foreachReverse(it,list) for (it=list->rbegin();it!=list->rend();it++)
 
 template <typename T1>
 list<T1> * AST_ListAppend(list<T1> *l, T1 e) { l->push_back(e); return l; }
+
 template <typename T1>
 list<T1> * AST_ListPrepend(list<T1> *l, T1 e) { l->push_front(e); return l; }
+
 template <typename T1>
 T1 AST_ListFirst(list<T1> *l) {return l->front();}
+
 #endif
