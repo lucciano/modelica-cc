@@ -275,9 +275,11 @@ ostream & operator<<(ostream &os , const AST_CompositionElement &ce) {
 }
 
 ostream & operator<<(ostream &os , const AST_String &s) {
+  assert(s!=NULL);
   os << *s;
   return os;
 }
+
 
 AST_ComponentList newAST_ComponentList() {
   return new list<AST_Component>(); 
@@ -528,8 +530,20 @@ AST_Modification newAST_ModificationAssign(AST_Expression) {
   return NULL;
 }
 
-AST_Expression newAST_Expression_Range(AST_Expression, AST_Expression) {
-  return newAST_Expression_Null();
+AST_Expression newAST_Expression_Range(AST_Expression e1, AST_Expression e2) {
+  AST_ExpressionList l;
+  if (e1->expressionType()==EXPRANGE) {
+    l = e1->getAsRange()->expressionList();
+    if (l->size()>2) {
+      cerr << "Not valid range expression: line " << e1->lineNum() << endl;
+      exit(-1);
+    }
+    l=AST_ListAppend(l,e2);
+  } else {
+    l=newAST_ExpressionList(e1);
+    l=AST_ListAppend(l,e2);
+  }
+  return new AST_Expression_Range_(l);
 }
 
 AST_Expression newAST_Expression_OutputExpressions(AST_ExpressionList exp_list) { 

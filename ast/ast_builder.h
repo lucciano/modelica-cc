@@ -77,6 +77,7 @@ class AST_Expression_BooleanNot_;
 class AST_Expression_Output_;
 class AST_Expression_If_ElseIf_;
 class AST_Expression_Colon_;
+class AST_Expression_Range_;
 
 class AST_Modification_;
 
@@ -121,6 +122,7 @@ typedef AST_Expression_If_                  *AST_Expression_If;
 
 typedef AST_Expression_If_ElseIf_           *AST_Expression_If_ElseIf;
 typedef AST_Expression_Colon_               *AST_Expression_Colon;
+typedef AST_Expression_Range_               *AST_Expression_Range;
 
 typedef AST_Expression_String_              *AST_Expression_String; 
 typedef AST_Expression_Real_                *AST_Expression_Real; 
@@ -168,7 +170,7 @@ typedef std::list<AST_String>::iterator              AST_StringListIterator;
 typedef std::list<AST_Statement>::iterator           AST_StatementListIterator;
 typedef std::list<AST_Equation_Else>::iterator       AST_Equation_ElseListIterator;
 typedef std::list<AST_Statement_Else>::iterator      AST_Statement_ElseListIterator;
-
+typedef std::list<AST_ForIndex>::iterator            AST_ForIndexListIterator;
 typedef std::list<AST_Expression>::reverse_iterator  AST_ExpressionListReverseIterator;
 
 extern AST_StoredDefinition root;
@@ -176,7 +178,7 @@ extern AST_StoredDefinition root;
 /* Enums */
 enum ElementType { ELNONE, COMPONENT, IMPORT, EXTENDS, ELCLASS };
 enum EquationType { EQNONE, EQEQUALITY, EQCONNECT,EQCALL, EQFOR, EQWHEN, EQIF };
-enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT };
+enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT, EXPRANGE };
 enum BinOpType {BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINOPGREATEREQ, BINOPCOMPNE, BINOPCOMPEQ, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPADD, BINOPELADD,
                 BINOPSUB, BINOPELSUB, BINOPEXP, BINOPELEXP, BINOPAND, BINOPOR };
 
@@ -373,6 +375,7 @@ ostream & operator<<(ostream &os , const AST_Equation &e ) ;
 ostream & operator<<(ostream &os , const AST_Statement &s ) ;
 ostream & operator<<(ostream &os , const AST_CompositionElement &ce ) ;
 ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr);
+ostream & operator<<(ostream &os , const AST_String &s );
 /* List uitls */
 
 #define current(it) (*it)

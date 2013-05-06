@@ -113,6 +113,24 @@ ostream & operator<<(ostream &os , const AST_Equation &e ) {
   return os;
 }
 
+ostream & operator<<(ostream &os , const AST_ForIndex &f ) {
+  os << *f;
+  return os;
+}
+
+ostream & operator<<(ostream &os , const AST_ForIndex_ &f ) {
+  os << f.variable();
+  if (f.in_exp()!=NULL) { 
+    os << " in " << f.in_exp();
+  }
+  return os;
+}
+
+
+
+
+
+
 AST_Equation_Call_::AST_Equation_Call_(AST_Expression e):_call(e) {
 
 }
@@ -134,8 +152,17 @@ string AST_Equation_For_::print() const {
   stringstream ret(stringstream::out);
   AST_EquationList eql = equationList();
   AST_EquationListIterator it;
+  AST_ForIndexListIterator ind_it;
   MAKE_SPACE;
-  ret << "for loop" << endl;
+  ret << "for ";
+  int size=forIndexList()->size(),i=0;
+  foreach(ind_it,forIndexList()) {
+    i++;
+    AST_ForIndex f= current(ind_it);
+    ret << f;
+    if (i<size) ret << ",";
+  }
+  ret << " loop" << endl;
   BEGIN_BLOCK;
   foreach(it,eql)
     ret << current(it);

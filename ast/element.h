@@ -88,7 +88,7 @@ public:
   AST_Class origin () { return _origin; }
   void setOrigin(AST_Class c) { if (_origin==NULL) _origin = c; }
   AST_TypePrefix typePrefix() { return _tp; }
-  AST_ExpressionList indexes() {return _indexes;}
+  AST_ExpressionList indexes() const {return _indexes;}
 
 private:
   bool _inherited;

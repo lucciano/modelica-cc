@@ -149,7 +149,7 @@ AST_Expression MMO_Replace_Equation_::replace_bool(AST_Expression_ComponentRefer
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			ls->push_back(replace_bool(v, b->getExpressionList()->front() )    )	;
+			ls->push_back(replace_bool(v, b->expressionList()->front() )    )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}  
 		  
@@ -191,7 +191,7 @@ AST_Expression MMO_Replace_Equation_::replace_real(AST_Expression e)
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			ls->push_back(replace_real( b->getExpressionList()->front() )    )	;
+			ls->push_back(replace_real( b->expressionList()->front() )    )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}  
 		  
@@ -218,7 +218,7 @@ AST_Expression MMO_Replace_Equation_::generate_condition( AST_Expression c )
 		case EXPOUTPUT :
 		{
 			AST_Expression_Output b = c->getAsOutput();
-			return generate_condition( b->getExpressionList()->front()); 
+			return generate_condition( b->expressionList()->front()); 
 		}  
 		
 		case EXPBINOP:

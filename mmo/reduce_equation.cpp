@@ -76,7 +76,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_real(AST_Expression e)
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			ls->push_back(   simplify_real( b->getExpressionList()->front() )    )	;
+			ls->push_back(   simplify_real( b->expressionList()->front() )    )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}  
       
@@ -127,7 +127,7 @@ bool MMO_Reduce_Equation_::simpleExpresion(AST_Expression e) {
 		case EXPOUTPUT :
 		{
 			AST_Expression_Output b = e->getAsOutput();
-			return simpleExpresion( b->getExpressionList()->front()); 
+			return simpleExpresion( b->expressionList()->front()); 
 		}  
 		
 		case EXPBINOP:
@@ -192,7 +192,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_condition(AST_Expression e)
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			ls->push_back(   simplify_condition( b->getExpressionList()->front() )    )	;
+			ls->push_back(   simplify_condition( b->expressionList()->front() )    )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}  
 		
@@ -271,7 +271,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			ls->push_back(   simplify_bool( b->getExpressionList()->front())    )	;
+			ls->push_back(   simplify_bool( b->expressionList()->front())    )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}  
       

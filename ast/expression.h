@@ -39,6 +39,7 @@ public:
   AST_Expression_UMinus getAsUMinus();
   AST_Expression_Output getAsOutput();
   AST_Expression_BooleanNot getAsBooleanNot();
+  AST_Expression_Range getAsRange();
   AST_Expression_If_ElseIf getAsElseIf();
 };
 
@@ -209,7 +210,18 @@ public:
 
   virtual ExpressionType expressionType() { return EXPOUTPUT; }
   virtual string print() const;
-  AST_ExpressionList getExpressionList();
+  AST_ExpressionList expressionList();
+private:
+  AST_ExpressionList _list;
+};
+
+class AST_Expression_Range_: public AST_Expression_ {
+public:
+  AST_Expression_Range_(AST_ExpressionList);
+
+  virtual ExpressionType expressionType() { return EXPRANGE; }
+  virtual string print() const;
+  AST_ExpressionList expressionList();
 private:
   AST_ExpressionList _list;
 };

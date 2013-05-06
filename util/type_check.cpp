@@ -89,7 +89,7 @@ Type TypeCheck_::check_expression(AST_Expression e)
 		case EXPOUTPUT :
 		{
 			AST_Expression_Output b = e->getAsOutput();
-			return check_expression(b->getExpressionList()->front() );
+			return check_expression(b->expressionList()->front() );
 		}  
 		  
 		case EXPIF:

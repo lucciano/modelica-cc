@@ -110,6 +110,10 @@ private:
 class AST_ForIndex_: public AST_Node {
 public:
   AST_ForIndex_(AST_String var, AST_Expression exp):_var(var),_in(exp) {}
+  string print() const;
+  AST_String variable() const { return _var; }
+  AST_Expression in_exp() const { return _in; }
+  friend ostream & operator<<(ostream &os , const AST_ForIndex_ &f );
   
 private:
   AST_String _var;

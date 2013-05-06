@@ -88,8 +88,12 @@ string AST_Declaration_::print() const {
     ret << _name;
     if (_indexes->size()) {
       ret << "[";
-      foreach (it,_indexes) 
+      int size=_indexes->size(),i=0;
+      foreach (it,_indexes) {
+        i++;
         ret << current(it);
+        if (i<size) ret << ",";
+      }
       ret << "]";
     }
     return ret.str();
@@ -109,7 +113,19 @@ string AST_Component_::print() const {
     ret << "  "; 
     if (isParameter()) 
       ret << "parameter "; 
-    ret << _type << " "; 
+    ret << _type;
+    AST_ExpressionListIterator exp_it;
+    if (indexes()->size()) {
+      ret << "[";
+      int size=indexes()->size(),i=0;
+      foreach (exp_it,indexes()) {
+        i++;
+        ret << current(exp_it);
+        if (i<size) ret << ",";
+      }
+      ret << "]";
+    }
+    ret << " "; 
     for (it=_decl_list->begin();it!=_decl_list->end();it++) {
       itt=it;
       itt++;

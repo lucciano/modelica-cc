@@ -151,6 +151,11 @@ AST_Expression_ComponentReference AST_Expression_::getAsComponentRef() {
   return dynamic_cast<AST_Expression_ComponentReference>(this);
 }
 
+
+AST_Expression_Range AST_Expression_::getAsRange() {
+  return dynamic_cast<AST_Expression_Range>(this);
+}
+
 AST_Expression_If AST_Expression_::getAsIf() {
   return dynamic_cast<AST_Expression_If>(this);
 }
@@ -255,6 +260,22 @@ AST_Expression_BinOp AST_Expression_::getAsBinOp() {
 AST_Expression_Output_::AST_Expression_Output_(AST_ExpressionList l): _list(l) {
 }
 
+AST_Expression_Range_::AST_Expression_Range_(AST_ExpressionList l): _list(l) {
+}
+
+string AST_Expression_Range_::print () const {
+  AST_ExpressionListIterator it;
+  stringstream ret;
+  int size=_list->size(),i=0;
+  foreach (it,_list) {
+    i++;
+    ret << current(it);
+    ret << (i==size ? "" : ":");
+  }
+  return ret.str();
+
+}
+
 string AST_Expression_Output_::print () const {
   AST_ExpressionListIterator it;
   stringstream ret;
@@ -270,10 +291,16 @@ string AST_Expression_Output_::print () const {
   
 }
 
-AST_ExpressionList AST_Expression_Output_::getExpressionList()
+AST_ExpressionList AST_Expression_Output_::expressionList()
 {
 	return _list;
 }
+
+AST_ExpressionList AST_Expression_Range_::expressionList()
+{
+	return _list;
+}
+
 
 ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr) {
   os << *cr;

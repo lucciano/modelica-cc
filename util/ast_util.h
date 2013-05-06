@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include <ast/ast_builder.h>
+#include <ast/expression.h>
 
 class AST_Expression_Traverse {
 public:
@@ -27,4 +28,26 @@ private:
   virtual AST_Expression mapTraverseElement(AST_Expression) = 0;
 };
 
+template<class R>
+class AST_Expression_Fold {
+public:
+  R foldTraverse(AST_Expression e) {
+    switch (e->expressionType()) {
+      case EXPBINOP:
+        AST_Expression_BinOp b = e->getAsBinOp();
+        return foldTraverseElement (foldTraverse(b->left()),foldTraverse(b->right()),b->binopType());
+      default:
+        return foldTraverseElement(e);
+    }
+  };
+private:
+  virtual R foldTraverseElement(AST_Expression) = 0;
+  virtual R foldTraverseElement(R, R, BinOpType) = 0;
 
+};
+
+class IsConstant: public AST_Expression_Fold<bool> {
+private:
+  //virtual bool foldTraverseElement(AST_Expression);
+  virtual bool foldTraverseElement(bool , bool , BinOpType);
+};

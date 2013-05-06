@@ -44,7 +44,7 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
 	{
 		AST_Expression_Output b = e2->getAsOutput();
         AST_ExpressionList ls = new list < AST_Expression > ();
-        ls->push_back(   mapTraverse( b->getExpressionList()->front() )    )	;
+        ls->push_back(   mapTraverse( b->expressionList()->front() )    )	;
         return newAST_Expression_OutputExpressions(ls);
 	}  
       
@@ -56,3 +56,22 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
   }  
   return e2;
 }
+
+
+
+bool IsConstant::foldTraverseElement(bool b1, bool b2, BinOpType ) {
+  return b1 && b2;
+}
+/*
+bool IsConstant::foldTraverseElement(AST_Expression e) {
+  cerr << "Here we go" <<  endl;
+  switch (e->expressionType()) {
+    case EXPREAL: 
+    case EXPINTEGER: 
+    case EXPSTRING: 
+    case EXPBOOLEAN: 
+      return true;
+  }
+  return false;
+};
+*/
