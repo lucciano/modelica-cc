@@ -205,7 +205,6 @@ AST_Expression newAST_Expression_Real(AST_Real r);
 AST_Expression newAST_Expression_String(AST_String s);
 AST_Expression newAST_Expression_Boolean(AST_Boolean b);
 AST_Expression newAST_Expression_Derivative(AST_ExpressionList el);
-AST_Expression_ComponentReference newAST_Expression_ComponentReference(AST_String);
 AST_Expression_ComponentReference newAST_Expression_ComponentReference();
 AST_Expression_ComponentReference AST_Expression_ComponentReference_Add(AST_Expression_ComponentReference, AST_String, AST_ExpressionList );
 AST_Expression_ComponentReference AST_Expression_ComponentReference_AddDot(AST_Expression_ComponentReference, AST_String, AST_ExpressionList);
@@ -250,6 +249,7 @@ AST_Modification newAST_Modification(AST_ArgumentList,AST_Expression);
 AST_Modification newAST_ModificationEqual(AST_Expression);
 AST_Modification newAST_ModificationAssign(AST_Expression); 
 AST_Modification newAST_ModificationNull();
+
 /* Statements */
 AST_Statement newAST_Statement_Break();
 AST_Statement newAST_Statement_Return();

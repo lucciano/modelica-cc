@@ -210,7 +210,9 @@ AST_CompositionElement newAST_CompositionElement(AST_ElementList el) {
 }
 
 AST_Expression newAST_Expression_ComponentReferenceExp(AST_String s) {
-  return newAST_Expression_ComponentReference(s);
+  AST_Expression_ComponentReference e = newAST_Expression_ComponentReference();
+  e->append(s,newAST_ExpressionList());
+  return e;
 }
 
 AST_Expression newAST_Expression_ComponentReferenceExp(AST_String s, AST_String s2) {
@@ -218,51 +220,29 @@ AST_Expression newAST_Expression_ComponentReferenceExp(AST_String s, AST_String 
     s->append(*s2);
     delete s2;
   }
-  return newAST_Expression_ComponentReference(s);
+  return newAST_Expression_ComponentReferenceExp(s);
 }
 
 AST_Expression newAST_Expression_ComponentReferenceExpDot(AST_String s, AST_String rest) {
   s->insert(0,".");
   s->append(rest->c_str());
   delete rest;
-  return newAST_Expression_ComponentReference(s);
+  return newAST_Expression_ComponentReferenceExp (s);
 }
 
 AST_Expression_ComponentReference newAST_Expression_ComponentReference() {
-  return new AST_Expression_ComponentReference_("");
+  // Empty cref
+  return new AST_Expression_ComponentReference_();
 }
 
 AST_Expression_ComponentReference AST_Expression_ComponentReference_AddDot(AST_Expression_ComponentReference cr, AST_String s, AST_ExpressionList subs) {
-  string n = cr->name();
-  n.insert(0,".");
-  n.insert(0,*s);
-  n.insert(0,".");
-  cr->setName(n);
-  delete s;
+  s->insert(0,".");
+  cr->prepend(s,subs);
   return cr;
 }
 
 AST_Expression_ComponentReference AST_Expression_ComponentReference_Add(AST_Expression_ComponentReference cr, AST_String s, AST_ExpressionList subs) {
-  string n = cr->name();
-  if  (n!= "") 
-    n.insert(0,".");
-  n.insert(0,*s);
-  cr->setName(n);
-  delete s;
-  return cr;
-}
-
-AST_Expression_ComponentReference AST_Expression_ComponentReference_Add2(AST_Expression_ComponentReference cr, AST_String s) {
-  string n = cr->name();
-  n.insert(0,*s);
-  cr->setName(n);
-  delete s;
-  return cr;
-}
-
-AST_Expression_ComponentReference newAST_Expression_ComponentReference(AST_String s) {
-  AST_Expression_ComponentReference cr = new AST_Expression_ComponentReference_(*s);
-  delete s;
+  cr->append(s,subs);
   return cr;
 }
 

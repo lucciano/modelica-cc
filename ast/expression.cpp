@@ -18,6 +18,7 @@
 
 ******************************************************************************/
 
+#include <stdlib.h>
 #include <sstream>
 #include <list>
 
@@ -129,23 +130,40 @@ string AST_Expression_Call_::print() const {
   return ret.str();
 }
 
-AST_Expression_ComponentReference_::AST_Expression_ComponentReference_(string name):_name(name){};
-AST_Expression_ComponentReference_::AST_Expression_ComponentReference_():_name(""){};
+AST_Expression_ComponentReference_::AST_Expression_ComponentReference_():_name(newAST_StringList()), _indexes(newAST_ExpressionListList()){};
+
 string AST_Expression_ComponentReference_::print() const {
   stringstream ret;
-  //ret << "COMPONENTREF[" << _name << "]";
-  ret <<  _name ;
+  AST_StringListIterator it;
+  AST_ExpressionListListIterator exp_it=indexes()->begin();
+  AST_ExpressionListIterator exp_it2;
+  int size=names()->size(),i=0;
+  foreach (it, names()) {
+    i++;
+    ret << current(it);
+    if (current(exp_it)->size()) {
+      ret << "[";
+      int size2=current(exp_it)->size(),i2=0;
+      foreach (exp_it2,current(exp_it))
+        ret << current(exp_it2) << (++i2<size2 ? "," : "");
+      ret << "]";
+    }
+    ret << (i<size ? "." : "");
+    exp_it++;
+  }
   return ret.str();
 }
-#include <stdlib.h>
-void AST_Expression_ComponentReference_::append(AST_Expression_ComponentReference_ *cr) { 
-  _name.append(cr->_name);
+
+void AST_Expression_ComponentReference_::append(AST_String s, AST_ExpressionList subs) {
+  AST_ListAppend(names(),s);
+  AST_ListAppend(indexes(),subs);
 }
 
-void AST_Expression_ComponentReference_::append(string s) {
-  _name.append(s);
-}
 
+void AST_Expression_ComponentReference_::prepend(AST_String s, AST_ExpressionList subs) {
+  AST_ListPrepend(names(),s);
+  AST_ListAppend(indexes(),subs);
+}
 
 AST_Expression_ComponentReference AST_Expression_::getAsComponentRef() {
   return dynamic_cast<AST_Expression_ComponentReference>(this);
@@ -171,8 +189,6 @@ AST_Expression_Output AST_Expression_::getAsOutput() {
 AST_Expression_BooleanNot AST_Expression_::getAsBooleanNot() {
   return dynamic_cast<AST_Expression_BooleanNot>(this);
 }
-
-void AST_Expression_ComponentReference_::setName(string name) { _name=name; }
 
 ExpressionType AST_Expression_BooleanNot_::expressionType() { 
   return EXPBOOLEANNOT; 

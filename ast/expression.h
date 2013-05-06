@@ -132,19 +132,20 @@ private:
 
 class AST_Expression_ComponentReference_: public AST_Expression_ {
 public:
-  AST_Expression_ComponentReference_(string name);
-  AST_Expression_ComponentReference_(string name, AST_ExpressionList);
+  AST_Expression_ComponentReference_(AST_String name, AST_ExpressionList);
   AST_Expression_ComponentReference_();
   string print() const;
-  void append(AST_Expression_ComponentReference cr);
-  void append(string s);
-  void append(string s,AST_ExpressionList);
-  void setName(string name);
-  string name() const { return _name; }
+  void append(AST_String,AST_ExpressionList);
+  void prepend(AST_String,AST_ExpressionList);
   virtual ExpressionType expressionType() { return EXPCOMPREF; }
+  AST_StringList names() const { return _name; }
+  string name() { return print(); } 
+  AST_ExpressionListList indexes() const { return _indexes ; }
+  
 
 private:
-  string _name;
+  AST_StringList _name;
+  AST_ExpressionListList _indexes;
 };
 
 class AST_Expression_BinOp_: public AST_Expression_ {
@@ -225,7 +226,5 @@ public:
 private:
   AST_ExpressionList _list;
 };
-
-
 
 #endif

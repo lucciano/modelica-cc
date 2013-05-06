@@ -200,7 +200,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_condition(AST_Expression e)
 	
 	AST_String name = new_label();
 	_c->addVariable( name ,_S("Boolean"));	
-	AST_Expression cr = newAST_Expression_ComponentReference(name);	
+	AST_Expression cr = newAST_Expression_ComponentReferenceExp (name);	
 	_c->addEquation( newAST_Equation_Equality( cr,e)  );
 	
 	return cr;
@@ -235,7 +235,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 					if (!bl) {	
 						AST_String name = new_label();
 						_c->addVariable( name , logic ? _S("Boolean") : _S("Real"));	
-						AST_Expression cr = newAST_Expression_ComponentReference(name);	
+						AST_Expression cr = newAST_Expression_ComponentReferenceExp (name);	
 						_c->addEquation( newAST_Equation_Equality( cr, b->left() )  );
 						 n1 =  cr;
 					} else 
@@ -244,7 +244,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 					if (!br) {	
 						AST_String name = new_label();
 						_c->addVariable( name , logic ? _S("Boolean") : _S("Real"));
-						AST_Expression cr = newAST_Expression_ComponentReference(name);		
+						AST_Expression cr = newAST_Expression_ComponentReferenceExp (name);		
 						_c->addEquation( newAST_Equation_Equality( cr, b->right() )  );
 						 n2 =  cr;
 					} else 
@@ -305,7 +305,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 			if ( i->then()->expressionType() != EXPCOMPREF) {	
 				AST_String name = new_label();
 				_c->addVariable( name , _S("Boolean"));	
-				AST_Expression cr = newAST_Expression_ComponentReference(name);
+				AST_Expression cr = newAST_Expression_ComponentReferenceExp (name);
 				_c->addEquation( newAST_Equation_Equality( cr , i->then() )  );
 				 n1 =  cr;
 			} else 
@@ -314,7 +314,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 			if (( i->else_exp()->expressionType() != EXPCOMPREF)) {	
 				AST_String name = _S(new_label());
 				_c->addVariable( name , _S("Boolean") );
-				AST_Expression cr = newAST_Expression_ComponentReference(name);	
+				AST_Expression cr =  newAST_Expression_ComponentReferenceExp (name);	
 				_c->addEquation( newAST_Equation_Equality( cr, i->else_exp() )  );
 				 n2 =  cr;
 			} else 
