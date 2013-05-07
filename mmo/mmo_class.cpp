@@ -38,10 +38,8 @@ MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 	foreach(elit,el) {
 		switch (current(elit)->elementType()) {
 			case COMPONENT:
-				
-				_comps->push_back(current(elit)->getAsComponent());
-				
-				
+			
+				AST_ListAppend(_comps , current(elit)->getAsComponent() ) ;
 				addVariable(current(elit)->getAsComponent());
 				break;
 			default:
@@ -62,13 +60,13 @@ MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
         if (e->getEquationsAlgs() != NULL) {
 			AST_EquationList eqs = e->getEquationsAlgs()->getEquations();
 			foreach(eqit,eqs) {
-				_eqs->push_back(current(eqit)); 
+				AST_ListAppend(_eqs , current(eqit));
 			}
 		}
 		
 		// Elements 
 		foreach(elit,e->getElementList()) {
-			_comps->push_back(current(elit)->getAsComponent()); 	
+			AST_ListAppend(_comps , current(elit)->getAsComponent() );
 			addVariable(current(elit)->getAsComponent());
 		}
 	}	
@@ -76,7 +74,7 @@ MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 }
 
 void MMO_Class::addEquation(MMO_Equation e) {
-	_eqs->push_back(e);
+	AST_ListAppend(_eqs,e);
 }
 
 MMO_EquationList MMO_Class::getEquations() {
@@ -84,7 +82,7 @@ MMO_EquationList MMO_Class::getEquations() {
 }
 
 void MMO_Class::addStatement(MMO_Statement e) {
-	_stms->push_back(e);
+	AST_ListAppend(_stms,e);
 }
 
 MMO_StatementList MMO_Class::getStatements() {
@@ -92,7 +90,7 @@ MMO_StatementList MMO_Class::getStatements() {
 }
 
 void MMO_Class::addComponent(MMO_Component c) {
-	_comps->push_back(c);
+	AST_ListAppend(_comps,c);
 }
 
 MMO_ComponentList MMO_Class::getComponents() {

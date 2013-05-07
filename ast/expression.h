@@ -41,6 +41,7 @@ public:
   AST_Expression_BooleanNot getAsBooleanNot();
   AST_Expression_Range getAsRange();
   AST_Expression_If_ElseIf getAsElseIf();
+  AST_Expression_Boolean getAsBoolean();
 };
 
 class AST_Expression_Integer_: public AST_Expression_ {

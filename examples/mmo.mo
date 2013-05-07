@@ -5,7 +5,7 @@ model Prueba
 	Boolean f;
 	Boolean j;
 equation
-	b = (if f and j then 50 else 30) + m[1];
+	b = (if not false and j then 50 else 30) + m[1];
 		
 	when b < 5 then 
 		if j then a = 10; else a = 30; end if ;

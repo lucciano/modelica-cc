@@ -51,7 +51,7 @@ void MMO_Replace_Equation_::replace()
 						break;
 					case TYBOOLEAN:
 						ex = replace_bool( _e->left()->getAsComponentRef()  ,  _e->right());
-						if (ex == NULL) del->push_back(eqit);
+						if (ex == NULL) AST_ListAppend(del,eqit);
 						else current(eqit) = newAST_Equation_Equality( _e->left() , ex) ;
 							
 						break;
@@ -70,7 +70,7 @@ void MMO_Replace_Equation_::replace()
 			{
 				AST_Equation_When when = eq->getAsWhen();
 				_c->addStatement( replace_when_eq (when)  );
-				del->push_back(eqit);
+				AST_ListAppend(del,eqit);
 				break;
 			}
 			
@@ -91,16 +91,16 @@ MMO_Statement MMO_Replace_Equation_::make_when(AST_Expression cond , AST_Express
 	AST_Statement e2 = newAST_Statement_Assign(var , I(0) );
 	
 	AST_StatementList l1 = new list < AST_Statement > ();
-	l1->push_back( e1 );
+	AST_ListAppend(l1, e1 );
 	
 	AST_StatementList l2 = new list < AST_Statement > ();
-	l2->push_back( e2 );
+	AST_ListAppend(l2,e2 );
 	
 	// FALTA NEGAR LA CONDICION!!!!
 	
 	AST_Statement_Else  _else = newAST_Statement_Else ( cond , l2 ); 
 	AST_Statement_ElseList elList = newAST_Statement_ElseList();
-	elList->push_back ( _else );
+	AST_ListAppend(elList,_else );
 
 	return newAST_Statement_When( cond , l1 , elList );
 	
@@ -142,14 +142,21 @@ AST_Expression MMO_Replace_Equation_::replace_bool(AST_Expression_ComponentRefer
 		
 		case EXPBOOLEANNOT:
 		{
-			return e;
+			return generate_condition(e);
+		}
+		
+		case EXPBOOLEAN:
+		{
+			AST_Expression_Boolean b = e->getAsBoolean();
+			if (b->value()) return  I(1);
+			else return I(0);
 		}
 		
 		case EXPOUTPUT :
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			ls->push_back(replace_bool(v, b->expressionList()->front() )    )	;
+			AST_ListAppend(ls,replace_bool(v, b->expressionList()->front() )    )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}  
 		  
@@ -191,7 +198,7 @@ AST_Expression MMO_Replace_Equation_::replace_real(AST_Expression e)
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			ls->push_back(replace_real( b->expressionList()->front() )    )	;
+			AST_ListAppend(ls,replace_real( b->expressionList()->front() )    )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}  
 		  
@@ -235,20 +242,29 @@ AST_Expression MMO_Replace_Equation_::generate_condition( AST_Expression c )
 					return SUB(I(1) , MULT( SUB(I(1) , generate_condition(b->left())) , SUB(I(1) ,generate_condition(b->right()) ) ) ) ;
 				}	
 				default: 
-					throw "Error!! No deberia pasar esto";
+					throw "Error!! No deberia pasar esto (2)";
 			}
 		}		
 		case EXPCOMPREF:
 		{
 			return c;
 		}
+		
 		case EXPBOOLEANNOT:	
 		{
 			AST_Expression_BooleanNot no = c->getAsBooleanNot();
 			return SUB(I(1) , generate_condition( no->exp() ) ) ;
 		}	
+		
+		case EXPBOOLEAN:
+		{
+			AST_Expression_Boolean b = c->getAsBoolean();
+			if (b->value()) return I(1);
+			else return I(0);
+		}
+		
 		default:
-			throw "Error!! No deberia pasar esto";
+			throw "Error!! No deberia pasar esto (1)";
 	}
 }
 
@@ -282,15 +298,15 @@ MMO_Statement MMO_Replace_Equation_::replace_when_eq (AST_Equation eq)
 					
 					AST_StatementList stmList = newAST_StatementList();
 					AST_EquationListIterator eqit;
-					foreach(eqit, qelse->equations()) stmList->push_back( replace_when_eq(current(eqit)) );
+					foreach(eqit, qelse->equations()) AST_ListAppend(stmList,replace_when_eq(current(eqit)) );
 					
-					elseList->push_back( newAST_Statement_Else( qelse->condition() , stmList   ) );
+					AST_ListAppend(elseList,newAST_Statement_Else( qelse->condition() , stmList   ) );
 				}	
 			}
 			
 			AST_StatementList stmList = newAST_StatementList();
 			AST_EquationListIterator eqit;
-			foreach(eqit, when->equationList()) stmList->push_back( replace_when_eq(current(eqit)) );
+			foreach(eqit, when->equationList()) AST_ListAppend(stmList,replace_when_eq(current(eqit)) );
 			
 			return newAST_Statement_When( when->condition() , stmList , elseList);  
 		}
@@ -306,18 +322,18 @@ MMO_Statement MMO_Replace_Equation_::replace_when_eq (AST_Equation eq)
 					
 					AST_StatementList stmList = newAST_StatementList();
 					AST_EquationListIterator eqit;
-					foreach(eqit, qelse->equations()) stmList->push_back( replace_when_eq(current(eqit)) );
+					foreach(eqit, qelse->equations()) AST_ListAppend(stmList,replace_when_eq(current(eqit)) );
 					
-					elseList->push_back( newAST_Statement_Else( qelse->condition() , stmList   ) );
+					AST_ListAppend(elseList,newAST_Statement_Else( qelse->condition() , stmList   ) );
 				}	
 			}
 			
 			AST_StatementList stmList = newAST_StatementList();
 			AST_EquationListIterator eqit;
-			foreach(eqit, i->equationList()) stmList->push_back( replace_when_eq(current(eqit)) );
+			foreach(eqit, i->equationList()) AST_ListAppend(stmList,replace_when_eq(current(eqit)) );
 			
 			AST_StatementList stmElseList = newAST_StatementList();
-			foreach(eqit, i->equationElseList()) stmElseList->push_back( replace_when_eq(current(eqit)) );
+			foreach(eqit, i->equationElseList()) AST_ListAppend(stmElseList,replace_when_eq(current(eqit)) );
 			
 			return newAST_Statement_If( i->condition() , stmList , elseList,stmElseList); 
 			
@@ -328,7 +344,7 @@ MMO_Statement MMO_Replace_Equation_::replace_when_eq (AST_Equation eq)
 			AST_Equation_For f = eq->getAsFor();
 			AST_StatementList stmList = newAST_StatementList();
 			AST_EquationListIterator eqit;
-			foreach(eqit, f->equationList()) stmList->push_back( replace_when_eq(current(eqit)) );
+			foreach(eqit, f->equationList()) AST_ListAppend(stmList,replace_when_eq(current(eqit)) );
 			return newAST_Statement_For(f->forIndexList() , stmList );
 		}
 		

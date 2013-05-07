@@ -100,6 +100,8 @@ string AST_Expression_String_::print() const {
 AST_Expression_Boolean_::AST_Expression_Boolean_(bool b):_b(b){
 }
 
+bool AST_Expression_Boolean_::value() { return _b;}
+
 string AST_Expression_Boolean_::print() const { 
   stringstream ret(stringstream::out);
   ret << "BOOLEAN[" << (_b ? "true" : "false") << "]";
@@ -207,9 +209,14 @@ AST_Expression_BooleanNot AST_Expression_::getAsBooleanNot() {
   return dynamic_cast<AST_Expression_BooleanNot>(this);
 }
 
+AST_Expression_Boolean AST_Expression_::getAsBoolean() {
+  return dynamic_cast<AST_Expression_Boolean>(this);
+}
+
 ExpressionType AST_Expression_BooleanNot_::expressionType() { 
   return EXPBOOLEANNOT; 
 }
+
 
 ExpressionType AST_Expression_::expressionType() { 
   return EXPNONE; 

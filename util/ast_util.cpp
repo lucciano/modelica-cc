@@ -44,7 +44,7 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
 	{
 		AST_Expression_Output b = e2->getAsOutput();
         AST_ExpressionList ls = new list < AST_Expression > ();
-        ls->push_back(   mapTraverse( b->expressionList()->front() )    )	;
+        AST_ListAppend(ls,mapTraverse( b->expressionList()->front() ))	;
         return newAST_Expression_OutputExpressions(ls);
 	}  
       

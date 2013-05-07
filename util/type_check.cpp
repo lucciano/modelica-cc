@@ -114,7 +114,6 @@ Type TypeCheck_::check_expression(AST_Expression e)
 			if (b->indexes()->front()->size() == 0)	
 				return tt->type();
 			else {
-				cerr << "Aca!" << endl;
 				Type t = tt->type();
 				AST_ExpressionListIterator exit;
 				foreach(exit , b->indexes()->front() ) 
