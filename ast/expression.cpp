@@ -47,7 +47,6 @@ string AST_Expression_BinOp_::print() const {
     /* Print parenthesis */
     if (left()->expressionType()==EXPBINOP) {
       AST_Expression_BinOp b = left()->getAsBinOp();
-      cerr << "Top prec is " << binopType() << " left prec is " << b->binopType() << endl;
       if (b->binopType()<binopType()) { // Parenthesis needed for left op
         ret << "(" << left() << ")";
       } else {
