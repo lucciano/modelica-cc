@@ -68,12 +68,40 @@ Type_Array Type_::getAsArray() {
   return dynamic_cast<Type_Array_*>(this);
 }
 
+Type_Tupla Type_::getAsTupla() {
+  return dynamic_cast<Type_Tupla_*>(this);
+}
+
+Type_Function Type_::getAsFunction() {
+  return dynamic_cast<Type_Function_ *>(this);
+}
+
 
 int operator==( Type_ &e1 ,  Type_ &e2 ){
     if (e1.getType() == e2.getType()) {
-		if (e1.getType() == TYARRAY)
-			return (e1.getAsArray()->arrayOf() == e2.getAsArray()->arrayOf() );
-		else return 1;	
+		switch (e1.getType())
+		{
+			case TYARRAY:
+				return ( *(e1.getAsArray()->arrayOf()) == e2.getAsArray()->arrayOf() );
+			case TYTUPLA:
+			{
+				Type_Tupla t1 = e1.getAsTupla(),t2 = e2.getAsTupla();
+				if ( t2->tupla()->size() != t1->tupla()->size() ) return 0;
+				TypeListIterator it1 = t1->tupla()->begin() , it2 = t1->tupla()->begin();
+				foreach(it1,t1->tupla()) {
+					if ( *current(it1)  != current(it2) ) return 0;
+					it2++;
+				}
+				return 1;
+			}
+			case TYFUNCTION: // No es necesario!!
+			{
+				Type_Function f1 = e1.getAsFunction(),f2 = e2.getAsFunction();
+				return (  *(f1->output()) == f2->output() );
+			}
+			default:
+				return 1;	
+		}
 	} else return 0; 
 }
 

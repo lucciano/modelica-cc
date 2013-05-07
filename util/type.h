@@ -54,6 +54,8 @@ public:
 	friend int operator!=( Type_ &e1 ,  Type e2 );
 	
 	Type_Array getAsArray();
+	Type_Tupla getAsTupla();
+	Type_Function getAsFunction();
 };
 
 class Type_Real_ : public Type_ {
