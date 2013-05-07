@@ -24,12 +24,9 @@
 
 #include <ast/ast_node.h>
 #include <ast/expression.h>
-/*const char *BinOpTypeName[] =  {"BINOPLOWER", "BINOPLOWEREQ", "BINOPGREATER", "BINOPGREATEREQ", "BINOPCOMPNE", "BINOPCOMPEQ", "BINOPDIV", "BINOPELDIV", "BINOPMULT",
-                          "BINOPELMULT", "BINOPADD", "BINOPELADD", "BINOPSUB", "BINOPELSUB","BINOPEXP", "BINOPELEXP", "BINOPAND", "BINOPOR" };
-*/
 
-const char *BinOpTypeName[] =  {"<", "<=", ">", ">=", "<>", "==", "/", "./", "*",
-                          ".*", "+", ".+", "-", ".-","^", ".^", " and ", " or " };
+const char *BinOpTypeName[] =  {" or ", " and ", "<", "<=", ">", ">=", "<>", "==", 
+                                "+", ".+", "-", ".-", "/", "./","*", ".*", "^", ".^" };
 
 using namespace std;
 ostream & operator<<(ostream &os , const AST_Expression_ &e ){
@@ -47,7 +44,29 @@ AST_Expression_BinOp_::AST_Expression_BinOp_(AST_Expression e1,AST_Expression e2
 
 string AST_Expression_BinOp_::print() const { 
     stringstream ret(stringstream::out);
-    ret  << left() << BinOpTypeName[binopType()] << right() ;
+    /* Print parenthesis */
+    if (left()->expressionType()==EXPBINOP) {
+      AST_Expression_BinOp b = left()->getAsBinOp();
+      cerr << "Top prec is " << binopType() << " left prec is " << b->binopType() << endl;
+      if (b->binopType()<binopType()) { // Parenthesis needed for left op
+        ret << "(" << left() << ")";
+      } else {
+        ret << left();
+      }
+    } else {
+        ret << left();
+    }
+    ret << BinOpTypeName[binopType()];
+    if (right()->expressionType()==EXPBINOP) {
+      AST_Expression_BinOp b = right()->getAsBinOp();
+      if (b->binopType()<binopType()) { // Parenthesis needed for left op
+        ret << "(" << right() << ")";
+      } else {
+        ret << right();
+      }
+    } else {
+      ret << right();
+    }
     return ret.str();
 }
 
@@ -57,7 +76,6 @@ AST_Expression_Integer_::AST_Expression_Integer_(int i):_i(i) {
 
 string AST_Expression_Integer_::print() const { 
   stringstream ret(stringstream::out);
-  //ret << "INTEGER[" << _i << "]";
   ret << _i ;
   return ret.str();
 }

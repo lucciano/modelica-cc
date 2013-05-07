@@ -126,7 +126,7 @@ void MMO_Class::addVariable(MMO_Component c)
 		if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
 		
-		VarInfo * v = new VarInfo( false , t , c->typePrefix());
+		VarInfo * v = new VarInfo(t , c->typePrefix());
 		varEnv->insert(current(it)->name(), v);
 	}
 }
@@ -135,7 +135,7 @@ void MMO_Class::addVariable(AST_String name , AST_String tys)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
-	VarInfo * v = new VarInfo(false , t , newAST_TypePrefix() );
+	VarInfo * v = new VarInfo(t , newAST_TypePrefix() );
 	varEnv->insert(*name, v);
 }
 

@@ -68,14 +68,18 @@ protected:
 
 class VarInfo {
 public:  
-  VarInfo( bool s , Type t, AST_TypePrefix tp);
+  VarInfo( Type t, AST_TypePrefix tp);
   bool isState();
   AST_TypePrefix typePrefix() {return _tp;};
   bool isParameter() { return _tp & TP_PARAMETER; }
   void setState();
+  bool isDiscrete() { return _tp & TP_DISCRETE; }
+  bool isConstant() { return _tp & TP_CONSTANT; }
+  bool isInput() { return _tp & TP_INPUT; }
+  bool isOutput() { return _tp & TP_OUTPUT; }
   Type type();
 private:
-  bool _s;
+  bool _state;
   Type _t;
   AST_TypePrefix _tp ;
 };
