@@ -89,6 +89,42 @@ int operator!=( Type_ &e1 ,  Type e2 ){
     return !(e1 == *e2);
 }
 
+
+Type_Tupla_::Type_Tupla_(TypeList tyl): _tyl(tyl) {};
+
+string Type_Tupla_ :: print() const{
+	stringstream ret(stringstream::out);
+	TypeListIterator tyit;
+	int i = 0 , s = _tyl->size();
+	ret << "< " ;
+	foreach(tyit , _tyl) {
+		i++;
+		ret << current(tyit);
+		if (i < s) ret << " , " ;
+	}
+	ret << " > " ;
+    return ret.str();
+}
+
+Type_Function_::Type_Function_(Type o , TypeList i): _input(i) , _output(o)  {};
+
+string Type_Function_ :: print() const{
+	stringstream ret(stringstream::out);
+	TypeListIterator tyit;
+	int i = 0 , s = _input->size();
+	
+	ret << _output << "  function ";
+	
+	ret << "( " ;
+	foreach(tyit , _input) {
+		i++;
+		ret << current(tyit);
+		if (i < s) ret << " , " ;
+	}
+	ret << " ) " ;
+    return ret.str();
+}
+
 /*
 int operator==( Type &e1 ,  Type &e2 ){
     return (*e1 == * e2);

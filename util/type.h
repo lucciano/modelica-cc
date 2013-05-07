@@ -28,24 +28,17 @@
 #define TYPE_H
 
 
-enum TypesType { TYREAL , TYINTEGER, TYBOOLEAN , TYSTRING , TYARRAY };
+enum TypesType { TYREAL , TYINTEGER, TYBOOLEAN , TYSTRING , TYARRAY , TYTUPLA , TYFUNCTION};
 
-
-class Type_;
-class Type_Real_;
-class Type_Integer_;
-class Type_Boolean_;
-class Type_String_;
-class Type_Array_;
-
-
-typedef Type_                   * Type;
-typedef Type_Real_              * Type_Real;
-typedef Type_Integer_           * Type_Integer;
-typedef Type_Boolean_           * Type_Boolean;
-typedef Type_String_            * Type_String;
-typedef Type_Array_             * Type_Array;
-
+DEFINE_TYPE(Type);
+DEFINE_TYPE(Type_Real);
+DEFINE_TYPE(Type_Integer);
+DEFINE_TYPE(Type_Boolean);
+DEFINE_TYPE(Type_String);
+DEFINE_TYPE(Type_Array);
+DEFINE_TYPE(Type_Tupla);
+DEFINE_TYPE(Type_Function);
+DEFINE_LIST(Type);
 
 class Type_ {
 public:
@@ -97,5 +90,27 @@ public:
 private:
 	Type _t;
 	AST_Expression _dim;
+};
+
+class Type_Tupla_ : public Type_ {
+public:
+	Type_Tupla_(TypeList tyl);
+	string print() const;
+	TypeList tupla() {return _tyl;}
+	virtual TypesType getType() { return TYTUPLA ;}
+private:
+	TypeList _tyl;
+};
+
+class Type_Function_ : public Type_ {
+public:
+	Type_Function_( Type output , TypeList input);
+	string print() const;
+	TypeList input() {return _input;}
+	Type output(){return _output;}
+	virtual TypesType getType() { return TYFUNCTION ;}
+private:
+	TypeList _input;
+	Type _output;
 };
 #endif
