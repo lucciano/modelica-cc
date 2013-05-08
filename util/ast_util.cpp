@@ -62,16 +62,17 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
 bool IsConstant::foldTraverseElement(bool b1, bool b2, BinOpType ) {
   return b1 && b2;
 }
-/*
+
 bool IsConstant::foldTraverseElement(AST_Expression e) {
-  cerr << "Here we go" <<  endl;
   switch (e->expressionType()) {
     case EXPREAL: 
     case EXPINTEGER: 
     case EXPSTRING: 
     case EXPBOOLEAN: 
       return true;
+    case EXPCOMPREF:
+      // Check symbol table!!!
+      return true;
   }
   return false;
 };
-*/

@@ -34,8 +34,10 @@ public:
   R foldTraverse(AST_Expression e) {
     switch (e->expressionType()) {
       case EXPBINOP:
+        {
         AST_Expression_BinOp b = e->getAsBinOp();
         return foldTraverseElement (foldTraverse(b->left()),foldTraverse(b->right()),b->binopType());
+        }
       default:
         return foldTraverseElement(e);
     }
@@ -48,6 +50,6 @@ private:
 
 class IsConstant: public AST_Expression_Fold<bool> {
 private:
-  //virtual bool foldTraverseElement(AST_Expression);
+  virtual bool foldTraverseElement(AST_Expression);
   virtual bool foldTraverseElement(bool , bool , BinOpType);
 };
