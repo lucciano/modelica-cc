@@ -69,8 +69,11 @@ bool IsConstant::foldTraverseElement(AST_Expression e) {
     case EXPBOOLEAN: 
       return true;
     case EXPCOMPREF:
+      AST_Expression_ComponentReference cr = e->getAsComponentRef();
+      VarInfo *v = _st->lookup(cr->name());
+      if (v->isParameter()) return true;
       // Check symbol table!!!
-      return true;
+      return false;
   }
   return false;
 };

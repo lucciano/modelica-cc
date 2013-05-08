@@ -20,6 +20,7 @@
 
 #include <ast/ast_builder.h>
 #include <ast/expression.h>
+#include <util/symbol_table.h>
 
 class AST_Expression_Traverse {
 public:
@@ -49,7 +50,10 @@ private:
 };
 
 class IsConstant: public AST_Expression_Fold<bool> {
+public:
+   IsConstant(VarSymbolTable st): _st(st) {};
 private:
   virtual bool foldTraverseElement(AST_Expression);
   virtual bool foldTraverseElement(bool , bool , BinOpType);
+  VarSymbolTable _st;
 };
