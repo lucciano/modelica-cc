@@ -57,8 +57,6 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
   return e2;
 }
 
-
-
 bool IsConstant::foldTraverseElement(bool b1, bool b2, BinOpType ) {
   return b1 && b2;
 }

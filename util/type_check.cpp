@@ -110,7 +110,10 @@ Type TypeCheck_::check_expression(AST_Expression e)
 			
 			VarInfo * tt = varEnv->lookup( * (b->names()->front()) );
 						
-			if (tt == NULL)  throw "Variable no existe (8)"; 
+			if (tt == NULL) {
+         cerr << "Var:" <<  b->names()->front() << ":";
+         throw "Variable no existe (8)"; 
+      }
 			if (b->indexes()->front()->size() == 0)	
 				return tt->type();
 			else {

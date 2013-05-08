@@ -15,7 +15,7 @@ model RLC
   parameter Real L;
   parameter Real C;
 equation
-  uL = L * 4 + j* der(iL);
+  uL = L * der(iL);
   u0 = sin(time);
   u1 = R1 * i1;
   u2 = R2 * i2;

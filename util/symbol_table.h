@@ -89,6 +89,7 @@ class VarSymbolTable_: public SymbolTable<VarName, VarInfo * >
 {
 public:
 	VarSymbolTable_() {};
+  void initialize(TypeSymbolTable); 
   VarInfo *varInfo(int i) { return val(i); }
   VarName varName(int i) { return key(i); }
 };

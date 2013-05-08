@@ -21,7 +21,8 @@
 #include <util/symbol_table.h>
 
 
-VarInfo::VarInfo ( Type t, AST_TypePrefix tp): _state(false) , _t(t) , _tp(tp) {};
+VarInfo::VarInfo ( Type t, AST_TypePrefix tp): _state(false) , _t(t) , _tp(tp) {
+};
 
 bool VarInfo::isState() {return _state;};
 
@@ -36,4 +37,6 @@ TypeSymbolTable_::TypeSymbolTable_(){
 	insert("Boolean", new Type_Boolean_() );
 }
 
-
+void VarSymbolTable_::initialize(TypeSymbolTable ty) {
+  insert("time",new VarInfo(ty->lookup("Real"),0));
+}
