@@ -56,15 +56,21 @@ int main(int argc, char ** argv)
 	MMO_Reduce_Equation_ * re = new MMO_Reduce_Equation_(d);  
 	 
 	cerr << "Reduciendo Ecuaciones" << endl;
-	 AST_EquationListIterator eqit;
+	try { 
+		re->simplifyAll();
+	} catch (char const * c) {  cerr << c << endl; exit(-1);}
+	
+	
+	/*
 	try { 
 		
 		int a = 0;
 		foreach(eqit,d->getEquations()) {
-			current(eqit) =  re->simplify( current(eqit) ) ;
+			current(eqit) =  re->simplifyAll( ) ;
 		}
 	} catch (char const * c) {  cerr << c << endl; exit(-1);}
-	
+	*/
+	AST_EquationListIterator eqit;
 	foreach(eqit,d->getEquations()) {
 		cerr <<  current(eqit)  ;
 	}

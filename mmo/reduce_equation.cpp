@@ -25,9 +25,26 @@ using namespace std;
 
 MMO_Reduce_Equation_::MMO_Reduce_Equation_ (MMO_Class * c): _c(c) {} ;
 
+void MMO_Reduce_Equation_::simplifyAll() {
+	AST_EquationListIterator eqit;
+	list<AST_EquationListIterator> * del = new list<AST_EquationListIterator>();
+	
+    foreach(eqit,_c->getEquations()) {		
+		AST_Equation eq =  simplify( current(eqit) ) ;
+		
+		if ( eq != NULL )
+			current(eqit) = eq;
+		else 
+			AST_ListAppend(del,eqit); 
+	}
+	
+	list<AST_EquationListIterator>::iterator delIt;
+	foreach(delIt,del) _c->getEquations()->erase(current(delIt));
+}
 
 AST_Equation MMO_Reduce_Equation_::simplify( AST_Equation e) {
 	AST_Expression ex;
+	
 	switch (e->equationType()) {
 		case EQEQUALITY:
 		{
@@ -51,7 +68,13 @@ AST_Equation MMO_Reduce_Equation_::simplify( AST_Equation e) {
 			}
 			return newAST_Equation_Equality( _e->left() , ex) ;
 		}	
-			
+		
+		case EQIF:
+		{
+			reduce_eq_if(e->getAsIf());
+			return NULL;
+		}	
+		
 		default:
 			return e;
 	}
@@ -311,7 +334,7 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 				AST_ExpressionList iflist = i->elseif_list();
 				
 				foreachReverse(it,iflist) {
-					if (current(it)->expressionType() == 8) {
+					if (current(it)->expressionType() == EXPELSEIF) {
 						AST_Expression_If_ElseIf elif = current(it)->getAsElseIf();					
 						if  (it == iflist->rbegin())
 							iff = newAST_Expression_If( elif->condition() , elif->then() , newAST_ExpressionList() ,i->else_exp() );					
@@ -352,6 +375,53 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 		default:
 			return e;
 	}  
+}
+
+AST_Expression find_equation(AST_Expression e, AST_EquationList eqList ) 
+{
+	AST_EquationListIterator eqit;
+	foreach( eqit , eqList ) 
+		if ( current(eqit)->equationType()  == EQEQUALITY ) {
+			AST_Equation_Equality eq = current(eqit)->getAsEquality();
+			if ( e->print() ==  eq->left()->print() )
+				return eq->right();
+	}
+	return NULL;
+	
+}
+
+void MMO_Reduce_Equation_::reduce_eq_if(AST_Equation_If iff)
+{
+	AST_EquationListIterator eqit;
+	foreach( eqit , iff->equationList() )
+	{
+		if ( current(eqit)->equationType()  != EQEQUALITY ) throw "No es una ecuacion!!";
+		AST_Equation_Equality e = current(eqit)->getAsEquality();
+		AST_Expression find = find_equation(e->left() , iff->equationElseList());
+	
+		if (find == NULL ) throw "No se encontro la ecuacion!!";
+		
+		AST_ExpressionList elseIfList = newAST_ExpressionList() ;
+		
+		if ( ! iff->equationElseIf()->empty() ) {
+			AST_Equation_ElseListIterator elseit;
+			foreach(elseit, iff->equationElseIf()) {
+				AST_Equation_Else elseIf =  current(elseit);
+				
+				AST_Expression _find = find_equation(e->left() , elseIf->equations());
+				if (_find == NULL ) throw "No se encontro la ecuacion!!";
+				AST_ListAppend(elseIfList,newAST_Expression_ElseIf(elseIf->condition() , _find) );
+				
+				
+			}
+			
+		}
+		
+		AST_Expression expIf = newAST_Expression_If(iff->condition() , e->right(), elseIfList , find );
+		_c->addEquation( newAST_Equation_Equality( e->left(), expIf  ));
+		
+	}
+	return ;
 }
 
 

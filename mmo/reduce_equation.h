@@ -31,17 +31,17 @@
 class MMO_Reduce_Equation_ {
 public:
 	MMO_Reduce_Equation_(MMO_Class * c );
-	AST_Equation  simplify( AST_Equation e );
 	
+	void simplifyAll();
 	
 private:
 	MMO_Class * _c;
 	AST_Expression simplify_real(AST_Expression e);
 	AST_Expression simplify_bool(AST_Expression e);
 	AST_Expression simplify_condition(AST_Expression e);
-	
+	void reduce_eq_if(AST_Equation_If);
 	bool simpleExpresion(AST_Expression e);
-	
+	AST_Equation  simplify( AST_Equation e );
 	AST_String  new_label();
 };
 
