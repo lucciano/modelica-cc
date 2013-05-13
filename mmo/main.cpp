@@ -29,8 +29,8 @@
 #include <util/type.h>
 #include <util/symbol_table.h>
 #include <util/type_check.h>
-#include <mmo/reduce_equation.h>
-#include <mmo/replace_equation.h>
+#include <mmo/tomicro.h>
+
 #include <iostream>
 using namespace std;
 
@@ -53,39 +53,20 @@ int main(int argc, char ** argv)
     MMO_Class * d = new MMO_Class(c, tyEnv);
 
 	 
-	MMO_Reduce_Equation_ * re = new MMO_Reduce_Equation_(d);  
+	MMO_ToMicroModelica_ * re = new MMO_ToMicroModelica_(d);  
 	 
 	cerr << "Reduciendo Ecuaciones" << endl;
 	try { 
-		re->simplifyAll();
+		re->transform();
 	} catch (char const * c) {  cerr << c << endl; exit(-1);}
 	
-	
-	/*
-	try { 
-		
-		int a = 0;
-		foreach(eqit,d->getEquations()) {
-			current(eqit) =  re->simplifyAll( ) ;
-		}
-	} catch (char const * c) {  cerr << c << endl; exit(-1);}
-	*/
 	AST_EquationListIterator eqit;
-	foreach(eqit,d->getEquations()) {
-		cerr <<  current(eqit)  ;
-	}
-	
-	
-	cerr << endl << "Reemplazando Ecuaciones" << endl;
-	MMO_Replace_Equation_ *   replace =  new MMO_Replace_Equation_(d);
-	try {
-		replace->replace();
-	} catch (char const * c) {  cerr << c << endl;}
-	
 	cerr << "equation " << endl;
+	
 	foreach(eqit,d->getEquations()) {
 		cerr <<  current(eqit)  ;
 	}
+	
 	cerr << "algothrims " << endl;
 	AST_StatementListIterator stit;
 	foreach(stit,d->getStatements()) {

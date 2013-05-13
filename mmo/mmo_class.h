@@ -56,6 +56,7 @@ public:
   Type getVariableType(AST_String name);
   void addVariable(AST_String name,AST_String tys); 
   
+
 private:
   void addVariable(MMO_Component); 
   MMO_EquationList _eqs;

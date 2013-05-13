@@ -193,6 +193,7 @@ bool MMO_Reduce_Equation_::simpleExpresion(AST_Expression e) {
 		case EXPREAL:
 		case EXPINTEGER:
 		case EXPCOMPREF:
+		case EXPDERIVATIVE:
 			return true;
 		default:
 			return false;
@@ -316,6 +317,22 @@ AST_Expression MMO_Reduce_Equation_::simplify_bool(AST_Expression e)
 			AST_ListAppend(ls,simplify_bool( b->expressionList()->front()));
 			return newAST_Expression_OutputExpressions(ls);
 		}  
+		
+		case EXPCALL:
+		{
+			cerr << "entro" << endl;
+			AST_Expression_Call c = e->getAsCall();
+			// Just for now, like this 
+			if ( * c->name() == "sample" ) 
+			{
+				AST_String name = new_label();
+				_c->addVariable( name , _S("Boolean"));	
+				AST_Expression cr = newAST_Expression_ComponentReferenceExp (name);
+				_c->addEquation( newAST_Equation_Equality( cr , c )  );
+				return cr;
+			}
+			
+		}
 		
 		case EXPBOOLEANNOT:
 		{

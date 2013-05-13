@@ -85,6 +85,27 @@ void MMO_Replace_Equation_::replace()
 }
 
 
+AST_Expression negar_cond(AST_Expression cond)
+{
+	AST_Expression_BinOp b = cond->getAsBinOp();
+	switch (b->binopType())
+	{
+		case BINOPLOWER: 
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPGREATER );
+		case BINOPLOWEREQ: 
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPGREATEREQ );
+		case BINOPGREATER: 
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPLOWER );
+		case BINOPGREATEREQ: 
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPLOWEREQ );
+		case BINOPCOMPNE: 
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPCOMPEQ );
+		case BINOPCOMPEQ: 
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPCOMPNE );
+	}
+}
+
+
 MMO_Statement MMO_Replace_Equation_::make_when(AST_Expression cond , AST_Expression_ComponentReference var)
 {
 	AST_Statement e1 = newAST_Statement_Assign(var , I(1) );
@@ -98,7 +119,7 @@ MMO_Statement MMO_Replace_Equation_::make_when(AST_Expression cond , AST_Express
 	
 	// FALTA NEGAR LA CONDICION!!!!
 	
-	AST_Statement_Else  _else = newAST_Statement_Else ( cond , l2 ); 
+	AST_Statement_Else  _else = newAST_Statement_Else ( negar_cond(cond) , l2 ); 
 	AST_Statement_ElseList elList = newAST_Statement_ElseList();
 	AST_ListAppend(elList,_else );
 
@@ -158,6 +179,11 @@ AST_Expression MMO_Replace_Equation_::replace_bool(AST_Expression_ComponentRefer
 			AST_ExpressionList ls = new list < AST_Expression > ();
 			AST_ListAppend(ls,replace_bool(v, b->expressionList()->front() )    )	;
 			return newAST_Expression_OutputExpressions(ls);
+		}  
+		  
+		case EXPCALL:
+		{
+			return NULL;
 		}  
 		  
 		case EXPIF:

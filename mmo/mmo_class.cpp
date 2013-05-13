@@ -156,3 +156,4 @@ Type MMO_Class::getVariableType(AST_String name)
 {
 	Type t = varEnv->lookup(*name)->type();
 }
+
