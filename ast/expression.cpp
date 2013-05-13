@@ -213,6 +213,10 @@ AST_Expression_Boolean AST_Expression_::getAsBoolean() {
   return dynamic_cast<AST_Expression_Boolean>(this);
 }
 
+AST_Expression_Call AST_Expression_::getAsCall() {
+  return dynamic_cast<AST_Expression_Call>(this);
+}
+
 ExpressionType AST_Expression_BooleanNot_::expressionType() { 
   return EXPBOOLEANNOT; 
 }

@@ -235,8 +235,8 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e)
 		
 		case EXPCALL:
 		{
-			
-			
+			AST_Expression_Call call = e->getAsCall();
+			return call;
 		}
 		
 		case EXPCOMPREF:
@@ -340,6 +340,53 @@ void MMO_ToMicroModelica_::toMicro_eq_if(AST_Equation_If iff)
  * 
  */
  
+AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_StatementList ls )
+{
+	switch (e->expressionType())
+	{
+		case EXPBINOP:
+		{
+			AST_Expression_BinOp b = e->getAsBinOp();
+			return newAST_Expression_BinOp(whenCondition(b->left(),ls),whenCondition(b->right(),ls) , b->binopType());
+		}
+		
+		case EXPBOOLEANNOT:
+		{
+			AST_Expression_BooleanNot no = e->getAsBooleanNot();
+			return newAST_Expression_BooleanNot( whenCondition( no->exp() ,ls) );
+		}
+		
+		case EXPOUTPUT:
+		{
+			AST_Expression_Output b = e->getAsOutput();
+			AST_ExpressionList lss = new list < AST_Expression > ();
+			AST_ListAppend(lss,whenCondition(b->expressionList()->front() , ls ) )	;
+			return newAST_Expression_OutputExpressions(lss);
+		}
+		
+		case EXPCALL:
+		{
+			AST_Expression_Call call = e->getAsCall();
+			if ( * call->name() == "sample") {
+				AST_String name = new_label();   // TNEXT
+				_c->addVariable( name , _S("Real"));	
+				AST_Expression_ComponentReference cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();
+				
+				AST_Expression per =   current (  ++call->arguments()->begin()   );
+				
+				AST_ListAppend(ls ,  newAST_Statement_Assign(cr, ADD(  cr ,per )  ) );
+				return GREATER( VAR(_S("time")) , cr );
+			}
+			if ( * call->name() == "initial") {
+				return GREATER( VAR(_S("time")) , I(0) );
+			}
+			return call;
+		}
+		default:
+			return e;
+	}	
+} 
+ 
 
 MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq) 
 {
@@ -366,7 +413,8 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 					AST_EquationListIterator eqit;
 					foreach(eqit, qelse->equations()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
 					
-					AST_ListAppend(elseList,newAST_Statement_Else( qelse->condition() , stmList   ) );
+					AST_Expression _cond = whenCondition(qelse->condition(), stmList);
+					AST_ListAppend(elseList,newAST_Statement_Else( _cond , stmList   ) );
 				}	
 			}
 			
@@ -374,7 +422,9 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 			AST_EquationListIterator eqit;
 			foreach(eqit, when->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
 			
-			return newAST_Statement_When( when->condition() , stmList , elseList);  
+			AST_Expression _cond = whenCondition(when->condition(), stmList);
+			
+			return newAST_Statement_When( _cond , stmList , elseList);  
 		}
 		
 		case EQIF:

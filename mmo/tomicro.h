@@ -27,6 +27,9 @@
 #ifndef TOMICRO_H
 #define TOMICRO_H
 
+#define VAR(v)		newAST_Expression_ComponentReferenceExp(v) 
+#define GREATER(l,r) 	newAST_Expression_BinOp(l, r, BINOPGREATER ) 
+#define LOWER(l,r) 	newAST_Expression_BinOp(l, r, BINOPLOWER )
 #define ADD(l,r) 	newAST_Expression_BinOp(l, r, BINOPADD )
 #define MULT(l,r) 	newAST_Expression_BinOp(l, r, BINOPMULT )
 #define SUB(l,r) 	newAST_Expression_BinOp(l, r, BINOPSUB )
@@ -49,7 +52,7 @@ private:
 	MMO_Equation toMicro_eq_equality(AST_Equation_Equality eq); 
 	AST_Expression toMicro_exp(AST_Expression);
 	 
-
+	AST_Expression whenCondition(AST_Expression e, AST_StatementList ls );
 	MMO_Statement make_when(AST_Expression cond , AST_Expression_ComponentReference var);
 	
 	 
