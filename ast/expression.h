@@ -43,6 +43,8 @@ public:
   AST_Expression_If_ElseIf getAsElseIf();
   AST_Expression_Boolean getAsBoolean();
   AST_Expression_Call getAsCall();
+  AST_Expression_Real getAsReal();
+  AST_Expression_Integer getAsInteger();
 };
 
 class AST_Expression_Integer_: public AST_Expression_ {
@@ -60,7 +62,7 @@ public:
   AST_Expression_Real_(double d);
   string print() const ;
   virtual ExpressionType expressionType();
-  double val();
+  double val() { return _d; }
 private:
 
   double _d;

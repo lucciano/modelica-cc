@@ -193,6 +193,14 @@ AST_Expression_Range AST_Expression_::getAsRange() {
   return dynamic_cast<AST_Expression_Range>(this);
 }
 
+AST_Expression_Real AST_Expression_::getAsReal() {
+  return dynamic_cast<AST_Expression_Real>(this);
+}
+
+AST_Expression_Integer AST_Expression_::getAsInteger() {
+  return dynamic_cast<AST_Expression_Integer>(this);
+}
+
 AST_Expression_If AST_Expression_::getAsIf() {
   return dynamic_cast<AST_Expression_If>(this);
 }
