@@ -280,6 +280,12 @@ AST_Expression newAST_Expression_BinOp(AST_Expression left, AST_Expression right
 }
 
 AST_Expression newAST_Expression_UnaryMinus(AST_Expression e) {
+  // Remove doble negation
+  if (e->expressionType()==EXPUMINUS) {
+    AST_Expression e2= e->getAsUMinus()->exp();
+    delete e;
+    return e2;
+  }
   return new AST_Expression_UMinus_(e);
 }
 
