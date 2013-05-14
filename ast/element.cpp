@@ -22,7 +22,6 @@
 #include <ast/class.h>
 #include <string>
 #include <ast/modification.h>
-
 using namespace std;
 
 AST_Element_ClassWrapper_::AST_Element_ClassWrapper_(AST_Class_ *c): _c(c){
@@ -104,7 +103,12 @@ string AST_Declaration_::print() const {
     if (modification()!=NULL) {
       if (modification()->modificationType()==MODEQUAL) {
         ret << " = " << modification()->getAsModificationEqual()->exp();
+      } else if (modification()->modificationType()==MODCLASS) {
+        AST_Expression e  = modification()->getAsModificationClass()->exp();
+        if (e!=NULL && e->expressionType()!=EXPNULL)
+          ret << " = " << e;
       }
+
     }
     return ret.str();
 }

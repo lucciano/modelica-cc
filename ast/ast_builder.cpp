@@ -616,9 +616,8 @@ AST_Argument newAST_ElementModification(AST_String, AST_Modification) {
   return NULL;
 }
 
-AST_Modification newAST_Modification(AST_ArgumentList,AST_Expression) {
-  /* TODO */
-  return NULL;
+AST_Modification newAST_ModificationClass(AST_ArgumentList al,AST_Expression e) {
+  return new AST_ModificationClass_(al,e);
 }
 
 AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs comp_eq_algs) {

@@ -37,7 +37,10 @@ class AST_ArgumentRedeclaration_: public AST_Argument_ {
 class AST_Modification_: public AST_Node {
 public:
   virtual ModificationType modificationType() { return MODNONE; }
+/* Conversion with dynamics casts */
   GET_AS(ModificationEqual);
+  GET_AS(ModificationClass);
+  GET_AS(ModificationAssign);
 };
 
 class AST_ModificationEqual_: public AST_Modification_ {
@@ -59,5 +62,18 @@ private:
   AST_Expression _e;
 
 };
+
+class AST_ModificationClass_: public AST_Modification_ {
+public:
+  AST_ModificationClass_(AST_ArgumentList al, AST_Expression e);
+  AST_Expression exp() { return _e; }
+  virtual ModificationType modificationType() { return MODCLASS; }
+private:
+  AST_Expression _e;
+  AST_ArgumentList _al;
+
+};
+
+
 #endif
 

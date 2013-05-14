@@ -104,7 +104,7 @@ bool AST_Expression_Boolean_::value() { return _b;}
 
 string AST_Expression_Boolean_::print() const { 
   stringstream ret(stringstream::out);
-  ret << "BOOLEAN[" << (_b ? "true" : "false") << "]";
+  ret << (_b ? "true" : "false") ;
   return ret.str();
 }
 

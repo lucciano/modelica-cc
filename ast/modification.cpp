@@ -26,4 +26,9 @@ AST_ModificationEqual_:: AST_ModificationEqual_(AST_Expression e): _e(e) {
 AST_ModificationAssign_:: AST_ModificationAssign_(AST_Expression e): _e(e) {
 }
 
+AST_ModificationClass_:: AST_ModificationClass_(AST_ArgumentList al,AST_Expression e): _e(e), _al(al) {
+}
+
 GET_AS_IMP(Modification,Equal);
+GET_AS_IMP(Modification,Class);
+GET_AS_IMP(Modification,Assign);

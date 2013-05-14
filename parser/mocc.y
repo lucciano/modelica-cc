@@ -461,7 +461,7 @@ opt_modification:
 ;
 
 modification:
-    class_modification opt_equal_exp  { $$ = newAST_Modification($1,$2); }
+    class_modification opt_equal_exp  { $$ = newAST_ModificationClass($1,$2); }
   | TOKEQUAL expression               { $$ = newAST_ModificationEqual($2); }
   | TOKASSING expression              { $$ = newAST_ModificationAssign($2); }
 ;

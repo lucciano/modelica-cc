@@ -89,6 +89,7 @@ DEFINE_TYPE(AST_ForIndex);
 DEFINE_TYPE(AST_ImportClause);
 DEFINE_TYPE(AST_Modification);
 DEFINE_TYPE(AST_ModificationAssign);
+DEFINE_TYPE(AST_ModificationClass);
 DEFINE_TYPE(AST_ModificationEqual);
 DEFINE_TYPE(AST_ShortClassExp);
 DEFINE_TYPE(AST_Statement);
@@ -120,7 +121,7 @@ enum ElementType { ELNONE, COMPONENT, IMPORT, EXTENDS, ELCLASS };
 enum EquationType { EQNONE, EQEQUALITY, EQCONNECT,EQCALL, EQFOR, EQWHEN, EQIF };
 enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, 
                       EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT, EXPRANGE };
-enum ModificationType { MODNONE ,MODEQUAL, MODASSIGN };
+enum ModificationType { MODNONE ,MODEQUAL, MODASSIGN, MODCLASS };
 
 /* Constructors */
 
@@ -250,7 +251,7 @@ AST_Equation_ElseList newAST_Equation_ElseList();
 AST_Equation_Else newAST_Equation_Else(AST_Expression, AST_EquationList);
 
 /* Modification */
-AST_Modification newAST_Modification(AST_ArgumentList,AST_Expression); 
+AST_Modification newAST_ModificationClass(AST_ArgumentList,AST_Expression); 
 AST_Modification newAST_ModificationEqual(AST_Expression);
 AST_Modification newAST_ModificationAssign(AST_Expression); 
 AST_Modification newAST_ModificationNull();
