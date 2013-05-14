@@ -36,7 +36,7 @@ void RemoveAlias::removeAliasEquations() {
 		  switch(eq->equationType()) {
 		    case EQEQUALITY:
 				  AST_Equation_Equality eqeq =  eq->getAsEquality();
-          IsConstant ic(_varSymbolTable);
+          //IsConstant ic(_varSymbolTable);
           if (IS_ZERO(eqeq->left()) && IS_SUM_OF_VARS(eqeq->right())) {
             // 0 =a + b;
             AST_Expression binop=eqeq->right();
@@ -61,7 +61,7 @@ void RemoveAlias::removeAliasEquations() {
             }
             delete binop;
           }
-          if (IS_VAR(eqeq->left()) && ic.foldTraverse(eqeq->right())) {
+          /*if (IS_VAR(eqeq->left()) && ic.foldTraverse(eqeq->right())) {
             // a = const;
             cerr << "REMOVING CONST_ALIAS: "<< eqeq;
            AST_ListAppend(remove,(AST_Equation)eqeq);
@@ -70,7 +70,7 @@ void RemoveAlias::removeAliasEquations() {
             // const =a;
             cerr << "REMOVING CONST_ALIAS: "<< eqeq;
            AST_ListAppend(remove,(AST_Equation)eqeq);
-          }
+          }*/
           if (IS_VAR(eqeq->left()) && IS_VAR(eqeq->right())) {
             // a = b;
            //cerr << "REMOVE ALIAS: "<< eqeq;

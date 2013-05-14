@@ -5,6 +5,7 @@ OBJS_ANTIALIAS := $(OBJS_COMMON) \
             util/type_check.o \
             util/symbol_table.o \
             antialias/remove_alias.o \
+            causalize/find_state.o \
             antialias/main.o 
 
 antialias/antialias: $(OBJS_ANTIALIAS)

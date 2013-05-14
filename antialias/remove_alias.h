@@ -1,6 +1,5 @@
 #include <iostream>
 #include <mmo/mmo_class.h>
-#include <util/ast_util.h>
 #include <util/symbol_table.h>
 
 using namespace std;

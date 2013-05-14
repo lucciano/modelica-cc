@@ -26,6 +26,7 @@
 #include <util/symbol_table.h>
 #include <mmo/mmo_class.h>
 #include <antialias/remove_alias.h>
+#include <causalize/find_state.h>
 
 using namespace std;
 
@@ -43,14 +44,16 @@ int main(int argc, char ** argv)
   TypeSymbolTable tyEnv = new TypeSymbolTable_;
   MMO_Class *c = new MMO_Class(sd->models()->front(), tyEnv);
   RemoveAlias ra(c);
+  StateVariablesFinder *finder = new StateVariablesFinder(c);
+  finder->findStateVariables();
   ra.removeAliasEquations();
 	MMO_EquationList eqs = c->getEquations();
 	MMO_EquationListIterator eqit;
-  if (eqs != NULL) {
+  /*if (eqs != NULL) {
     foreach(eqit, eqs) 
       cerr << current(eqit);
-  }
-  cerr << sd->models()->front();
+  }*/
+  cerr << sd;
 
   return 0;
 }
