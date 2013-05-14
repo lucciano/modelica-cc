@@ -42,7 +42,7 @@ public:
   MMO_Class(AST_Class, TypeSymbolTable ty);
   
   void addEquation(MMO_Equation);
-  MMO_EquationList getEquations();
+  MMO_EquationList getEquations() const; 
   void removeEquation(MMO_Equation);
   
   void addComponent(MMO_Component);
@@ -56,7 +56,9 @@ public:
   Type getExpresionType(AST_Expression e) ;
   Type getVariableType(AST_String name);
   void addVariable(AST_String name,AST_String tys); 
+  AST_String name() const { return _class->name(); }
   
+  friend ostream & operator<<(ostream &os , const MMO_Class &c );
 
 private:
   void addVariable(MMO_Component); 

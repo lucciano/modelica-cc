@@ -53,7 +53,7 @@ AST_Expression StateVariablesFinder::mapTraverseElement(AST_Expression e) {
 					VarInfo *varInfo = _varSymbolTable->lookup(compref->name());
 					if (varInfo != NULL) {
 						varInfo->setState();
-						cout << compref->name() << endl;
+						//cout << compref->name() << endl;
 					} else {
 						// TODO [Fede]
 					}

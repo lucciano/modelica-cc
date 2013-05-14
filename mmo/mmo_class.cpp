@@ -82,7 +82,7 @@ void MMO_Class::removeEquation(MMO_Equation e) {
 	AST_ListRemove(_eqs,e);
 }
 
-MMO_EquationList MMO_Class::getEquations() {
+MMO_EquationList MMO_Class::getEquations() const {
   return _eqs;
 }
 
@@ -161,3 +161,16 @@ Type MMO_Class::getVariableType(AST_String name)
 	Type t = varEnv->lookup(*name)->type();
 }
 
+ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
+  MMO_EquationList eqs = c.getEquations();
+  AST_EquationListIterator it;
+  ret << "class " << c.name() << endl;
+  if (eqs->size())
+    ret  << "equaiton" << endl;
+  BEGIN_BLOCK;
+  foreach(it,eqs) 
+    ret << current(it);
+  END_BLOCK;
+  ret  << "end " << c.name() << ";" << endl;
+  return ret;
+}

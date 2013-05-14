@@ -4,6 +4,7 @@
 #include <ast/ast_builder.h>
 #include <ast/expression.h>
 #include <util/symbol_table.h>
+#include <causalize/find_state.h>
 
 RemoveAlias::RemoveAlias(MMO_Class *c) {
 	_c = c;
@@ -27,65 +28,67 @@ RemoveAlias::RemoveAlias(MMO_Class *c) {
 
 void RemoveAlias::removeAliasEquations() {
 
-	MMO_EquationList eqs = _c->getEquations();
-	MMO_EquationListIterator eqit;
-	MMO_EquationList remove = newAST_EquationList();
+  StateVariablesFinder *finder = new StateVariablesFinder(_c);
+  finder->findStateVariables();
+  MMO_EquationList eqs = _c->getEquations();
+  MMO_EquationListIterator eqit;
+  MMO_EquationList remove = newAST_EquationList();
 
   if (eqs != NULL) {
     foreach(eqit, eqs) {
-		  AST_Equation eq = (AST_Equation) current(eqit);
-		  switch(eq->equationType()) {
-		    case EQEQUALITY:
-				  AST_Equation_Equality eqeq =  eq->getAsEquality();
-          //IsConstant ic(_varSymbolTable);
-          if (IS_ZERO(eqeq->left()) && IS_SUM_OF_VARS(eqeq->right())) {
-            // 0 =a + b;
-            AST_Expression binop=eqeq->right();
-            if (IS_ADD(binop)) {
-              eqeq->setLeft(newAST_Expression_UnaryMinus(LEFT_EXP(binop)));
-              eqeq->setRight(RIGHT_EXP(binop));
-            } else { 
-              eqeq->setLeft(LEFT_EXP(binop));
-              eqeq->setRight(RIGHT_EXP(binop));
-            }
-            delete binop;
+      AST_Equation eq = (AST_Equation) current(eqit);
+      switch(eq->equationType()) {
+        case EQEQUALITY:
+	AST_Equation_Equality eqeq =  eq->getAsEquality();
+        //IsConstant ic(_varSymbolTable);
+        if (IS_ZERO(eqeq->left()) && IS_SUM_OF_VARS(eqeq->right())) {
+          // 0 =a + b;
+          AST_Expression binop=eqeq->right();
+          if (IS_ADD(binop)) {
+            eqeq->setLeft(newAST_Expression_UnaryMinus(LEFT_EXP(binop)));
+            eqeq->setRight(RIGHT_EXP(binop));
+          } else { 
+            eqeq->setLeft(LEFT_EXP(binop));
+            eqeq->setRight(RIGHT_EXP(binop));
           }
-          if (IS_ZERO(eqeq->right()) && IS_SUM_OF_VARS(eqeq->left())) {
-            // a + b = 0;
-            AST_Expression binop=eqeq->left();
-            if (IS_ADD(binop)) {
-              eqeq->setLeft(newAST_Expression_UnaryMinus(LEFT_EXP(binop)));
-              eqeq->setRight(RIGHT_EXP(binop));
-            } else { 
-              eqeq->setLeft(LEFT_EXP(binop));
-              eqeq->setRight(RIGHT_EXP(binop));
-            }
-            delete binop;
+          delete binop;
+        }
+        if (IS_ZERO(eqeq->right()) && IS_SUM_OF_VARS(eqeq->left())) {
+          // a + b = 0;
+          AST_Expression binop=eqeq->left();
+          if (IS_ADD(binop)) {
+            eqeq->setLeft(newAST_Expression_UnaryMinus(LEFT_EXP(binop)));
+            eqeq->setRight(RIGHT_EXP(binop));
+          } else { 
+            eqeq->setLeft(LEFT_EXP(binop));
+            eqeq->setRight(RIGHT_EXP(binop));
           }
-          /*if (IS_VAR(eqeq->left()) && ic.foldTraverse(eqeq->right())) {
-            // a = const;
-            cerr << "REMOVING CONST_ALIAS: "<< eqeq;
-           AST_ListAppend(remove,(AST_Equation)eqeq);
-          }
-          if (IS_VAR(eqeq->right()) && ic.foldTraverse(eqeq->left())) {
-            // const =a;
-            cerr << "REMOVING CONST_ALIAS: "<< eqeq;
-           AST_ListAppend(remove,(AST_Equation)eqeq);
-          }*/
-          if (IS_VAR(eqeq->left()) && IS_VAR(eqeq->right())) {
-            // a = b;
-           if (IS_CREF(eqeq->left()) && !IS_STATE(eqeq->left())) {
-            cerr << "REMOVE ALIAS EQ: " << eqeq;
-            cerr << "REMOVE ALIAS VAR: "<< eqeq->left()->getAsComponentRef()->name() << endl;
+          delete binop;
+        }
+        /*if (IS_VAR(eqeq->left()) && ic.foldTraverse(eqeq->right())) {
+          // a = const;
+          cerr << "REMOVING CONST_ALIAS: "<< eqeq;
+         AST_ListAppend(remove,(AST_Equation)eqeq);
+        }
+        if (IS_VAR(eqeq->right()) && ic.foldTraverse(eqeq->left())) {
+          // const =a;
+          cerr << "REMOVING CONST_ALIAS: "<< eqeq;
+         AST_ListAppend(remove,(AST_Equation)eqeq);
+        }*/
+        if (IS_VAR(eqeq->left()) && IS_VAR(eqeq->right())) {
+          // a = b;
+          if (IS_CREF(eqeq->left()) && !IS_STATE(eqeq->left())) {
+            //cerr << "REMOVE ALIAS EQ: " << eqeq;
+            //cerr << "REMOVE ALIAS VAR: "<< eqeq->left()->getAsComponentRef()->name() << endl;
             AST_ListAppend(remove,(AST_Equation)eqeq);
           }
-          }
-				  break;
-				}
-			}
+        }
+	break;
+	}
+    }
     foreach(eqit, remove) 
       _c->removeEquation(current(eqit));  
-		}
+  }
 }
 
 
