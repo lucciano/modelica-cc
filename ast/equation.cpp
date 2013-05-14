@@ -186,6 +186,14 @@ string AST_Equation_Equality_::print() const {
   return ret.str();
 }
 
+void AST_Equation_Equality_::setLeft(AST_Expression e) {
+  _left=e;
+}
+
+void AST_Equation_Equality_::setRight(AST_Expression e) {
+  _right=e;
+}
+
 AST_Equation_Equality_::AST_Equation_Equality_ (AST_Expression left, AST_Expression right):_left(left), _right(right) {
 }
 
@@ -197,4 +205,4 @@ string AST_Equation_Connect_::print() const {
   MAKE_SPACE;
   ret << "connect(" << _cr1 << "," << _cr2 <<");" << endl;
   return ret.str();
-  }
+}

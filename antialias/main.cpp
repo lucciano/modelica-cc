@@ -18,12 +18,39 @@
 
 ******************************************************************************/
 
-#include <ast/modification.h>
+#include <iostream>
 
-AST_ModificationEqual_:: AST_ModificationEqual_(AST_Expression e): _e(e) {
+#include <parser/parse.h>
+#include <ast/stored_definition.h>
+#include <ast/class.h>
+#include <util/symbol_table.h>
+#include <mmo/mmo_class.h>
+#include <antialias/remove_alias.h>
+
+using namespace std;
+
+int main(int argc, char ** argv)
+{
+  int r;
+  if (argc<2) {
+    cerr << "Usage:\nantialias file.mo\n";
+    return -1;
+  }
+  AST_StoredDefinition sd = parseFile(argv[1],&r);
+  if (r!=0) 
+    return -1;
+
+  TypeSymbolTable tyEnv = new TypeSymbolTable_;
+  MMO_Class *c = new MMO_Class(sd->models()->front(), tyEnv);
+  RemoveAlias ra(c);
+  ra.removeAliasEquations();
+	MMO_EquationList eqs = c->getEquations();
+	MMO_EquationListIterator eqit;
+  if (eqs != NULL) {
+    foreach(eqit, eqs) 
+      cerr << current(eqit);
+  }
+  cerr << sd->models()->front();
+
+  return 0;
 }
-
-AST_ModificationAssign_:: AST_ModificationAssign_(AST_Expression e): _e(e) {
-}
-
-GET_AS_IMP(Modification,Equal);

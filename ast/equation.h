@@ -47,6 +47,8 @@ public:
   string print() const ;
   AST_Expression left() const;
   AST_Expression right() const;
+  void setLeft(AST_Expression);
+  void setRight(AST_Expression);
 
 private:
   AST_Expression _left,_right;

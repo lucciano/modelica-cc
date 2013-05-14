@@ -14,10 +14,11 @@ OBJS_COMMON := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
-all:mmo/mmo causalize/causalize
+all:mmo/mmo causalize/causalize antialias/antialias
 
 include mmo/Makefile.include
 include causalize/Makefile.include
+include antialias/Makefile.include
 
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
@@ -27,10 +28,10 @@ docs:
 	doxygen 
 
 parser/mocc_parser.cpp: parser/mocc.y
-	@BISONXX@ -t -d -v -hparser/mocc_parser.h -o parser/mocc_parser.cpp parser/mocc.y
+	bison++ -t -d -v -hparser/mocc_parser.h -o parser/mocc_parser.cpp parser/mocc.y
 
 parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
-	@FLEXXX@ -d -oparser/mocc_scanner.cpp parser/mocc.lex
+	flex++ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
 clean:
 	rm -rf $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h mmo/mmo casusalize/causalize 

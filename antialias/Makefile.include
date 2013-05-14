@@ -1,0 +1,15 @@
+OBJS_ANTIALIAS := $(OBJS_COMMON) \
+            mmo/mmo_class.o \
+            util/ast_util.o \
+            util/type.o \
+            util/type_check.o \
+            util/symbol_table.o \
+            antialias/remove_alias.o \
+            antialias/main.o 
+
+antialias/antialias: $(OBJS_ANTIALIAS)
+	$(CXX) $(CXXFLAGS) -o antialias/antialias $(OBJS_ANTIALIAS)
+
+
+
+	

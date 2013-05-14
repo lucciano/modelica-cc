@@ -436,7 +436,7 @@ component_declaration:
 ;
 
 declaration:
-  TOKID opt_array_subscripts opt_modification  { $$ = newAST_Declaration($1,$2); }
+  TOKID opt_array_subscripts opt_modification  { $$ = newAST_Declaration($1,$2,$3); }
 ;
 
 opt_condition_attribute:

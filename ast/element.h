@@ -65,13 +65,15 @@ private:
 
 class AST_Declaration_: public AST_Element_{
 public:
-  AST_Declaration_(string name, AST_ExpressionList indexes);
+  AST_Declaration_(string name, AST_ExpressionList indexes, AST_Modification);
   string print() const;
-  string name() { return _name; }
-  AST_ExpressionList index() { return _indexes;}
+  string name() const { return _name; }
+  AST_ExpressionList indexes() const { return _indexes;}
+  AST_Modification modification() const { return _mod; }
 private:
   string _name;
   AST_ExpressionList _indexes;
+  AST_Modification _mod;
 };
 
 class AST_Component_: public AST_Element_ {

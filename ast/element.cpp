@@ -21,6 +21,7 @@
 #include <ast/element.h>
 #include <ast/class.h>
 #include <string>
+#include <ast/modification.h>
 
 using namespace std;
 
@@ -80,21 +81,30 @@ AST_ImportClause_::AST_ImportClause_(string name):_name(name) {
 AST_ExtendsClause_ ::AST_ExtendsClause_ (string name):_name(name) {
 }
 
-AST_Declaration_::AST_Declaration_(string name, AST_ExpressionList indexes):_name(name), _indexes(indexes) {}
+AST_Declaration_::AST_Declaration_(string name, AST_ExpressionList indexes, AST_Modification m):_name(name), _indexes(indexes), _mod(m) {
+  if (m!=NULL) {
+    cerr << name << " has a modifier";
+  }
+}
 ;
 string AST_Declaration_::print() const { 
     stringstream ret(stringstream::out);
     AST_ExpressionListIterator it;
-    ret << _name;
-    if (_indexes->size()) {
+    ret << name();
+    if (indexes()->size()) {
       ret << "[";
-      int size=_indexes->size(),i=0;
-      foreach (it,_indexes) {
+      int size=indexes()->size(),i=0;
+      foreach (it,indexes()) {
         i++;
         ret << current(it);
         if (i<size) ret << ",";
       }
       ret << "]";
+    }
+    if (modification()!=NULL) {
+      if (modification()->modificationType()==MODEQUAL) {
+        ret << " = " << modification()->getAsModificationEqual()->exp();
+      }
     }
     return ret.str();
 }

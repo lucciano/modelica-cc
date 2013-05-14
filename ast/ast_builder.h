@@ -31,6 +31,8 @@
 #define MAKE_SPACE for (int i=0;i<depth;i++) ret << " ";
 #define BEGIN_BLOCK depth+=2;
 #define END_BLOCK depth-=2;
+#define GET_AS(X) AST_##X getAs##X ();
+#define GET_AS_IMP(X,Y) AST_##X##Y AST_##X##_::getAs##X##Y () { return dynamic_cast<AST_##X##Y > (this); }
 extern int depth;
 
 class MCC_Parser;
@@ -86,6 +88,8 @@ DEFINE_TYPE(AST_ExtendsClause);
 DEFINE_TYPE(AST_ForIndex);
 DEFINE_TYPE(AST_ImportClause);
 DEFINE_TYPE(AST_Modification);
+DEFINE_TYPE(AST_ModificationAssign);
+DEFINE_TYPE(AST_ModificationEqual);
 DEFINE_TYPE(AST_ShortClassExp);
 DEFINE_TYPE(AST_Statement);
 DEFINE_TYPE(AST_Statement_Break);
@@ -110,12 +114,13 @@ DEFINE_LIST(AST_Statement_Else);
 DEFINE_LIST(AST_String);
 
 /* Enums */
+enum BinOpType { BINOPOR, BINOPAND, BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINOPGREATEREQ, BINOPCOMPNE, BINOPCOMPEQ,
+                 BINOPADD, BINOPELADD, BINOPSUB, BINOPELSUB, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPEXP, BINOPELEXP };
 enum ElementType { ELNONE, COMPONENT, IMPORT, EXTENDS, ELCLASS };
 enum EquationType { EQNONE, EQEQUALITY, EQCONNECT,EQCALL, EQFOR, EQWHEN, EQIF };
 enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, 
                       EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT, EXPRANGE };
-enum BinOpType { BINOPOR, BINOPAND, BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINOPGREATEREQ, BINOPCOMPNE, BINOPCOMPEQ,
-                 BINOPADD, BINOPELADD, BINOPSUB, BINOPELSUB, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPEXP, BINOPELEXP };
+enum ModificationType { MODNONE ,MODEQUAL, MODASSIGN };
 
 /* Constructors */
 
@@ -191,7 +196,7 @@ AST_Element AST_ExtendsToElement(AST_ExtendsClause e);
 AST_ExtendsClause newAST_ExtendsClause(AST_String);
 AST_Element newAST_Element_ClassWrapper(AST_Class);
 AST_CompositionElementList newAST_CompositionElementList();
-AST_Declaration newAST_Declaration(AST_String,AST_ExpressionList);
+AST_Declaration newAST_Declaration(AST_String,AST_ExpressionList, AST_Modification);
 AST_DeclarationList newAST_DeclarationList(AST_Declaration);
 AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs);
 AST_CompositionElement newAST_CompositionElement(AST_ElementList);

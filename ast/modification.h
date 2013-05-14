@@ -20,6 +20,7 @@
 
 #ifndef AST_MODIFICAITON
 #define AST_MODIFICAITON
+
 #include <ast/ast_node.h>
 #include <ast/ast_builder.h>
 
@@ -27,11 +28,36 @@ class AST_Argument_: public AST_Node {
 
 };
 
-class AST_ArgumentModification_: public AST_Argument {
+class AST_ArgumentModification_: public AST_Argument_ {
 };
 
-class AST_ArgumentRedeclaration_: public AST_Argument {
+class AST_ArgumentRedeclaration_: public AST_Argument_ {
 };
 
+class AST_Modification_: public AST_Node {
+public:
+  virtual ModificationType modificationType() { return MODNONE; }
+  GET_AS(ModificationEqual);
+};
+
+class AST_ModificationEqual_: public AST_Modification_ {
+public:
+  AST_ModificationEqual_(AST_Expression e);
+  AST_Expression exp() { return _e; }
+  virtual ModificationType modificationType() { return MODEQUAL; }
+private:
+  AST_Expression _e;
+
+};
+
+class AST_ModificationAssign_: public AST_Modification_ {
+public:
+  AST_ModificationAssign_(AST_Expression e);
+  AST_Expression exp() { return _e; }
+  virtual ModificationType modificationType() { return MODASSIGN; }
+private:
+  AST_Expression _e;
+
+};
 #endif
 

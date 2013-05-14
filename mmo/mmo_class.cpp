@@ -119,7 +119,7 @@ void MMO_Class::addVariable(MMO_Component c)
 	foreach(it , c->nameList()) {
 		
 		AST_ExpressionList dims = newAST_ExpressionList();
-		AST_ListConcat(dims, current(it)->index() );
+		AST_ListConcat(dims, current(it)->indexes() );
 		AST_ListConcat(dims, c->indexes() );
 		
 		if (dims->size() > 0 ) 

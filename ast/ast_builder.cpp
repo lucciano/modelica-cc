@@ -25,6 +25,7 @@
 #include <ast/expression.h>
 #include <ast/equation.h>
 #include <ast/statement.h>
+#include <ast/modification.h>
 #include <cassert>
 
 class MCC_Parser;
@@ -193,8 +194,8 @@ AST_Component newAST_Component(AST_DeclarationList cl, AST_String type, AST_Type
   return c;
 }
 
-AST_Declaration newAST_Declaration(AST_String s,AST_ExpressionList indexes) {
-  AST_Declaration ret = new AST_Declaration_(*s,indexes);
+AST_Declaration newAST_Declaration(AST_String s,AST_ExpressionList indexes, AST_Modification m) {
+  AST_Declaration ret = new AST_Declaration_(*s,indexes,m);
   delete s;
   return ret;
 }
@@ -505,13 +506,11 @@ AST_Argument AST_ArgumentSetReplaceable(AST_Argument arg) {
   return arg;
 }
 
-AST_Modification newAST_ModificationEqual(AST_Expression) {
-  /* TODO */
-  return NULL;
+AST_Modification newAST_ModificationEqual(AST_Expression e) {
+  return new AST_ModificationEqual_(e);
 }
-AST_Modification newAST_ModificationAssign(AST_Expression) {
-  /* TODO */
-  return NULL;
+AST_Modification newAST_ModificationAssign(AST_Expression e) {
+  return new AST_ModificationAssign_(e);
 }
 
 AST_Expression newAST_Expression_Range(AST_Expression e1, AST_Expression e2) {
