@@ -81,9 +81,6 @@ AST_ExtendsClause_ ::AST_ExtendsClause_ (string name):_name(name) {
 }
 
 AST_Declaration_::AST_Declaration_(string name, AST_ExpressionList indexes, AST_Modification m):_name(name), _indexes(indexes), _mod(m) {
-  if (m!=NULL) {
-    cerr << name << " has a modifier";
-  }
 }
 ;
 string AST_Declaration_::print() const { 

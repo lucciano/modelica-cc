@@ -23,6 +23,7 @@ RemoveAlias::RemoveAlias(MMO_Class *c) {
 #define IS_SUB(X) ((X)->expressionType()==EXPBINOP && (X)->getAsBinOp()->binopType()==BINOPSUB)
 #define IS_SUM_(X) (IS_SUB(X) || IS_ADD(X))
 #define IS_SUM_OF_VARS(X) (IS_SUM_(X) && (IS_VAR((X)->getAsBinOp()->left()) && IS_VAR((X)->getAsBinOp()->right())))
+#define IS_STATE(X) (_varSymbolTable->lookup((X)->getAsComponentRef()->name())!=NULL && _varSymbolTable->lookup(X->getAsComponentRef()->name())->isState())
 
 void RemoveAlias::removeAliasEquations() {
 
@@ -73,14 +74,17 @@ void RemoveAlias::removeAliasEquations() {
           }*/
           if (IS_VAR(eqeq->left()) && IS_VAR(eqeq->right())) {
             // a = b;
-           //cerr << "REMOVE ALIAS: "<< eqeq;
-           AST_ListAppend(remove,(AST_Equation)eqeq);
+           if (IS_CREF(eqeq->left()) && !IS_STATE(eqeq->left())) {
+            cerr << "REMOVE ALIAS EQ: " << eqeq;
+            cerr << "REMOVE ALIAS VAR: "<< eqeq->left()->getAsComponentRef()->name() << endl;
+            AST_ListAppend(remove,(AST_Equation)eqeq);
+          }
           }
 				  break;
 				}
 			}
     foreach(eqit, remove) 
-      eqs->remove(current(eqit));  
+      _c->removeEquation(current(eqit));  
 		}
 }
 

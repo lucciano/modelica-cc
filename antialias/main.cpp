@@ -43,17 +43,16 @@ int main(int argc, char ** argv)
 
   TypeSymbolTable tyEnv = new TypeSymbolTable_;
   MMO_Class *c = new MMO_Class(sd->models()->front(), tyEnv);
-  RemoveAlias ra(c);
-  StateVariablesFinder *finder = new StateVariablesFinder(c);
-  finder->findStateVariables();
+  /*StateVariablesFinder *finder = new StateVariablesFinder(c);
+  finder->findStateVariables();*/
+  RemoveAlias *ra = new RemoveAlias(c);
   ra.removeAliasEquations();
 	MMO_EquationList eqs = c->getEquations();
 	MMO_EquationListIterator eqit;
-  /*if (eqs != NULL) {
+  if (eqs != NULL) {
     foreach(eqit, eqs) 
       cerr << current(eqit);
-  }*/
-  cerr << sd;
+  }
 
   return 0;
 }

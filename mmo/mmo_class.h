@@ -43,6 +43,7 @@ public:
   
   void addEquation(MMO_Equation);
   MMO_EquationList getEquations();
+  void removeEquation(MMO_Equation);
   
   void addComponent(MMO_Component);
   MMO_ComponentList getComponents();

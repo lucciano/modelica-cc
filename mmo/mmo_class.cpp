@@ -78,6 +78,10 @@ void MMO_Class::addEquation(MMO_Equation e) {
 	AST_ListAppend(_eqs,e);
 }
 
+void MMO_Class::removeEquation(MMO_Equation e) {
+	AST_ListRemove(_eqs,e);
+}
+
 MMO_EquationList MMO_Class::getEquations() {
   return _eqs;
 }

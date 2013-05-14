@@ -327,6 +327,9 @@ template <typename T1>
 list<T1> * AST_ListPrepend(list<T1> *l, T1 e) { l->push_front(e); return l; }
 
 template <typename T1>
+list<T1> * AST_ListRemove(list<T1> *l, T1 e) { l->remove(e); return l; }
+
+template <typename T1>
 T1 AST_ListFirst(list<T1> *l) {return l->front();}
 
 
