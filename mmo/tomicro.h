@@ -35,6 +35,7 @@
 #define SUB(l,r) 	newAST_Expression_BinOp(l, r, BINOPSUB )
 #define I(n) 		newAST_Expression_Integer(n)
 #define PA(e)       newAST_Expression_OutputExpressions(e) 
+#define UMENOS(e)   SUB( I(1) , e )
 
 
 class MMO_ToMicroModelica_ {
@@ -55,7 +56,8 @@ private:
 	AST_Expression whenCondition(AST_Expression e, AST_StatementList ls );
 	MMO_Statement make_when(AST_Expression cond , AST_Expression_ComponentReference var);
 	
-	 
+	AST_Expression makeCondition(AST_ExpressionList ls , int n );
+	AST_Expression makeEquation(AST_EquationList ls , AST_ExpressionList cond); 
  
 	
 };

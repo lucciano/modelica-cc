@@ -6,12 +6,20 @@ model Prueba
 	Boolean f;
 	Boolean j;
 equation
-	b =  if  (if ( b < 50) then true else false ) then 10 else 50;	
-	when sample(0,1) then
-		a = 1;
-	elsewhen initial() then 
+	if f then 
+		exp1 = 50 < 2;
+		exp3 = exp4;
+	elseif j then
+		eee = if a then 1 else 2;
+		b = 4;
+	elseif w then
+		eee = if a then 1 else 2;
+		b = 4;
+	else
 		a = 5;
-	end when;
+		b = 6;
+	end if;	
+		
 public
     Real c;   
 end Prueba;     

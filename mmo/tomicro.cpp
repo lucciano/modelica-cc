@@ -225,6 +225,12 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e)
 			}
 		}
 		
+		case EXPUMINUS:
+		{
+			AST_Expression_UMinus u = e->getAsUMinus();
+			return newAST_Expression_UnaryMinus( toMicro_exp(u->exp()) );
+		}
+		
 		case EXPOUTPUT :
 		{
 			AST_Expression_Output b = e->getAsOutput();
@@ -294,46 +300,83 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e)
 }
 
 
+AST_Expression MMO_ToMicroModelica_::makeCondition(AST_ExpressionList ls , int n )
+{
+	AST_ExpressionListIterator exit =  ls->begin();
+	int i;
+	if (n==0) return  current(exit);
+	AST_Expression e = UMENOS(current(exit)) ;
+	exit++;
+	for(i = 1; i < n; i++ ){
+		e = MULT( e , UMENOS(  current(exit) ));
+		exit++;
+	}
+	if (n < ls->size())
+		e = MULT( e , current(exit));
+	return e;
+	
+}
+
+AST_Expression MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_ExpressionList cond)
+{
+	int i = 0;
+	AST_Expression e1,e2;
+	AST_EquationListIterator eqit = ls->begin();
+	e1 = MULT( toMicro_exp(current(eqit)->getAsEquality()->left())   , makeCondition(cond,0) );
+	e2 = MULT( toMicro_exp(current(eqit)->getAsEquality()->right())  , makeCondition(cond,0) );
+	eqit++;
+	for (i = 1; i < ls->size(); i ++ ){
+		e1 = ADD(e1,MULT( toMicro_exp(current(eqit)->getAsEquality()->left())   , makeCondition(cond,i) ));
+		e2 = ADD(e2,MULT( toMicro_exp(current(eqit)->getAsEquality()->right())  , makeCondition(cond,i) ));
+		eqit++;
+	}
+	_c->addEquation(newAST_Equation_Equality(e1,e2));
+}
+
 
 /*
  * 
  * CAMBIAR ESTE IF POR EL OTRO NUEVO
- * 
+ * PRECONDICION: MISMA CANTIDAD DE ECUACIONES EN CADA RAMA
 */
 void MMO_ToMicroModelica_::toMicro_eq_if(AST_Equation_If iff)
 {
-	AST_EquationListIterator eqit;
-	foreach( eqit , iff->equationList() )
-	{
-		if ( current(eqit)->equationType()  != EQEQUALITY ) throw "No es una ecuacion!!";
-		AST_Equation_Equality e = current(eqit)->getAsEquality();
-		AST_Expression find = find_equation(e->left() , iff->equationElseList());
+	AST_ExpressionList condList = newAST_ExpressionList();
+	AST_ListAppend(condList,toMicro_exp(iff->condition()));
 	
-		if (find == NULL ) throw "No se encontro la ecuacion!!";
-		
-		AST_ExpressionList elseIfList = newAST_ExpressionList() ;
-		
-		if ( ! iff->equationElseIf()->empty() ) {
-			AST_Equation_ElseListIterator elseit;
-			foreach(elseit, iff->equationElseIf()) {
-				AST_Equation_Else elseIf =  current(elseit);
-				
-				AST_Expression _find = find_equation(e->left() , elseIf->equations());
-				if (_find == NULL ) throw "No se encontro la ecuacion!!";
-				AST_ListAppend(elseIfList,newAST_Expression_ElseIf(elseIf->condition() , _find) );
-				
-				
-			}
-			
-		}
-		
-		AST_Expression expIf = newAST_Expression_If(iff->condition() , e->right(), elseIfList , find );
-		_c->addEquation( newAST_Equation_Equality( e->left(), expIf  ));
-		
+	/*  Lista de condiciones */ 
+	if ( ! iff->equationElseIf()->empty() ) {
+		AST_Equation_ElseListIterator elseit;
+		foreach(elseit, iff->equationElseIf()) AST_ListAppend(condList, toMicro_exp(current(elseit)->condition()) );
 	}
-	return ;
+	int nro =  iff->equationList()->size();
+	
+	/*  Re ordeno las ecuaciones */ 
+	AST_EquationList * ls = new AST_EquationList[nro];
+	for(int i = 0; i < nro;i++) ls[i] = newAST_EquationList();
+	
+	AST_EquationListIterator eqit;
+	int k = 0;
+	foreach (eqit, iff->equationList()) AST_ListAppend( ls[k++] , current(eqit) );
+	
+	if ( ! iff->equationElseIf()->empty() ) {
+		AST_Equation_ElseListIterator elseit;
+		foreach(elseit, iff->equationElseIf()) {
+			AST_Equation_Else elseIf =  current(elseit);
+			k = 0;
+			foreach( eqit , elseIf->equations() ) AST_ListAppend( ls[k++] , current(eqit) );		
+		}
+	}
+	k=0;
+	foreach (eqit, iff->equationElseList()) AST_ListAppend( ls[k++] , current(eqit) );
+	
+	/* Ahora transformo y creo */
+	for(k= 0;k < nro;k++) makeEquation(ls[k],condList );
+	
+	 
+	
+	
 }
-
 
 /*
  * 	FALTA VER SAMPLE Y LAS VARIABLES STATES
@@ -348,6 +391,12 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 		{
 			AST_Expression_BinOp b = e->getAsBinOp();
 			return newAST_Expression_BinOp(whenCondition(b->left(),ls),whenCondition(b->right(),ls) , b->binopType());
+		}
+		
+		case EXPUMINUS:
+		{
+			AST_Expression_UMinus u = e->getAsUMinus();
+			return newAST_Expression_UnaryMinus( whenCondition(u->exp(),ls));
 		}
 		
 		case EXPBOOLEANNOT:
