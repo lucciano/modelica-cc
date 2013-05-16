@@ -456,7 +456,9 @@ AST_Expression AST_Expression_ComponentReferenceExpAdd(AST_Expression_ComponentR
 AST_Expression newAST_Expression_NamedArgument(AST_String, AST_Expression) {
 }
 
-AST_Expression newAST_Expression_FunctionCallArgs(AST_ExpressionList) {
+AST_Expression newAST_Expression_FunctionCallArgs(AST_ExpressionList el) {
+  AST_Expression e=new AST_Expression_CallArgs_(el);
+  return e;
 }
 
 

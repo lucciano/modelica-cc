@@ -135,6 +135,10 @@ string AST_Expression_BooleanNot_::print() const {
 
 AST_Expression_Call_::AST_Expression_Call_(AST_String name, AST_ExpressionList args):_name(name), _args(args) { };
 
+AST_Expression_CallArgs_::AST_Expression_CallArgs_(AST_ExpressionList args): _args(args) { };
+string AST_Expression_CallArgs_::print() const {}
+
+
 string AST_Expression_Call_::print() const {
   stringstream ret;
   AST_ExpressionListIterator it;

@@ -663,7 +663,7 @@ statement_list:
 ;
 
 statement: 
-    component_reference opt_assing comment           { $$ = newAST_Statement_Assign($1,$2); }
+    component_reference opt_assing comment           { $$ = newAST_Statement_Assign($1,$2);}
   | TOKOPAREN output_expression_list TOKCPAREN 
     TOKASSING component_reference function_call_args { $$ = newAST_Statement_OutputAssign($2,$5,$6); }
   | while_statement comment                          { $$ = $1; }
@@ -735,7 +735,7 @@ opt_more_args:
 
 opt_assing:
     TOKASSING expression  { $$ = $2; }
-  | function_call_args    { newAST_Expression_FunctionCallArgs($1);  }
+  | function_call_args    { $$= newAST_Expression_FunctionCallArgs($1);  }
 ;
 
 function_argument:

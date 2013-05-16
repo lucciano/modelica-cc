@@ -134,6 +134,17 @@ private:
   AST_ExpressionList _args;
 };
 
+class AST_Expression_CallArgs_: public AST_Expression_ {
+public:
+  AST_Expression_CallArgs_(AST_ExpressionList args);
+  AST_ExpressionList arguments() const { return _args; }
+  virtual ExpressionType expressionType() { return EXPCALLARG; }
+  string print() const ;
+
+private:
+  AST_ExpressionList _args;
+};
+
 class AST_Expression_ComponentReference_: public AST_Expression_ {
 public:
   AST_Expression_ComponentReference_(AST_String name, AST_ExpressionList);

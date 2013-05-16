@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include <ast/statement.h>
+#include <ast/expression.h>
 #include <iostream>
 #include <sstream>
 
@@ -47,7 +48,10 @@ string AST_Statement_Break_::print() const {
 string AST_Statement_Assign_::print() const { 
   stringstream ret(stringstream::out);
   MAKE_SPACE;
-  ret << lhs() << ":=" << exp() << ";"<<endl;
+  if (exp()->expressionType()!=EXPCALLARG)
+    ret << lhs() << ":=" << exp() << ";"<<endl;
+  else  
+    ret << lhs() << "();" << endl;
   return ret.str();
 }
 AST_Statement_Assign_::AST_Statement_Assign_(AST_Expression_ComponentReference lhs,AST_Expression exp): _lhs(lhs), _exp(exp) {
