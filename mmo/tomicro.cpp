@@ -444,7 +444,17 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 		{ 
 			AST_Equation_Equality _e =  eq->getAsEquality();
 			if (_e->left()->expressionType() == EXPCOMPREF)
-				return newAST_Statement_Assign(  _e->left()->getAsComponentRef() , _e->right() );
+			{
+				AST_Expression_ComponentReference cf = _e->left()->getAsComponentRef(); 
+				VarInfo *varInfo = _c->getVarSymbolTable()->lookup( * (cf->names()->front()));
+				if (varInfo->isState()) {
+					AST_ExpressionList ls = newAST_ExpressionList(); 
+					AST_ListAppend(ls, (AST_Expression)cf );
+					AST_ListAppend(ls, _e->right() );
+					return newAST_Statement_Assign(AST_Expression_ComponentReference(_S("reinit")), newAST_Expression_FunctionCallArgs(ls) );
+				} else 
+					return newAST_Statement_Assign( cf  , _e->right() );
+			}
 			//if (_e->left()->expressionType() == EXPOUTPUT)	
 			//	return 
 		}

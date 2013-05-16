@@ -30,6 +30,8 @@
 #include <util/symbol_table.h>
 #include <util/type_check.h>
 #include <mmo/tomicro.h>
+#include <causalize/find_state.h>
+
 
 #include <iostream>
 using namespace std;
@@ -54,6 +56,8 @@ int main(int argc, char ** argv)
 
 	 
 	MMO_ToMicroModelica_ * re = new MMO_ToMicroModelica_(d);  
+	StateVariablesFinder * finder = new StateVariablesFinder(d); 
+	finder->findStateVariables(); 
 	 
 	cerr << "Reduciendo Ecuaciones" << endl;
 	try { 

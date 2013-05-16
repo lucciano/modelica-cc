@@ -6,7 +6,8 @@ OBJS_MMO := $(OBJS_COMMON) \
             util/type.o \
             util/symbol_table.o \
             util/type_check.o \
-            mmo/tomicro.o
+            mmo/tomicro.o \
+            causalize/find_state.o 
       
 
 mmo/mmo: $(OBJS_MMO)

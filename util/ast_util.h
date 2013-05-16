@@ -22,6 +22,9 @@
 #include <ast/expression.h>
 #include <util/symbol_table.h>
 
+#ifndef AST_UTIL 
+#define AST_UTIL
+
 class AST_Expression_Traverse {
 public:
   AST_Expression mapTraverse(AST_Expression);
@@ -57,3 +60,5 @@ private:
   virtual bool foldTraverseElement(bool , bool , BinOpType);
   VarSymbolTable _st;
 };
+
+#endif
