@@ -6,11 +6,6 @@
 #include <util/symbol_table.h>
 #include <causalize/find_state.h>
 
-RemoveAlias::RemoveAlias(MMO_Class *c) {
-	_c = c;
-	_varSymbolTable = c->getVarSymbolTable();
-}
-
 #define IS_CREF(X) ((X)->expressionType()==EXPCOMPREF)
 #define IS_UMINUS(X) ((X)->expressionType()==EXPUMINUS)
 #define IS_UMINUS_VAR(X) (IS_UMINUS(X) && IS_CREF((X)->getAsUMinus()->exp()))
@@ -26,8 +21,9 @@ RemoveAlias::RemoveAlias(MMO_Class *c) {
 #define IS_SUM_OF_VARS(X) (IS_SUM_(X) && (IS_VAR((X)->getAsBinOp()->left()) && IS_VAR((X)->getAsBinOp()->right())))
 #define IS_STATE(X) (_varSymbolTable->lookup((X)->getAsComponentRef()->name())!=NULL && _varSymbolTable->lookup(X->getAsComponentRef()->name())->isState())
 
-void RemoveAlias::removeAliasEquations() {
+void RemoveAlias::removeAliasEquations(MMO_Class *_c) {
 
+	_varSymbolTable = _c->getVarSymbolTable();
   StateVariablesFinder *finder = new StateVariablesFinder(_c);
   finder->findStateVariables();
   MMO_EquationList eqs = _c->getEquations();

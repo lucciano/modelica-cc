@@ -31,6 +31,7 @@ using namespace std;
 
 int main(int argc, char ** argv)
 {
+  RemoveAlias ra;
   int r;
   if (argc<2) {
     cerr << "Usage:\nantialias file.mo\n";
@@ -42,9 +43,10 @@ int main(int argc, char ** argv)
 
   TypeSymbolTable tyEnv = new TypeSymbolTable_;
   MMO_Class *c = new MMO_Class(sd->models()->front(), tyEnv);
-  RemoveAlias *ra = new RemoveAlias(c);
-  ra->removeAliasEquations();
+  ra.removeAliasEquations(c);
   cerr << *c;
+  delete c;
+  delete tyEnv;
 
   return 0;
 }

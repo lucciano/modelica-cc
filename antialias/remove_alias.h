@@ -6,8 +6,7 @@ using namespace std;
 
 class RemoveAlias {
 public:
-	RemoveAlias(MMO_Class *c);
-	void removeAliasEquations();
+	void removeAliasEquations(MMO_Class *c);;
 private:
 	MMO_Class *_c;
 	VarSymbolTable _varSymbolTable;
