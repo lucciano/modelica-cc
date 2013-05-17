@@ -51,14 +51,15 @@ string AST_Statement_Assign_::print() const {
   MAKE_SPACE;
   if (exp()->expressionType()!=EXPCALLARG)
     ret << lhs() << ":=" << exp() << ";"<<endl;
-  else  
+  else if (exp()->expressionType()==EXPCALLARG) {
     ret << lhs() << "(";
     int size=exp()->getAsCallArgs()->arguments()->size(),i=0;
     foreach(it,exp()->getAsCallArgs()->arguments()) {
       ret << current(it) << (++i<size ? "," : "");
     }
-    
     ret << ");" << endl;
+  }
+    
   return ret.str();
 }
 AST_Statement_Assign_::AST_Statement_Assign_(AST_Expression_ComponentReference lhs,AST_Expression exp): _lhs(lhs), _exp(exp) {
