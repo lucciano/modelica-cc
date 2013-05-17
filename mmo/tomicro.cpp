@@ -28,17 +28,24 @@ MMO_ToMicroModelica_::MMO_ToMicroModelica_ (MMO_Class * c): _c(c) {} ;
 
 void MMO_ToMicroModelica_::transform()
 {
+	/* Aca comienza todo el ciclo */
+	transformEqList(_c->getEquations(), _c->getStatements() );
+}
+
+
+void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_StatementList stList)
+{
 	AST_EquationListIterator eqit;
 	list<AST_EquationListIterator> * del = new list<AST_EquationListIterator>();
 	
-    foreach(eqit,_c->getEquations()) {		
+    foreach(eqit,eqList) {		
 		AST_Equation eq = current(eqit);
 				
 		switch (eq->equationType()) 
 		{
 			case EQEQUALITY:
 			{
-				AST_Equation _e = toMicro_eq_equality(eq->getAsEquality());
+				AST_Equation _e = toMicro_eq_equality(eq->getAsEquality(), stList );
 				
 				if (_e != NULL)  current(eqit) = _e;
 				else AST_ListAppend(del,eqit);
@@ -60,10 +67,19 @@ void MMO_ToMicroModelica_::transform()
 			
 			case EQIF:
 			{
-				toMicro_eq_if(eq->getAsIf());
+				AST_EquationList ls = toMicro_eq_if(eq->getAsIf(),stList );
+				AST_EquationListIterator eqit;
+				foreach(eqit,ls)  _c->addEquation(current(eqit));
 				AST_ListAppend(del,eqit);
 				break;
 			}	
+			
+			case EQFOR:
+			{
+				AST_Equation _e = toMicro_eq_for(eq->getAsFor(),stList);
+				current(eqit) = _e;
+				break;
+			}
 			
 			default:
 				cerr << "Error: "  << eq->equationType() << endl;
@@ -74,7 +90,7 @@ void MMO_ToMicroModelica_::transform()
 	}
 	
 	list<AST_EquationListIterator>::iterator delIt;
-	foreach(delIt,del) _c->getEquations()->erase(current(delIt));
+	foreach(delIt,del) eqList->erase(current(delIt));
 
 	
 }
@@ -143,7 +159,7 @@ AST_Expression find_equation(AST_Expression e, AST_EquationList eqList )
 	
 }
 
-MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq)
+MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq , AST_StatementList stList)
 {
 	AST_Expression r = eq->right();
 	switch (r->expressionType())
@@ -161,7 +177,7 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq)
 				case BINOPCOMPEQ:
 				{
 					// Ver esta precondicion (si o si component ref)	
-					_c->addStatement(make_when( b, eq->left()->getAsComponentRef() ));
+					AST_ListAppend(stList , make_when( b, eq->left()->getAsComponentRef() ));
 					return NULL;
 				
 				} 
@@ -177,13 +193,18 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq)
 		}
 			
 	}
-	AST_Expression _r = toMicro_exp(eq->right());
+	AST_Expression _r = toMicro_exp(eq->right(),stList);
 	return newAST_Equation_Equality( eq->left() , _r );
 }
 
-
-AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e)
+AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_StatementList ls)
 {
+	
+	return toMicro_exp(e , ls , NULL);
+}
+
+AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_StatementList stList , IndexMap iMap)
+{	
 	switch (e->expressionType())
 	{
 		case EXPBINOP:
@@ -198,28 +219,32 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e)
 				case BINOPCOMPNE: 
 				case BINOPCOMPEQ:
 				{
-					AST_String name = new_label();
-					_c->addVariable( name , _S("Real"));	
-					AST_Expression_ComponentReference cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();
-					AST_Expression _b = newAST_Expression_BinOp( toMicro_exp(b->left()) , toMicro_exp(b->right()) ,b->binopType()  );
-					_c->addStatement(make_when( _b, cr ));
-					return cr;
+					if (!iMap) {
+						AST_String name = new_label();
+						_c->addVariable( name , _S("Real"));	
+						AST_Expression_ComponentReference cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();
+						AST_Expression _b = newAST_Expression_BinOp( toMicro_exp(b->left(),stList,iMap) , toMicro_exp(b->right(),stList,iMap) ,b->binopType()  );
+						AST_ListAppend(stList, make_when( _b, cr ));
+						return cr;
+					}else {
+						
+					}
 					
 				}
 				
 				case BINOPAND:
 				{
-					return MULT( toMicro_exp(b->left()) , toMicro_exp(b->right()) );
+					return MULT( toMicro_exp(b->left(),stList,iMap) , toMicro_exp(b->right(),stList,iMap) );
 				}
 				
 				case BINOPOR:
 				{
-					return SUB(I(1) , MULT( SUB(I(1) , toMicro_exp(b->left())) , SUB(I(1) ,toMicro_exp(b->right()) ) ) ) ;
+					return SUB(I(1) , MULT( SUB(I(1) , toMicro_exp(b->left(),stList,iMap)) , SUB(I(1) ,toMicro_exp(b->right(),stList,iMap) ) ) ) ;
 				}	
 				
 				default:
 				{
-					return newAST_Expression_BinOp( toMicro_exp(b->left()) , toMicro_exp(b->right()) ,b->binopType()  );
+					return newAST_Expression_BinOp( toMicro_exp(b->left(),stList,iMap) , toMicro_exp(b->right(),stList,iMap) ,b->binopType()  );
 				}
 				 
 			}
@@ -228,14 +253,14 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e)
 		case EXPUMINUS:
 		{
 			AST_Expression_UMinus u = e->getAsUMinus();
-			return newAST_Expression_UnaryMinus( toMicro_exp(u->exp()) );
+			return newAST_Expression_UnaryMinus( toMicro_exp(u->exp(),stList,iMap) );
 		}
 		
 		case EXPOUTPUT :
 		{
 			AST_Expression_Output b = e->getAsOutput();
 			AST_ExpressionList ls = new list < AST_Expression > ();
-			AST_ListAppend(ls,toMicro_exp(b->expressionList()->front() ) )	;
+			AST_ListAppend(ls,toMicro_exp(b->expressionList()->front(),stList ,iMap) )	;
 			return newAST_Expression_OutputExpressions(ls);
 		}
 		
@@ -251,7 +276,7 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e)
 		case EXPBOOLEANNOT:	
 		{
 			AST_Expression_BooleanNot no = e->getAsBooleanNot();
-			return SUB(I(1) , toMicro_exp( no->exp() ) ) ;
+			return SUB(I(1) , toMicro_exp( no->exp() ,stList ,iMap) ) ;
 		}	
 		
 		case EXPBOOLEAN:
@@ -283,9 +308,9 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e)
 				i = iff->getAsIf();
 			}
 			
-			AST_Expression eq1 = toMicro_exp(i->then());
-			AST_Expression eq2 = toMicro_exp(i->else_exp());
-			AST_Expression cond = toMicro_exp(i->condition());
+			AST_Expression eq1 = toMicro_exp(i->then(),stList,iMap);
+			AST_Expression eq2 = toMicro_exp(i->else_exp(),stList,iMap);
+			AST_Expression cond = toMicro_exp(i->condition(),stList,iMap);
 			return ADD( MULT( cond , eq1 )  ,  MULT ( SUB(I(1), cond )   , eq2 )  );
 			
 		}	
@@ -317,20 +342,20 @@ AST_Expression MMO_ToMicroModelica_::makeCondition(AST_ExpressionList ls , int n
 	
 }
 
-AST_Expression MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_ExpressionList cond)
+AST_Equation  MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_ExpressionList cond,MMO_StatementList stList)
 {
 	int i = 0;
 	AST_Expression e1,e2;
 	AST_EquationListIterator eqit = ls->begin();
-	e1 = MULT( toMicro_exp(current(eqit)->getAsEquality()->left())   , makeCondition(cond,0) );
-	e2 = MULT( toMicro_exp(current(eqit)->getAsEquality()->right())  , makeCondition(cond,0) );
+	e1 = MULT( toMicro_exp(current(eqit)->getAsEquality()->left(),stList)   , makeCondition(cond,0) );
+	e2 = MULT( toMicro_exp(current(eqit)->getAsEquality()->right(),stList)  , makeCondition(cond,0) );
 	eqit++;
 	for (i = 1; i < ls->size(); i ++ ){
-		e1 = ADD(e1,MULT( toMicro_exp(current(eqit)->getAsEquality()->left())   , makeCondition(cond,i) ));
-		e2 = ADD(e2,MULT( toMicro_exp(current(eqit)->getAsEquality()->right())  , makeCondition(cond,i) ));
+		e1 = ADD(e1,MULT( toMicro_exp(current(eqit)->getAsEquality()->left(),stList)   , makeCondition(cond,i) ));
+		e2 = ADD(e2,MULT( toMicro_exp(current(eqit)->getAsEquality()->right(),stList)  , makeCondition(cond,i) ));
 		eqit++;
 	}
-	_c->addEquation(newAST_Equation_Equality(e1,e2));
+	return newAST_Equation_Equality(e1,e2);
 }
 
 
@@ -339,15 +364,15 @@ AST_Expression MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_Expr
  * CAMBIAR ESTE IF POR EL OTRO NUEVO
  * PRECONDICION: MISMA CANTIDAD DE ECUACIONES EN CADA RAMA
 */
-void MMO_ToMicroModelica_::toMicro_eq_if(AST_Equation_If iff)
+AST_EquationList MMO_ToMicroModelica_::toMicro_eq_if(AST_Equation_If iff , MMO_StatementList stList)
 {
 	AST_ExpressionList condList = newAST_ExpressionList();
-	AST_ListAppend(condList,toMicro_exp(iff->condition()));
+	AST_ListAppend(condList,toMicro_exp(iff->condition(),stList));
 	
 	/*  Lista de condiciones */ 
 	if ( ! iff->equationElseIf()->empty() ) {
 		AST_Equation_ElseListIterator elseit;
-		foreach(elseit, iff->equationElseIf()) AST_ListAppend(condList, toMicro_exp(current(elseit)->condition()) );
+		foreach(elseit, iff->equationElseIf()) AST_ListAppend(condList, toMicro_exp(current(elseit)->condition(),stList) );
 	}
 	int nro =  iff->equationList()->size();
 	
@@ -371,11 +396,9 @@ void MMO_ToMicroModelica_::toMicro_eq_if(AST_Equation_If iff)
 	foreach (eqit, iff->equationElseList()) AST_ListAppend( ls[k++] , current(eqit) );
 	
 	/* Ahora transformo y creo */
-	for(k= 0;k < nro;k++) makeEquation(ls[k],condList );
-	
-	 
-	
-	
+	AST_EquationList eqList = newAST_EquationList();
+	for(k= 0;k < nro;k++) AST_ListAppend(eqList,makeEquation(ls[k],condList,stList));
+	return eqList;
 }
 
 /*
@@ -525,3 +548,15 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 		
 	}	
 }
+
+MMO_Equation MMO_ToMicroModelica_::toMicro_eq_for (AST_Equation_For f, MMO_StatementList stList)
+{
+	IndexMap iMap = NULL; //viewIndex(f->forIndexList());
+	MMO_StatementList stLs = newAST_StatementList();
+	
+	transformEqList(f->equationList() , stLs );
+	
+	if (stList->size() > 0)
+		AST_ListAppend(stList , newAST_Statement_For(f->forIndexList() , stLs) ) ;
+	return f;
+} 
