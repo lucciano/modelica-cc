@@ -193,6 +193,11 @@ AST_Expression_ComponentReference AST_Expression_::getAsComponentRef() {
 }
 
 
+AST_Expression_CallArgs AST_Expression_::getAsCallArgs() {
+  return dynamic_cast<AST_Expression_CallArgs>(this);
+}
+
+
 AST_Expression_Range AST_Expression_::getAsRange() {
   return dynamic_cast<AST_Expression_Range>(this);
 }

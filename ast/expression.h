@@ -43,6 +43,7 @@ public:
   AST_Expression_If_ElseIf getAsElseIf();
   AST_Expression_Boolean getAsBoolean();
   AST_Expression_Call getAsCall();
+  AST_Expression_CallArgs getAsCallArgs();
   AST_Expression_Real getAsReal();
   AST_Expression_Integer getAsInteger();
 };

@@ -47,11 +47,18 @@ string AST_Statement_Break_::print() const {
 
 string AST_Statement_Assign_::print() const { 
   stringstream ret(stringstream::out);
+  AST_ExpressionListIterator it;
   MAKE_SPACE;
   if (exp()->expressionType()!=EXPCALLARG)
     ret << lhs() << ":=" << exp() << ";"<<endl;
   else  
-    ret << lhs() << "();" << endl;
+    ret << lhs() << "(";
+    int size=exp()->getAsCallArgs()->arguments()->size(),i=0;
+    foreach(it,exp()->getAsCallArgs()->arguments()) {
+      ret << current(it) << (++i<size ? "," : "");
+    }
+    
+    ret << ");" << endl;
   return ret.str();
 }
 AST_Statement_Assign_::AST_Statement_Assign_(AST_Expression_ComponentReference lhs,AST_Expression exp): _lhs(lhs), _exp(exp) {
