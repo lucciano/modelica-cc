@@ -11,13 +11,13 @@
 
 UnknownCollector::UnknownCollector(MMO_Class *c) {
 	_c = c;
+	_unknowns = new list<string>;
 }
 
 UnknownCollector::~UnknownCollector() {
 }
 
-void UnknownCollector::collectUnknowns() {
-	cout << "Unknowns: ";
+list<string> *UnknownCollector::collectUnknowns() {
   VarSymbolTable symbolTable = _c->getVarSymbolTable();
 	int i; int symbolTableSize = symbolTable->count();
 	for (i = 0; i<symbolTableSize; i++) {
@@ -27,12 +27,17 @@ void UnknownCollector::collectUnknowns() {
 				&& !varInfo->isDiscrete()
 				&& !varInfo->isParameter()) {
 				if (varInfo->isState()) {
-				  cout << "der(" << symbolTable->varName(i) << ")" << " ";
+				  _unknowns->push_back(replaceStateByDer(symbolTable->varName(i)));
 				} else {
-				  cout << symbolTable->varName(i) << " ";
+				  _unknowns->push_back(symbolTable->varName(i));
 				}
 		}
 	}
-	cout << endl;
+	return _unknowns;
+}
 
+string UnknownCollector::replaceStateByDer(string state) {
+  string s1 =  "der(";
+  string s2 = ")";
+  return s1.append(state.append(s2));
 }

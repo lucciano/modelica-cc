@@ -50,7 +50,12 @@ int main(int argc, char ** argv)
   DiscreteVariablesFinder *discreteVarFinder = new DiscreteVariablesFinder(c);
   discreteVarFinder->findDiscreteVariables();
   UnknownCollector *collector = new UnknownCollector(c);
-  collector->collectUnknowns();
-
+  list<string> *unknowns = collector->collectUnknowns();
+  list<string>::iterator unknownsIter;
+  cout << "Unknowns: ";
+  foreach(unknownsIter, unknowns) {
+    cout << current(unknownsIter) << " ";
+  }
+  cout << endl;
   return 0;
 }
