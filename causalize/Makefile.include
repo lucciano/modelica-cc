@@ -5,7 +5,9 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             util/type_check.o \
             util/symbol_table.o \
             causalize/main.o \
-            causalize/find_state.o
+            causalize/find_state.o \
+            causalize/find_discrete_var.o \
+            causalize/collect_unknowns.o
 
 causalize/causalize: $(OBJS_CAUSALIZE)
 	$(CXX) $(CXXFLAGS) -o causalize/causalize $(OBJS_CAUSALIZE)

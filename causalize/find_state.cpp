@@ -2,7 +2,7 @@
  * findstate.cpp
  *
  *  Created on: 28/04/2013
- *      Author: fede
+ *      Author: Moya
  */
 
 #include <iostream>
@@ -18,27 +18,62 @@ StateVariablesFinder::StateVariablesFinder(MMO_Class *c) {
 }
 
 StateVariablesFinder::~StateVariablesFinder() {
-	// TODO [Fede] Auto-generated destructor stub
+	// TODO [Moya] Auto-generated destructor stub
 }
 
 void StateVariablesFinder::findStateVariables() {
+  MMO_EquationList eqs = _c->getEquations();
+  findStateVariablesInEquations(eqs);
+}
 
-	MMO_EquationList eqs = _c->getEquations();
-	MMO_EquationListIterator eqit;
-
-		if (eqs != NULL) {
-			foreach(eqit, eqs) {
-				AST_Equation eq = (AST_Equation) current(eqit);
-				switch(eq->equationType()) {
-					case EQEQUALITY:
-						AST_Equation_Equality eqeq =  eq->getAsEquality();
-						mapTraverse(eqeq->left());
-						mapTraverse(eqeq->right());
-						break;
-					// TODO [Fede] ver como es el manejo de errores y/o excepciones.
-				}
-			}
-		}
+void StateVariablesFinder::findStateVariablesInEquations(MMO_EquationList eqs) {
+  MMO_EquationListIterator eqIter;
+  if (eqs != NULL) {
+    foreach(eqIter, eqs) {
+      MMO_Equation eq = current(eqIter);
+      switch(eq->equationType()) {
+        case EQEQUALITY:
+        {
+          AST_Equation_Equality eqEq = eq->getAsEquality();
+          mapTraverse(eqEq->left());
+          mapTraverse(eqEq->right());
+        }
+          break;
+        case EQWHEN:
+        {
+          AST_Equation_When eqWhen = eq->getAsWhen();
+          findStateVariablesInEquations(eqWhen->equationList());
+          AST_Equation_ElseList elseWhenList = eqWhen->equationElseWhen();
+          AST_Equation_ElseListIterator elseWhenListIter;
+          foreach(elseWhenListIter, elseWhenList) {
+            AST_Equation_Else eqElse = current(elseWhenListIter);
+            findStateVariablesInEquations(eqElse->equations());
+          }
+        }
+          break;
+        case EQCALL:
+          // TODO [Moya] Este caso no hay que considerarlo, cierto?
+          break;
+        case EQCONNECT:
+          // TODO [Moya]
+          break;
+        case EQFOR:
+          // TODO [Moya]
+          break;
+        case EQIF:
+          // TODO Es correcto considerar toda la lista de ecuaciones? Porque de este if sale una sola ecuacion, o no?
+//          AST_Equation_If eqIf = eq->getAsIf();
+//          AST_EquationList innerEqs = eqIf->equationList();
+//          findStateVariablesInEquations(innerEqs);
+          break;
+        case EQNONE:
+          // TODO [Moya] ver como es el manejo de errores y/o excepciones.
+          break;
+        default:
+        ;// TODO [Moya] ver como es el manejo de errores y/o excepciones.
+      }
+    }
+  }
 }
 
 AST_Expression StateVariablesFinder::mapTraverseElement(AST_Expression e) {
@@ -46,19 +81,21 @@ AST_Expression StateVariablesFinder::mapTraverseElement(AST_Expression e) {
 		case EXPDERIVATIVE:
 			AST_Expression_Derivative der = e->getAsDerivative();
 			AST_ExpressionList arguments = der->arguments();
-			AST_Expression argument = arguments->front(); // FIXME [Fede] Por ahora nos quedamos con el 1er elemento. En un futuro habra que iterar sobre todos los elementos de la lista.
+			AST_Expression argument = arguments->front(); // FIXME [Moya] Por ahora nos quedamos con el 1er elemento. En un futuro habra que iterar sobre todos los elementos de la lista.
 			switch(argument->expressionType()) {
 				case EXPCOMPREF:
+				{
 					AST_Expression_ComponentReference compref = argument->getAsComponentRef();
 					VarInfo *varInfo = _varSymbolTable->lookup(compref->name());
 					if (varInfo != NULL) {
 						varInfo->setState();
 						//cout << compref->name() << endl;
 					} else {
-						// TODO [Fede]
+						// TODO [Moya]
 					}
+				}
 					break;
-				// TODO [Fede] ver como es el manejo de errores y/o excepciones.
+				// TODO [Moya] ver como es el manejo de errores y/o excepciones.
 			}
 
 	}

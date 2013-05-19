@@ -21,12 +21,16 @@
 #include <util/symbol_table.h>
 
 
-VarInfo::VarInfo ( Type t, AST_TypePrefix tp): _state(false) , _t(t) , _tp(tp) {
+VarInfo::VarInfo ( Type t, AST_TypePrefix tp): _state(false), _discrete(false) , _t(t) , _tp(tp) {
 };
 
 bool VarInfo::isState() {return _state;};
 
 void VarInfo::setState() { _state = true; };
+
+void VarInfo::setDiscrete() {
+	_discrete = true;
+}
 
 Type VarInfo::type() {return _t;};
 

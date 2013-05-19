@@ -26,6 +26,8 @@
 #include <util/symbol_table.h>
 #include <mmo/mmo_class.h>
 #include <causalize/find_state.h>
+#include <causalize/find_discrete_var.h>
+#include <causalize/collect_unknowns.h>
 
 using namespace std;
 
@@ -43,9 +45,12 @@ int main(int argc, char ** argv)
   TypeSymbolTable tyEnv = new TypeSymbolTable_;
   MMO_Class *c = new MMO_Class(sd->models()->front(), tyEnv);
 
-  StateVariablesFinder *finder = new StateVariablesFinder(c);
-  cout << "Las siguientes variables son estados:" << endl;
-  finder->findStateVariables();
-  
+  StateVariablesFinder *stateFinder = new StateVariablesFinder(c);
+  stateFinder->findStateVariables();
+  DiscreteVariablesFinder *discreteVarFinder = new DiscreteVariablesFinder(c);
+  discreteVarFinder->findDiscreteVariables();
+  UnknownCollector *collector = new UnknownCollector(c);
+  collector->collectUnknowns();
+
   return 0;
 }

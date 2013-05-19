@@ -29,7 +29,7 @@ MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 	_stms = new list<MMO_Statement>();
 	varEnv = new VarSymbolTable_;
 	tyEnv = ty;
-  varEnv->initialize(ty);
+//  varEnv->initialize(ty);
 	
 	AST_Composition comp = c->composition();
 

@@ -19,6 +19,7 @@ public:
 	void findStateVariables();
 	virtual AST_Expression mapTraverseElement(AST_Expression);
 private:
+	void findStateVariablesInEquations(MMO_EquationList eqs);
 	MMO_Class *_c;
 	VarSymbolTable _varSymbolTable;
 };
