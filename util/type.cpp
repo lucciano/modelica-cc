@@ -56,7 +56,21 @@ string Type_String_ :: print() const{
 
 string Type_Array_ :: print() const{
 	stringstream ret(stringstream::out);
-    ret << "Array [" <<  _dim <<  "]  of " << _t->print() ;
+	AST_ExpressionList exls = newAST_ExpressionList();
+	Type tt = _t;
+	AST_ListPrepend(exls, _dim);
+	while ( tt->getType() == TYARRAY ) {
+		AST_ListPrepend(exls, tt->getAsArray()->dimension() );
+		tt = tt->getAsArray()-> arrayOf();
+	}
+	
+	ret <<  tt->print() << " [" ;
+	AST_ExpressionListIterator exit = exls->begin();
+	int s = exls->size();
+	for(int i = 0; i < s; i++)
+		ret << current(exit++) <<  ( i + 1 < s ? "," :   "") ;
+	
+	ret << "]" ;
     return ret.str();
 }
 

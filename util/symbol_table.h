@@ -70,18 +70,20 @@ class VarInfo {
 public:  
   VarInfo( Type t, AST_TypePrefix tp);
   AST_TypePrefix typePrefix() {return _tp;};
-  bool isParameter() { return _tp & TP_PARAMETER; }
-  bool isDiscrete() { return (_tp & TP_DISCRETE) || _discrete; }
+  bool isParameter() const { return _tp & TP_PARAMETER; }
+  bool isDiscrete() const  { return (_tp & TP_DISCRETE) || _discrete; }
   /**
   * Para el caso de una variable real la cual es asignada en una clausula when.
   */
   void setDiscrete();
-  bool isConstant() { return _tp & TP_CONSTANT; }
-  bool isInput() { return _tp & TP_INPUT; }
-  bool isOutput() { return _tp & TP_OUTPUT; }
+  bool isConstant() const { return _tp & TP_CONSTANT; }
+  bool isInput() const { return _tp & TP_INPUT; }
+  bool isOutput() const { return _tp & TP_OUTPUT; }
   Type type();
   bool isState();
   void setState();
+  
+  friend ostream & operator<<(ostream &os , const VarInfo &e );
 private:
   bool _state;
   bool _discrete;

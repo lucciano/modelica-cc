@@ -60,11 +60,15 @@ int main(int argc, char ** argv)
 	finder->findStateVariables(); 
 	 
 	cerr << "Reduciendo Ecuaciones" << endl;
+	
+	
 	try { 
 		re->transform();
 	} catch (char const * c) {  cerr << c << endl; exit(-1);}
+	cerr << "---------------------" << endl;
 	
-	AST_EquationListIterator eqit;
+	cerr << *d <<  endl;
+	/*AST_EquationListIterator eqit;
 	cerr << "equation " << endl;
 	
 	foreach(eqit,d->getEquations()) {
@@ -76,15 +80,15 @@ int main(int argc, char ** argv)
 	foreach(stit,d->getStatements()) {
 		cerr << current(stit) << endl;
 	}
-	
+	*/
 	
 	//cerr << c << "---------------------" << endl;
 	
-    cerr << "----------------------" << endl << " Variables: " << endl;
+   /* cerr << "----------------------" << endl << " Variables: " << endl;
     AST_ComponentListIterator cit;
     foreach(cit,d->getComponents()) {
 		cerr << "-> " << current(cit)->name() << ":" <<  d->getVarSymbolTable()->lookup(current(cit)->name())->type() << endl;	
-	}
+	}*/
 	//cerr << "-> a:" <<  d->getVariableType(_S("a")) << endl;	
 	
 	

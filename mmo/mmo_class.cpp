@@ -90,7 +90,7 @@ void MMO_Class::addStatement(MMO_Statement e) {
 	AST_ListAppend(_stms,e);
 }
 
-MMO_StatementList MMO_Class::getStatements() {
+MMO_StatementList MMO_Class::getStatements() const {
   return _stms;
 }
 
@@ -98,7 +98,7 @@ void MMO_Class::addComponent(MMO_Component c) {
 	AST_ListAppend(_comps,c);
 }
 
-MMO_ComponentList MMO_Class::getComponents() {
+MMO_ComponentList MMO_Class::getComponents() const {
   return _comps;
 }
 
@@ -154,7 +154,7 @@ void MMO_Class::addVariable(AST_String name , AST_String tys)
 	varEnv->insert(*name, v);
 }
 
-VarSymbolTable  MMO_Class::getVarSymbolTable()
+VarSymbolTable  MMO_Class::getVarSymbolTable() const
 {
 	return varEnv;
 }
@@ -173,16 +173,34 @@ Type MMO_Class::getVariableType(AST_String name)
 	Type t = varEnv->lookup(*name)->type();
 }
 
+
 ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
-  MMO_EquationList eqs = c.getEquations();
+  MMO_EquationList  eqs = c.getEquations();
+  MMO_StatementList stm = c.getStatements();
   AST_EquationListIterator it;
+  AST_StatementListIterator stit;
   ret << "class " << c.name() << endl;
+  
+  VarSymbolTable symbolTable = c.getVarSymbolTable();
+  int i; int symbolTableSize = symbolTable->count();
+  for (i = 0; i<symbolTableSize; i++) {
+	VarInfo *var = symbolTable->varInfo(i);
+	ret << var  << " "  << symbolTable->varName(i) << ";" << endl;  
+  }
   if (eqs->size())
-    ret  << "equaiton" << endl;
+    ret  << "equation" << endl;
   BEGIN_BLOCK;
   foreach(it,eqs) 
     ret << current(it);
   END_BLOCK;
+  
+  if (stm->size())
+    ret  << "algothrims" << endl;
+  BEGIN_BLOCK;
+  foreach(stit,stm) 
+    ret << current(stit);
+  END_BLOCK;
+  
   ret  << "end " << c.name() << ";" << endl;
   return ret;
 }

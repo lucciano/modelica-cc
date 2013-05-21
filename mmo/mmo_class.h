@@ -46,12 +46,12 @@ public:
   void removeEquation(MMO_Equation);
   
   void addComponent(MMO_Component);
-  MMO_ComponentList getComponents();
+  MMO_ComponentList getComponents() const;
   
   void addStatement(MMO_Statement);
-  MMO_StatementList getStatements();
+  MMO_StatementList getStatements() const;
   
-  VarSymbolTable getVarSymbolTable();
+  VarSymbolTable getVarSymbolTable() const;
   TypeSymbolTable getTypeSymbolTable();
   Type getExpresionType(AST_Expression e) ;
   Type getVariableType(AST_String name);
