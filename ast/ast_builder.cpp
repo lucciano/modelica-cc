@@ -216,6 +216,7 @@ AST_Expression newAST_Expression_ComponentReferenceExp(AST_String s) {
   return e;
 }
 
+
 AST_Expression newAST_Expression_ComponentReferenceExp(AST_String s, AST_String s2) {
   if (s2!=NULL) {
     s->append(*s2);

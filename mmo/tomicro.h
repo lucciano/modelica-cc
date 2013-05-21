@@ -37,6 +37,7 @@
 #define PA(e)       newAST_Expression_OutputExpressions(e) 
 #define UMENOS(e)   SUB( I(1) , e )
 
+typedef std::map<string, AST_Expression> 		IndexMap_;
 typedef std::map<string, AST_Expression> 		* IndexMap;
 
 class MMO_ToMicroModelica_ {
@@ -49,12 +50,12 @@ private:
 	MMO_Class * _c;
 	AST_String  new_label();
 	
-	void transformEqList(AST_EquationList  , AST_StatementList );
+	void transformEqList(AST_EquationList  , AST_StatementList,IndexMap );
 	
-	AST_EquationList 	toMicro_eq_if(AST_Equation_If,MMO_StatementList );
+	AST_EquationList 	toMicro_eq_if(AST_Equation_If,MMO_StatementList,IndexMap );
 	MMO_Statement		toMicro_eq_when (AST_Equation );
-	MMO_Equation 		toMicro_eq_equality(AST_Equation_Equality , MMO_StatementList); 
-	MMO_Equation		toMicro_eq_for(AST_Equation_For,MMO_StatementList);
+	MMO_Equation 		toMicro_eq_equality(AST_Equation_Equality , MMO_StatementList,IndexMap); 
+	MMO_Equation		toMicro_eq_for(AST_Equation_For,MMO_StatementList,IndexMap);
 	AST_Expression 		toMicro_exp(AST_Expression , AST_StatementList);
 	AST_Expression 		toMicro_exp(AST_Expression , AST_StatementList,IndexMap);
 	 
@@ -62,9 +63,10 @@ private:
 	MMO_Statement 		make_when(AST_Expression  , AST_Expression_ComponentReference );
 	
 	AST_Expression 		makeCondition(AST_ExpressionList  , int  );
-	AST_Equation 		makeEquation(AST_EquationList  , AST_ExpressionList ,MMO_StatementList ); 
+	AST_Equation 		makeEquation(AST_EquationList  , AST_ExpressionList ,MMO_StatementList,IndexMap ); 
  
-	
+	IndexMap viewIndex(IndexMap , AST_ForIndexList );
+	bool IndexAccess(AST_Expression e, string i );
 };
 
 

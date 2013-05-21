@@ -134,6 +134,18 @@ void MMO_Class::addVariable(MMO_Component c)
 	}
 }
 
+void MMO_Class::addVariable(AST_String name , AST_String tys, AST_ExpressionList dims)
+{
+	Type t = tyEnv->lookup(*tys);
+	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
+	if (dims->size() > 0 ) 
+			t = make_array_type(  dims, t  );
+	VarInfo * v = new VarInfo(t , newAST_TypePrefix() );
+	varEnv->insert(*name, v);
+}
+
+
+
 void MMO_Class::addVariable(AST_String name , AST_String tys)
 {
 	Type t = tyEnv->lookup(*tys);
