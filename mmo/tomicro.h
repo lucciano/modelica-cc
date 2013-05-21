@@ -56,7 +56,6 @@ private:
 	MMO_Statement		toMicro_eq_when (AST_Equation );
 	MMO_Equation 		toMicro_eq_equality(AST_Equation_Equality , MMO_StatementList,IndexMap); 
 	MMO_Equation		toMicro_eq_for(AST_Equation_For,MMO_StatementList,IndexMap);
-	AST_Expression 		toMicro_exp(AST_Expression , AST_StatementList);
 	AST_Expression 		toMicro_exp(AST_Expression , AST_StatementList,IndexMap);
 	 
 	AST_Expression 		whenCondition(AST_Expression , AST_StatementList  );

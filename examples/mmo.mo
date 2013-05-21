@@ -6,19 +6,10 @@ model Prueba
 	Boolean f;
 	Boolean j;
 equation
-	if f then 
-		exp1 = 50 < 2;
-		exp3 = exp4;
-	elseif j then
-		eee = if a then 1 else 2;
-		b = 4;
-	elseif w then
-		eee = if a then 1 else 2;
-		b = 4;
-	else
-		a = 5;
-		b = 6;
-	end if;	
+	for i in 1:10 loop
+		m[i] = if f < 4 then 1 else 2;
+		m[i] = i > 4;
+	end	for;
 		
 public
     Real c;   

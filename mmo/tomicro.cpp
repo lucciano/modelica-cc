@@ -197,11 +197,7 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq 
 	return newAST_Equation_Equality( eq->left() , _r );
 }
 
-AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_StatementList ls)
-{
-	
-	return toMicro_exp(e , ls , NULL);
-}
+
 
 AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_StatementList stList , IndexMap iMap)
 {	
@@ -219,6 +215,7 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 				case BINOPCOMPNE: 
 				case BINOPCOMPEQ:
 				{
+					
 					AST_Expression e1 =  toMicro_exp(b->left(),stList,iMap);
 					AST_Expression e2 =  toMicro_exp(b->right(),stList,iMap);
 					AST_ExpressionList indexList = newAST_ExpressionList();
@@ -233,7 +230,6 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 					}
 					
 					AST_String name = new_label();
-					
 					AST_Expression_ComponentReference cr;
 					if (sList->size() == 0 ) {
 						_c->addVariable( name , _S("Real"));	
@@ -257,7 +253,7 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 				{
 					return SUB(I(1) , MULT( SUB(I(1) , toMicro_exp(b->left(),stList,iMap)) , SUB(I(1) ,toMicro_exp(b->right(),stList,iMap) ) ) ) ;
 				}	
-				
+								
 				default:
 				{
 					return newAST_Expression_BinOp( toMicro_exp(b->left(),stList,iMap) , toMicro_exp(b->right(),stList,iMap) ,b->binopType()  );
@@ -571,12 +567,12 @@ IndexMap MMO_ToMicroModelica_::viewIndex(IndexMap imap, AST_ForIndexList list)
 	IndexMap i = new IndexMap_ ;
 	AST_ForIndexListIterator forit;
 	typename IndexMap_::iterator it;
-    for(it = imap->begin() ;  it !=  imap->end(); it++)
-		(*i)[ it->first ] = it->second;   
-	
-	foreach(forit,list)
-		(*i)[*(current(forit)->variable()) ] = I(99);  // jUST FOR NOW
-		
+	if (imap) {
+		for(it = imap->begin() ;  it !=  imap->end(); it++)
+			(*i)[ it->first ] = it->second;   
+	}
+	foreach(forit,list) 
+		(*i)[*(current(forit)->variable()) ] = I(99);  // jUST FOR NOW 
 	return i;
 }
 
@@ -586,9 +582,9 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_for (AST_Equation_For f, MMO_State
 	IndexMap _iMap = viewIndex(iMap,f->forIndexList());
 	MMO_StatementList stLs = newAST_StatementList();
 	
-	transformEqList(f->equationList() , stLs , iMap);
+	transformEqList(f->equationList() , stLs , _iMap);
 	
-	if (stList->size() > 0)
+	if (stLs->size() > 0)
 		AST_ListAppend(stList , newAST_Statement_For(f->forIndexList() , stLs) ) ;
 	return f;
 } 
@@ -640,6 +636,12 @@ bool MMO_ToMicroModelica_::IndexAccess(AST_Expression e, string i )
 			return b;
 			
 		}
+		
+		case EXPBOOLEAN:
+		case EXPSTRING:
+		case EXPREAL:
+		case EXPINTEGER:
+			return false;
 		
 		default:
 			return true;
