@@ -21,6 +21,8 @@
 #include <map>
 #include <string>
 #include <util/type.h>
+#include <ast/ast_node.h>
+#include <ast/ast_builder.h>
 
 #ifndef SymbolTable_H
 #define SymbolTable_H
@@ -68,8 +70,9 @@ protected:
 
 class VarInfo {
 public:  
-  VarInfo( Type t, AST_TypePrefix tp);
+  VarInfo( Type t, AST_TypePrefix tp, AST_Modification);
   AST_TypePrefix typePrefix() {return _tp;};
+  AST_Modification modification() {return _m;};
   bool isParameter() const { return _tp & TP_PARAMETER; }
   bool isDiscrete() const  { return (_tp & TP_DISCRETE) || _discrete; }
   /**
@@ -89,6 +92,7 @@ private:
   bool _discrete;
   Type _t;
   AST_TypePrefix _tp ;
+  AST_Modification _m;
 };
 
 

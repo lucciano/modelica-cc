@@ -23,6 +23,7 @@
 
 #include <ast/ast_node.h>
 #include <ast/ast_builder.h>
+#include <sstream>
 
 class AST_Argument_: public AST_Node {
 
@@ -37,6 +38,9 @@ class AST_ArgumentRedeclaration_: public AST_Argument_ {
 class AST_Modification_: public AST_Node {
 public:
   virtual ModificationType modificationType() { return MODNONE; }
+  friend ostream & operator<<(ostream &os , const AST_Modification_ &e );
+  friend ostream & operator<<(ostream &os , const AST_Modification  &e );
+  virtual string print() const =0;
 /* Conversion with dynamics casts */
   GET_AS(ModificationEqual);
   GET_AS(ModificationClass);
@@ -47,6 +51,7 @@ class AST_ModificationEqual_: public AST_Modification_ {
 public:
   AST_ModificationEqual_(AST_Expression e);
   AST_Expression exp() { return _e; }
+  string print() const;
   virtual ModificationType modificationType() { return MODEQUAL; }
 private:
   AST_Expression _e;
@@ -57,6 +62,7 @@ class AST_ModificationAssign_: public AST_Modification_ {
 public:
   AST_ModificationAssign_(AST_Expression e);
   AST_Expression exp() { return _e; }
+  string print() const;
   virtual ModificationType modificationType() { return MODASSIGN; }
 private:
   AST_Expression _e;
@@ -67,6 +73,7 @@ class AST_ModificationClass_: public AST_Modification_ {
 public:
   AST_ModificationClass_(AST_ArgumentList al, AST_Expression e);
   AST_Expression exp() { return _e; }
+  string print() const;
   virtual ModificationType modificationType() { return MODCLASS; }
 private:
   AST_Expression _e;

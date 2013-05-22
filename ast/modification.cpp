@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include <ast/modification.h>
+#include <sstream>
 
 AST_ModificationEqual_:: AST_ModificationEqual_(AST_Expression e): _e(e) {
 }
@@ -29,6 +30,36 @@ AST_ModificationAssign_:: AST_ModificationAssign_(AST_Expression e): _e(e) {
 AST_ModificationClass_:: AST_ModificationClass_(AST_ArgumentList al,AST_Expression e): _e(e), _al(al) {
 }
 
+ostream & operator<<(ostream &os , const AST_Modification_ &e ){
+    os << e.print();  
+    return os;
+}
+
+ostream & operator<<(ostream &os , const AST_Modification &e ){
+    os << *e;
+    return os;
+}
+
+
 GET_AS_IMP(Modification,Equal);
 GET_AS_IMP(Modification,Class);
 GET_AS_IMP(Modification,Assign);
+
+
+string AST_ModificationEqual_::print() const { 
+  stringstream ret(stringstream::out);
+  ret << " = " << _e;
+  return ret.str();
+}
+
+string AST_ModificationAssign_::print() const { 
+  stringstream ret(stringstream::out);
+  ret << " := " << _e;
+  return ret.str();
+}
+
+string AST_ModificationClass_::print() const { 
+  stringstream ret(stringstream::out);
+  ret << " = " << _e;
+  return ret.str();
+}

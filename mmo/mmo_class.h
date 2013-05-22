@@ -56,6 +56,7 @@ public:
   Type getExpresionType(AST_Expression e) ;
   Type getVariableType(AST_String name);
   void addVariable(AST_String name,AST_String tys); 
+  void addVariable(AST_String name,AST_String tys,AST_Expression); 
   void addVariable(AST_String name,AST_String tys,AST_ExpressionList); 
   AST_String name() const { return _class->name(); }
   

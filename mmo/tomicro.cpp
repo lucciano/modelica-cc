@@ -453,7 +453,7 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 			AST_Expression_Call call = e->getAsCall();
 			if ( * call->name() == "sample") {
 				AST_String name = new_label();   // TNEXT
-				_c->addVariable( name , _S("Real"));	
+				_c->addVariable( name , _S("Real") , current(call->arguments()->begin()) );	
 				AST_Expression_ComponentReference cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();
 				
 				AST_Expression per =   current (  ++call->arguments()->begin()   );
