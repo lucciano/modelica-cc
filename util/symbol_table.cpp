@@ -45,14 +45,14 @@ void VarSymbolTable_::initialize(TypeSymbolTable ty) {
   insert("time",new VarInfo(ty->lookup("Real"),0,NULL));
 }
 
-ostream & operator<<(ostream &os , const VarInfo &e )
+ostream & operator<<(ostream &ret , const VarInfo &e )
 {
-	if (e.isParameter()) os << "Parameter ";
-	if (e.isDiscrete())  os << "Discrete ";
-	if (e.isConstant())  os << "Constant ";
-	if (e.isInput())     os << "Input ";
-	if (e.isOutput())    os << "Output ";
-	os << e._t;
+	if (e.isParameter()) ret << "parameter ";
+	if (e.isDiscrete())  ret << "discrete ";
+	if (e.isConstant())  ret << "constant ";
+	if (e.isInput())     ret << "input ";
+	if (e.isOutput())    ret << "output ";
+	ret << e._t;
 	//if (e._m != NULL) os << e._m->print();
-	return os;
+	return ret;
 }

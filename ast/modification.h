@@ -39,7 +39,6 @@ class AST_Modification_: public AST_Node {
 public:
   virtual ModificationType modificationType() { return MODNONE; }
   friend ostream & operator<<(ostream &os , const AST_Modification_ &e );
-  friend ostream & operator<<(ostream &os , const AST_Modification  &e );
   virtual string print() const =0;
 /* Conversion with dynamics casts */
   GET_AS(ModificationEqual);
@@ -72,8 +71,10 @@ private:
 class AST_ModificationClass_: public AST_Modification_ {
 public:
   AST_ModificationClass_(AST_ArgumentList al, AST_Expression e);
-  AST_Expression exp() { return _e; }
+  AST_Expression exp() const { return _e; }
+  AST_ArgumentList arguments() const { return _al; }
   string print() const;
+  AST_ArgumentListIterator it;
   virtual ModificationType modificationType() { return MODCLASS; }
 private:
   AST_Expression _e;

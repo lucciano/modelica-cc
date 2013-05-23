@@ -189,13 +189,15 @@ ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
   
   VarSymbolTable symbolTable = c.getVarSymbolTable();
   int i; int symbolTableSize = symbolTable->count();
+  BEGIN_BLOCK;
   for (i = 0; i<symbolTableSize; i++) {
-	VarInfo *var = symbolTable->varInfo(i);
-	ret << *var  << " "  << symbolTable->varName(i);
-	if (var->modification()) ret <<  var-> modification() ;
-	ret  << ";" << endl;  
-	
+	  VarInfo *var = symbolTable->varInfo(i);
+    MAKE_SPACE;
+	  ret << *var  << " "  << symbolTable->varName(i);
+  	if (var->modification()) ret <<  var-> modification() ;
+	  ret  << ";" << endl;  
   }
+  END_BLOCK;
   if (eqs->size())
     ret  << "equation" << endl;
   BEGIN_BLOCK;

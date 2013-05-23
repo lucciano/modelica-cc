@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include <ast/modification.h>
+#include <ast/expression.h>
 #include <sstream>
 
 AST_ModificationEqual_:: AST_ModificationEqual_(AST_Expression e): _e(e) {
@@ -60,6 +61,16 @@ string AST_ModificationAssign_::print() const {
 
 string AST_ModificationClass_::print() const { 
   stringstream ret(stringstream::out);
-  ret << " = " << _e;
+  AST_ArgumentListIterator it;
+  if (arguments()->size()) {
+    ret << "(";
+    foreach(it,arguments()) 
+      ret << current(it);
+    ret << ")";
+  } 
+  if (exp()->expressionType()!=EXPNULL) {
+    ret << " = " << exp();
+  }
+  
   return ret.str();
 }

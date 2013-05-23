@@ -312,6 +312,7 @@ DEFINE_PRINTER(AST_Class);
 DEFINE_PRINTER(AST_Expression);
 DEFINE_PRINTER(AST_String);
 DEFINE_PRINTER(AST_Equation);
+DEFINE_PRINTER(AST_Modification);
 DEFINE_PRINTER(AST_Statement);
 DEFINE_PRINTER(AST_CompositionElement);
 DEFINE_PRINTER(AST_Expression_ComponentReference);
