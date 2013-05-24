@@ -25,7 +25,4 @@ equation
   uC = u2;
   i0 = i1 + iL;
   i1 = i2 + iC;
-  when time < 43 then 
-    x=345;
-  end when;
 end RLC;
