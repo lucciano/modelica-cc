@@ -6,6 +6,7 @@
 #include <util/symbol_table.h>
 #include <causalize/find_state.h>
 
+#define CREF_NAME(X) ((X)->getAsComponentRef()->name())
 #define IS_CREF(X) ((X)->expressionType()==EXPCOMPREF)
 #define IS_UMINUS(X) ((X)->expressionType()==EXPUMINUS)
 #define IS_UMINUS_VAR(X) (IS_UMINUS(X) && IS_CREF((X)->getAsUMinus()->exp()))
@@ -21,6 +22,25 @@
 #define IS_SUM_OF_VARS(X) (IS_SUM_(X) && (IS_VAR((X)->getAsBinOp()->left()) && IS_VAR((X)->getAsBinOp()->right())))
 #define IS_STATE(X) (_varSymbolTable->lookup((X)->getAsComponentRef()->name())!=NULL && _varSymbolTable->lookup(X->getAsComponentRef()->name())->isState())
 
+void RemoveAlias::addAlias(AST_Expression a, AST_Expression b) {
+ VarInfo *v  = _varSymbolTable->lookup(CREF_NAME(a));
+  if (v==NULL) {
+    cerr << "Unknown variable " << CREF_NAME(b)<< endl;
+    return;
+  } 
+  //_varSymbolTable->remove(CREF_NAME(b));
+  AST_Modification m = v->modification();
+ if (m!=NULL) {
+  /* add to modificaiton */
+ } else {
+  AST_ArgumentList al= newAST_ArgumentList();
+  AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(newAST_String(CREF_NAME(b))))))));
+  m = newAST_ModificationClass(al, newAST_Expression_Null());
+  v->setModification(m); 
+  }
+ 
+}
+
 void RemoveAlias::removeAliasEquations(MMO_Class *_c) {
 
 	_varSymbolTable = _c->getVarSymbolTable();
@@ -35,11 +55,11 @@ void RemoveAlias::removeAliasEquations(MMO_Class *_c) {
       AST_Equation eq = (AST_Equation) current(eqit);
       switch(eq->equationType()) {
         case EQEQUALITY:
-	AST_Equation_Equality eqeq =  eq->getAsEquality();
-        //IsConstant ic(_varSymbolTable);
-        if (IS_ZERO(eqeq->left()) && IS_SUM_OF_VARS(eqeq->right())) {
+	        AST_Equation_Equality eqeq =  eq->getAsEquality();
+          AST_Expression left=eqeq->left(),right=eqeq->right();
+          if (IS_ZERO(left) && IS_SUM_OF_VARS(right)) {
           // 0 =a + b;
-          AST_Expression binop=eqeq->right();
+          AST_Expression binop=right;
           if (IS_ADD(binop)) {
             eqeq->setLeft(newAST_Expression_UnaryMinus(LEFT_EXP(binop)));
             eqeq->setRight(RIGHT_EXP(binop));
@@ -47,11 +67,12 @@ void RemoveAlias::removeAliasEquations(MMO_Class *_c) {
             eqeq->setLeft(LEFT_EXP(binop));
             eqeq->setRight(RIGHT_EXP(binop));
           }
+          left=eqeq->left();right=eqeq->right();
           delete binop;
         }
-        if (IS_ZERO(eqeq->right()) && IS_SUM_OF_VARS(eqeq->left())) {
+        if (IS_ZERO(right) && IS_SUM_OF_VARS(left)) {
           // a + b = 0;
-          AST_Expression binop=eqeq->left();
+          AST_Expression binop=left;
           if (IS_ADD(binop)) {
             eqeq->setLeft(newAST_Expression_UnaryMinus(LEFT_EXP(binop)));
             eqeq->setRight(RIGHT_EXP(binop));
@@ -59,6 +80,7 @@ void RemoveAlias::removeAliasEquations(MMO_Class *_c) {
             eqeq->setLeft(LEFT_EXP(binop));
             eqeq->setRight(RIGHT_EXP(binop));
           }
+          left=eqeq->left();right=eqeq->right();
           delete binop;
         }
         /*if (IS_VAR(eqeq->left()) && ic.foldTraverse(eqeq->right())) {
@@ -71,10 +93,13 @@ void RemoveAlias::removeAliasEquations(MMO_Class *_c) {
           cerr << "REMOVING CONST_ALIAS: "<< eqeq;
          AST_ListAppend(remove,(AST_Equation)eqeq);
         }*/
-        if (IS_VAR(eqeq->left()) && IS_VAR(eqeq->right())) {
-          // a = b;
-          if (IS_CREF(eqeq->left()) && !IS_STATE(eqeq->left())) {
-            //cerr << "REMOVE ALIAS EQ: " << eqeq;
+        if (IS_VAR(left) && IS_VAR(right)) {
+          if (IS_CREF(left) && !IS_STATE(left) && IS_CREF(right)) {
+            // a = b;
+            addAlias(right,left);
+            cerr << "ADDING ALIAS " << CREF_NAME(left) << " FOR " << CREF_NAME(right) << " FROM ALIAS EQ: " << eqeq;
+           
+            
             //cerr << "REMOVE ALIAS VAR: "<< eqeq->left()->getAsComponentRef()->name() << endl;
             AST_ListAppend(remove,(AST_Equation)eqeq);
           }

@@ -62,6 +62,9 @@ public:
     for (int j=0;j<i;j++) it++;
     return it->first;
   }
+  void remove(Key k) {
+    _st.erase(k);
+  }
 
 protected:
   std::map<Key,Value> _st;
@@ -73,6 +76,7 @@ public:
   VarInfo( Type t, AST_TypePrefix tp, AST_Modification);
   AST_TypePrefix typePrefix() {return _tp;};
   AST_Modification modification() {return _m;};
+  void setModification (AST_Modification m) {_m=m;};
   bool isParameter() const { return _tp & TP_PARAMETER; }
   bool isDiscrete() const  { return (_tp & TP_DISCRETE) || _discrete; }
   /**

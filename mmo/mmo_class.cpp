@@ -183,8 +183,7 @@ Type MMO_Class::getVariableType(AST_String name)
 ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
   MMO_EquationList  eqs = c.getEquations();
   MMO_StatementList stm = c.getStatements();
-  AST_EquationListIterator it;
-  AST_StatementListIterator stit;
+
   ret << "class " << c.name() << endl;
   
   VarSymbolTable symbolTable = c.getVarSymbolTable();
@@ -198,20 +197,9 @@ ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
 	  ret  << ";" << endl;  
   }
   END_BLOCK;
-  if (eqs->size())
-    ret  << "equation" << endl;
-  BEGIN_BLOCK;
-  foreach(it,eqs) 
-    ret << current(it);
-  END_BLOCK;
-  
-  if (stm->size())
-    ret  << "algothrims" << endl;
-  BEGIN_BLOCK;
-  foreach(stit,stm) 
-    ret << current(stit);
-  END_BLOCK;
-  
+
+  AST_ListPrint(eqs,ret,"equation\n","","","",true);
+  AST_ListPrint(stm,ret,"algorithm\n","","","",true);
   ret  << "end " << c.name() << ";" << endl;
   return ret;
 }

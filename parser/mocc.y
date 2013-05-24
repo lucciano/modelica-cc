@@ -819,7 +819,7 @@ primary:
   | TOKINITIAL function_call_args                                 { $$ = newAST_Expression_Derivative($2); }
   | opt_comp_call                                                 { $$ = $1; }
   | TOKOBRACKET expression_list primary_exp_list TOKCBRACKET      { $$ = newAST_BracketExpList(AST_ListPrepend($3,$2)); }
-  | TOKOBRACE function_arguments TOKCBRACE                        { $$ = newAST_Expression_FunctionArguments($2); }
+  | TOKOBRACE function_arguments TOKCBRACE                        { $$ = newAST_Expression_Brace($2); }
   | TOKENDSUB                                                     { $$ = newAST_Expression_End(); }
 ;
 

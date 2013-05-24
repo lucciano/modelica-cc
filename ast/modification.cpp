@@ -61,13 +61,15 @@ string AST_ModificationAssign_::print() const {
 
 string AST_ModificationClass_::print() const { 
   stringstream ret(stringstream::out);
-  AST_ArgumentListIterator it;
+  
+  AST_ListPrint(arguments(),ret,"",",","(",")");
+  /*AST_ArgumentListIterator it;
   if (arguments()->size()) {
     ret << "(";
     foreach(it,arguments()) 
       ret << current(it);
     ret << ")";
-  } 
+  } */
   if (exp()->expressionType()!=EXPNULL) {
     ret << " = " << exp();
   }
@@ -93,6 +95,7 @@ AST_ArgumentModification_::AST_ArgumentModification_(AST_String name, AST_Modifi
 }
 string AST_ArgumentModification_::print() const { 
   stringstream ret(stringstream::out);
+  ret << name() << modification();
   return ret.str();
 }
 

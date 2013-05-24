@@ -146,6 +146,18 @@ private:
   AST_ExpressionList _args;
 };
 
+class AST_Expression_Brace_: public AST_Expression_ {
+public:
+  AST_Expression_Brace_(AST_ExpressionList args);
+  AST_ExpressionList arguments() const { return _args; }
+  virtual ExpressionType expressionType() { return EXPBRACE; }
+  string print() const ;
+
+private:
+  AST_ExpressionList _args;
+};
+
+
 class AST_Expression_ComponentReference_: public AST_Expression_ {
 public:
   AST_Expression_ComponentReference_(AST_String name, AST_ExpressionList);

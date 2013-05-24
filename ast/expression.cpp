@@ -93,7 +93,7 @@ AST_Expression_String_::AST_Expression_String_(string s): _s(s){
 
 string AST_Expression_String_::print() const { 
   stringstream ret(stringstream::out);
-  ret << "STRING[" << _s << "]";
+  ret << "\"" << _s << "\"";
   return ret.str();
 }
 
@@ -136,7 +136,19 @@ string AST_Expression_BooleanNot_::print() const {
 AST_Expression_Call_::AST_Expression_Call_(AST_String name, AST_ExpressionList args):_name(name), _args(args) { };
 
 AST_Expression_CallArgs_::AST_Expression_CallArgs_(AST_ExpressionList args): _args(args) { };
-string AST_Expression_CallArgs_::print() const {}
+string AST_Expression_CallArgs_::print() const {
+  stringstream ret(stringstream::out);
+  ret << "" ;
+  return ret.str();
+}
+
+AST_Expression_Brace_::AST_Expression_Brace_(AST_ExpressionList args): _args(args) { };
+string AST_Expression_Brace_::print() const {
+  stringstream ret(stringstream::out);
+  AST_ListPrint(arguments(),ret,"",",","{","}");
+  return ret.str();
+}
+
 
 
 string AST_Expression_Call_::print() const {

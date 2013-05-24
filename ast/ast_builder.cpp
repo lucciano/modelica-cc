@@ -540,8 +540,9 @@ AST_Expression newAST_Expression_OutputExpressions(AST_ExpressionList exp_list) 
   return new AST_Expression_Output_(exp_list);
 }
 
-AST_Expression newAST_Expression_FunctionArguments(AST_ExpressionList) {
-  return newAST_Expression_Null();
+AST_Expression newAST_Expression_Brace(AST_ExpressionList el) {
+  /* TODO */
+  return new AST_Expression_Brace_(el);
 }
 
 AST_Expression newAST_BracketExpList(AST_ExpressionListList) {

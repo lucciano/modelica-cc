@@ -70,6 +70,7 @@ DEFINE_TYPE(AST_Expression);
 DEFINE_TYPE(AST_Expression_BinOp);
 DEFINE_TYPE(AST_Expression_Boolean);
 DEFINE_TYPE(AST_Expression_BooleanNot);
+DEFINE_TYPE(AST_Expression_Brace);
 DEFINE_TYPE(AST_Expression_Call);
 DEFINE_TYPE(AST_Expression_CallArgs);
 DEFINE_TYPE(AST_Expression_Colon);
@@ -121,7 +122,7 @@ enum BinOpType { BINOPOR, BINOPAND, BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINO
                  BINOPADD, BINOPELADD, BINOPSUB, BINOPELSUB, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPEXP, BINOPELEXP };
 enum ElementType { ELNONE, COMPONENT, IMPORT, EXTENDS, ELCLASS };
 enum EquationType { EQNONE, EQEQUALITY, EQCONNECT,EQCALL, EQFOR, EQWHEN, EQIF };
-enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALLARG,
+enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALLARG, EXPBRACE,
                       EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT, EXPRANGE };
 enum ModificationType { MODNONE ,MODEQUAL, MODASSIGN, MODCLASS };
 
@@ -236,7 +237,7 @@ AST_Expression newAST_Expression_FunctionCallArgs(AST_ExpressionList);
 AST_Expression newAST_Expression_Function(AST_String, AST_ExpressionList);
 AST_Expression newAST_Expression_OutputExpressions(AST_ExpressionList);
 AST_Expression newAST_Expression_Range(AST_Expression, AST_Expression);
-AST_Expression newAST_Expression_FunctionArguments(AST_ExpressionList);
+AST_Expression newAST_Expression_Brace(AST_ExpressionList);
 AST_Expression newAST_BracketExpList(AST_ExpressionListList);
 
 /* Equations */
@@ -342,5 +343,24 @@ list<T1> * AST_ListConcat(list<T1> *l1,list<T1> *l2) {
 	l1->insert(l1->end(), l2->begin() , l2->end());
 	return l1;
 }
+
+template <typename T1>
+list<T1> * AST_ListPrint(list<T1> *l1, ostream &ret, string sec_name="", string separator=" ", string opener="",string closer="", bool block=false) {
+  typename list<T1>::iterator it;
+  int size=l1->size(),i=1;
+  if (size) {
+    ret << sec_name;
+    if (block) BEGIN_BLOCK;
+    ret << opener;
+    foreach(it,l1)  {
+      ret << current(it);
+      ret << (i<size ? separator : "");
+      i++;
+    }
+    ret << closer;
+    if (block) END_BLOCK;
+  }
+}
+
 
 #endif
