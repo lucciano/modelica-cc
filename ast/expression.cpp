@@ -122,7 +122,7 @@ AST_Expression_UMinus_::AST_Expression_UMinus_(AST_Expression e): _e(e){
 
 string AST_Expression_UMinus_::print() const { 
   stringstream ret(stringstream::out);
-  ret << "-(" <<  _e << ")";
+  ret << "(-" <<  _e << ")";
   return ret.str();
 };
 
