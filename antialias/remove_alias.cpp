@@ -84,8 +84,7 @@ void RemoveAlias::removeAliasEquations(MMO_Class *c) {
           }
           left=eqeq->left();right=eqeq->right();
           delete binop;
-        }
-        if (IS_ZERO(right) && IS_SUM_OF_VARS(left)) {
+        } else if (IS_ZERO(right) && IS_SUM_OF_VARS(left)) {
           // a + b = 0;
           AST_Expression binop=left;
           if (IS_ADD(binop)) {
@@ -98,7 +97,8 @@ void RemoveAlias::removeAliasEquations(MMO_Class *c) {
           left=eqeq->left();right=eqeq->right();
           delete binop;
         }
-        /*if (IS_VAR(eqeq->left()) && ic.foldTraverse(eqeq->right())) {
+        /*
+        if (IS_VAR(eqeq->left()) && ic.foldTraverse(eqeq->right())) {
           // a = const;
           cerr << "REMOVING CONST_ALIAS: "<< eqeq;
          AST_ListAppend(remove,(AST_Equation)eqeq);
@@ -107,7 +107,8 @@ void RemoveAlias::removeAliasEquations(MMO_Class *c) {
           // const =a;
           cerr << "REMOVING CONST_ALIAS: "<< eqeq;
          AST_ListAppend(remove,(AST_Equation)eqeq);
-        }*/
+        }
+        */
         if (IS_VAR(left) && IS_VAR(right)) {
           if (!IS_STATE(CREF_NAME(left))) {
             cerr << "ADDING ALIAS " << left << " FOR " << right << " FROM ALIAS EQ: " << eqeq;
@@ -119,8 +120,8 @@ void RemoveAlias::removeAliasEquations(MMO_Class *c) {
             AST_ListAppend(remove,(AST_Equation)eqeq);
           }
         }
-	break;
-	}
+	      break;
+  	  }
     }
     foreach(eqit, remove) 
       _c->removeEquation(current(eqit));  
