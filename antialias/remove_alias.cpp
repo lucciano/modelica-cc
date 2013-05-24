@@ -7,34 +7,49 @@
 #include <util/ast_util.h>
 #include <causalize/find_state.h>
 
-void RemoveAlias::addAlias(AST_Expression a, AST_Expression b) {
- VarInfo *v  = _varSymbolTable->lookup(CREF_NAME(a));
+void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
+  
+  VarInfo *v = _varSymbolTable->lookup(CREF_NAME(var));
   if (v==NULL) {
-    cerr << "Unknown variable " << CREF_NAME(b)<< endl;
+    cerr << "Unknown variable " << CREF_NAME(var)<< endl;
     return;
   } 
-  _varSymbolTable->remove(CREF_NAME(b));
+  _varSymbolTable->remove(CREF_NAME(alias));
   AST_Modification m = v->modification();
  if (m!=NULL) {
   /* add to modificaiton */
  } else {
-  AST_ArgumentList al= newAST_ArgumentList();
-  AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(newAST_String(CREF_NAME(b))))))));
-  m = newAST_ModificationClass(al, newAST_Expression_Null());
-  v->setModification(m); 
+    AST_ArgumentList al= newAST_ArgumentList();
+    AST_String alias_name;
+    if (IS_UMINUS(alias)) {
+      alias_name = newAST_String(CREF_NAME(alias));
+      alias_name->insert(0,"-");
+    } else {
+      alias_name = newAST_String(CREF_NAME(alias));
+    }
+    AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
+    m = newAST_ModificationClass(al, newAST_Expression_Null());
+    v->setModification(m); 
   }
   /* Do the replacement */ 
   ReplaceExp rep;
   MMO_EquationList eqs = _c->getEquations();
   MMO_EquationListIterator eqit;
+  if (IS_UMINUS(alias) && !IS_UMINUS(var)) {
+    var = newAST_Expression_UnaryMinus(var);
+    alias = UMINUS_EXP(alias);
+  } else  if (IS_UMINUS(alias) && IS_UMINUS(var)) {
+    alias = UMINUS_EXP(alias);
+    var = UMINUS_EXP(var);
+  }
   if (eqs != NULL) {
     foreach(eqit, eqs) {
       AST_Equation eq = current(eqit);
       switch(eq->equationType()) {
         case EQEQUALITY:
 	        AST_Equation_Equality eqeq =  eq->getAsEquality();
-          eqeq->setLeft(rep.replaceExp(b,a,eqeq->left()));
-          eqeq->setRight(rep.replaceExp(b,a,eqeq->right()));
+          eqeq->setLeft(rep.replaceExp(alias,var,eqeq->left()));
+          eqeq->setRight(rep.replaceExp(alias,var,eqeq->right()));
           break;
       }
     }
@@ -94,10 +109,13 @@ void RemoveAlias::removeAliasEquations(MMO_Class *c) {
          AST_ListAppend(remove,(AST_Equation)eqeq);
         }*/
         if (IS_VAR(left) && IS_VAR(right)) {
-          if (IS_CREF(left) && !IS_STATE(left) && IS_CREF(right)) {
-            // a = b;
+          if (!IS_STATE(CREF_NAME(left))) {
+            cerr << "ADDING ALIAS " << left << " FOR " << right << " FROM ALIAS EQ: " << eqeq;
             addAlias(right,left);
-            cerr << "ADDING ALIAS " << CREF_NAME(left) << " FOR " << CREF_NAME(right) << " FROM ALIAS EQ: " << eqeq;
+            AST_ListAppend(remove,(AST_Equation)eqeq);
+          } else if (!IS_STATE(CREF_NAME(right))) {
+            cerr << "ADDING ALIAS " << right << " FOR " << left << " FROM ALIAS EQ: " << eqeq;
+            addAlias(left,right);
             AST_ListAppend(remove,(AST_Equation)eqeq);
           }
         }
