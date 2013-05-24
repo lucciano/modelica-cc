@@ -27,9 +27,13 @@
 #include <ast/statement.h>
 #include <ast/modification.h>
 #include <cassert>
+#include <parser/mocc_parser.h>
 
 class MCC_Parser;
+class MCC_Lexer;
 int depth;
+
+MCC_Lexer *MCC_Parser::lexer =NULL;
 
 AST_StoredDefinition newAST_StoredDefinition(AST_ClassList cl, AST_String within) { 
   return new AST_StoredDefinition_(cl,within);
@@ -614,9 +618,8 @@ AST_Argument newAST_ShortClass(AST_ClassPrefix,AST_String, AST_ShortClassExp) {
   return NULL;
 }
 
-AST_Argument newAST_ElementModification(AST_String, AST_Modification) {
-  /* TODO */
-  return NULL;
+AST_Argument newAST_ElementModification(AST_String n, AST_Modification m) {
+  return new AST_ArgumentModification_(n,m);
 }
 
 AST_Modification newAST_ModificationClass(AST_ArgumentList al,AST_Expression e) {

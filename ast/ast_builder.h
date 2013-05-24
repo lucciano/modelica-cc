@@ -28,7 +28,7 @@
 #define DEFINE_TYPE(X) class X##_; typedef X##_ *X;
 #define DEFINE_LIST(X) typedef std::list<X>  *X##List; typedef std::list<X>::iterator X##ListIterator; typedef std::list<X>::reverse_iterator X##ListReverseIterator;
 #define _S(s) newAST_String(s)
-#define MAKE_SPACE for (int i=0;i<depth;i++) ret << " ";
+#define MAKE_SPACE for (int __i=0;__i<depth;__i++) ret << " ";
 #define BEGIN_BLOCK depth+=2;
 #define END_BLOCK depth-=2;
 #define GET_AS(X) AST_##X getAs##X ();
@@ -49,6 +49,7 @@ typedef int                                  AST_TypePrefix;
 typedef int                                  AST_ClassPrefix;
 
 DEFINE_TYPE(AST_Argument);
+DEFINE_TYPE(AST_ArgumentModification);
 DEFINE_TYPE(AST_Class);
 DEFINE_TYPE(AST_Component) ;
 DEFINE_TYPE(AST_Composition);
@@ -306,16 +307,17 @@ enum ClassPrefix {
 
 /* Printers */
 #define DEFINE_PRINTER(X) ostream & operator<<(ostream &os , const X &x ) ;
-DEFINE_PRINTER(AST_StoredDefinition);
+DEFINE_PRINTER(AST_Argument);
+DEFINE_PRINTER(AST_CompositionElement);
 DEFINE_PRINTER(AST_Composition);
 DEFINE_PRINTER(AST_Class);
 DEFINE_PRINTER(AST_Expression);
-DEFINE_PRINTER(AST_String);
+DEFINE_PRINTER(AST_Expression_ComponentReference);
 DEFINE_PRINTER(AST_Equation);
 DEFINE_PRINTER(AST_Modification);
 DEFINE_PRINTER(AST_Statement);
-DEFINE_PRINTER(AST_CompositionElement);
-DEFINE_PRINTER(AST_Expression_ComponentReference);
+DEFINE_PRINTER(AST_StoredDefinition);
+DEFINE_PRINTER(AST_String);
 
 /* List uitls */
 #define current(it) (*it)

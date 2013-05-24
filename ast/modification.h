@@ -26,10 +26,25 @@
 #include <sstream>
 
 class AST_Argument_: public AST_Node {
+public:
+  friend ostream & operator<<(ostream &os , const AST_Argument_ &a );
 
+  virtual string print() const =0;
+
+/* Conversion with dynamics casts */
+  GET_AS(ArgumentModification);
 };
 
 class AST_ArgumentModification_: public AST_Argument_ {
+public:
+  AST_ArgumentModification_(AST_String name, AST_Modification m);
+  AST_String name() const { return _name; }
+  AST_Modification modification() const { return _mod; } 
+
+  string print() const;
+private:
+  AST_String _name;
+  AST_Modification _mod;
 };
 
 class AST_ArgumentRedeclaration_: public AST_Argument_ {
@@ -40,6 +55,7 @@ public:
   virtual ModificationType modificationType() { return MODNONE; }
   friend ostream & operator<<(ostream &os , const AST_Modification_ &e );
   virtual string print() const =0;
+
 /* Conversion with dynamics casts */
   GET_AS(ModificationEqual);
   GET_AS(ModificationClass);

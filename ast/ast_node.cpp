@@ -24,10 +24,7 @@
 using namespace std;
 
 AST_Node::AST_Node() {
-  /*
-  if (parser!=NULL)
-    _linenum = lineno();
-  */
+  _linenum = MCC_Parser::lineno();
 }
 
 ostream & operator<<(ostream &os , const AST_Node &n ) { 

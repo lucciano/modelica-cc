@@ -74,3 +74,26 @@ string AST_ModificationClass_::print() const {
   
   return ret.str();
 }
+
+
+ostream & operator<<(ostream &os , const AST_Argument_ &a ){
+    os << a.print();  
+    return os;
+}
+
+ostream & operator<<(ostream &os , const AST_Argument &a ){
+    os << *a;
+    return os;
+}
+
+
+
+AST_ArgumentModification_::AST_ArgumentModification_(AST_String name, AST_Modification m): _name(name), _mod(m) {
+
+}
+string AST_ArgumentModification_::print() const { 
+  stringstream ret(stringstream::out);
+  return ret.str();
+}
+
+

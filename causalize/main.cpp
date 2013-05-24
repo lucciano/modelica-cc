@@ -35,7 +35,7 @@ int main(int argc, char ** argv)
 {
   int r;
   if (argc<2) {
-    cerr << "Usage:\n\causalize file.mo\n";
+    cerr << "Usage:\ncausalize file.mo\n";
     return -1;
   }
   AST_StoredDefinition sd = parseFile(argv[1],&r);

@@ -6,7 +6,13 @@
 %define CONSTRUCTOR_CODE \
   parsing_subscript = false;\
   yydebug=debug;\
-  lexer.setParser(this);
+  lexer = new MCC_Lexer();\
+  lexer->setParser(this);
+
+
+%define DESSTRUCTOR_CODE \
+  delete lexer;\
+  lexer = NULL;
 
 %header{
 #include <FlexLexer.h>
@@ -28,21 +34,21 @@ private:
 %define LSP_NEEDED
 %define MEMBERS \
           virtual ~MCC_Parser() {} \
-          int gettoken() { return lexer.yylex(); };   \
-          int yyinput() { return lexer.yyinput(); };   \
-          int lineno() { return lexer.lineno(); };    \
-          int parseFile(std::istream* in) { lexer.setInput(in); return yyparse(); };    \
+          int gettoken() { return lexer->yylex(); };   \
+          int yyinput() { return lexer->yyinput(); };   \
+          static int lineno() { if (lexer==NULL) return 0; return lexer->lineno(); };    \
+          int parseFile(std::istream* in) { lexer->setInput(in); return yyparse(); };    \
           void setParsingSubscript() { parsing_subscript=true; } \
           void unsetParsingSubscript() { parsing_subscript=false; } \
           bool isParsingSubscript() { return parsing_subscript; } \
           AST_StoredDefinition root() { return _root; }\
           void setRoot(AST_StoredDefinition sd) { _root=sd; }\
           private: \
-                MCC_Lexer lexer; \
+                static MCC_Lexer *lexer; \
                 bool parsing_subscript;\
                 AST_StoredDefinition _root;
-%define LEX_BODY { return lexer.yylex();}
-%define ERROR_BODY { cerr << "error encountered at line: "<<lexer.lineno()<<" last word parsed:"<<lexer.YYText()<<"\n";}
+%define LEX_BODY { return lexer->yylex();}
+%define ERROR_BODY { cerr << "error encountered at line: "<<lexer->lineno()<<" last word parsed:"<<lexer->YYText()<<"\n";}
 
 %token TOKALGORITHM TOKAND TOKANNOTATION /*TOKASSERT*/ TOKBLOCK TOKBREAK TOKCLASS TOKCONNECT TOKCONNECTOR TOKCONSTANT TOKCONSTRAINEDBY TOKDER TOKDISCRETE TOKEACH TOKELSE TOKELSEIF TOKELSEWHEN TOKENCAPSULATED TOKEND TOKENUMERATION TOKEQUATION TOKEXPANDABLE TOKEXTENDS TOKEXTERNAL TOKFALSE TOKFINAL TOKFLOW TOKFOR TOKFUNCTION TOKIF TOKIMPORT TOKIMPURE TOKIN TOKINITIAL TOKINNER TOKINPUT TOKLOOP TOKMODEL TOKOPERATOR TOKOR TOKOUTER TOKOUTPUT TOKPACKAGE TOKPARAMETER TOKPARTIAL TOKPROTECTED TOKPUBLIC TOKPURE TOKRECORD TOKREDECLARE TOKREPLACEABLE TOKRETURN TOKSTREAM TOKTHEN TOKTRUE TOKTYPE TOKWHEN TOKWHILE TOKWITHIN 
 
