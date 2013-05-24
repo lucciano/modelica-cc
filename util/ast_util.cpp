@@ -56,7 +56,12 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
   }  
   return e2;
 }
-
+bool EqualExp::isEqual(AST_Expression a, AST_Expression b) {
+  if (a->expressionType()!=b->expressionType()) return false;
+  if (a->expressionType()==EXPCOMPREF) 
+    return CREF_NAME(a)==CREF_NAME(b);
+    
+} 
 bool IsConstant::foldTraverseElement(bool b1, bool b2, BinOpType ) {
   return b1 && b2;
 }
@@ -77,3 +82,19 @@ bool IsConstant::foldTraverseElement(AST_Expression e) {
   }
   return false;
 };
+
+
+
+
+AST_Expression ReplaceExp::replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in) {
+  _rep=rep;
+  _for_exp=for_exp;
+  _in=in;
+  return mapTraverse(in);
+} 
+AST_Expression ReplaceExp::mapTraverseElement(AST_Expression e) {
+  cerr << "Replacing " << _rep << " for " << _for_exp << " in " << e<< endl;
+  if (EqualExp::isEqual(e,_rep))
+    return _for_exp;
+  return e;
+}
