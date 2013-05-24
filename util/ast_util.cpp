@@ -93,7 +93,6 @@ AST_Expression ReplaceExp::replaceExp(AST_Expression rep, AST_Expression for_exp
   return mapTraverse(in);
 } 
 AST_Expression ReplaceExp::mapTraverseElement(AST_Expression e) {
-  cerr << "Replacing " << _rep << " for " << _for_exp << " in " << e<< endl;
   if (EqualExp::isEqual(e,_rep))
     return _for_exp;
   return e;
