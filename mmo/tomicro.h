@@ -27,6 +27,9 @@
 #ifndef TOMICRO_H
 #define TOMICRO_H
 
+
+DEFINE_TYPE(MMO_ToMicroModelica);
+
 #define VAR(v)		newAST_Expression_ComponentReferenceExp(v) 
 #define GREATER(l,r) 	newAST_Expression_BinOp(l, r, BINOPGREATER ) 
 #define LOWER(l,r) 	newAST_Expression_BinOp(l, r, BINOPLOWER )
@@ -36,6 +39,9 @@
 #define I(n) 		newAST_Expression_Integer(n)
 #define PA(e)       newAST_Expression_OutputExpressions(e) 
 #define UMENOS(e)   SUB( I(1) , e )
+
+#define IS_COMPARE(X) ((X)->expressionType()==EXPBINOP && ( (X)->getAsBinOp()->binopType() >= BINOPLOWER  && (X)->getAsBinOp()->binopType() <= BINOPCOMPEQ  ))
+#define IS_CREF(X) ((X)->expressionType()==EXPCOMPREF)
 
 typedef std::map<string, AST_Expression> 		IndexMap_;
 typedef std::map<string, AST_Expression> 		* IndexMap;
@@ -68,5 +74,6 @@ private:
 	bool IndexAccess(AST_Expression e, string i );
 };
 
+MMO_ToMicroModelica newMMO_ToMicroModelica(MMO_Class  c );
 
 #endif

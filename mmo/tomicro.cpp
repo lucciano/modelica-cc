@@ -60,7 +60,7 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 			case EQWHEN:
 			{
 				AST_Equation_When when = eq->getAsWhen();
-				_c->addStatement( toMicro_eq_when(when));
+				AST_ListAppend(stList,toMicro_eq_when(when));
 				AST_ListAppend(del,eqit);
 				break;
 			}
@@ -68,8 +68,8 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 			case EQIF:
 			{
 				AST_EquationList ls = toMicro_eq_if(eq->getAsIf(),stList ,iMap);
-				AST_EquationListIterator eqit;
-				foreach(eqit,ls)  _c->addEquation(current(eqit));
+				AST_EquationListIterator eqxit;
+				foreach(eqxit,ls)  _c->addEquation(current(eqxit));
 				AST_ListAppend(del,eqit);
 				break;
 			}	
@@ -162,39 +162,22 @@ AST_Expression find_equation(AST_Expression e, AST_EquationList eqList)
 MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq , AST_StatementList stList,IndexMap iMap)
 {
 	AST_Expression r = eq->right();
-	switch (r->expressionType())
-	{
-		case EXPBINOP:
-		{
-			AST_Expression_BinOp b = r->getAsBinOp();
-			switch (b->binopType()) 
-			{
-				case BINOPLOWER: 
-				case BINOPLOWEREQ: 
-				case BINOPGREATER: 
-				case BINOPGREATEREQ: 
-				case BINOPCOMPNE: 
-				case BINOPCOMPEQ:
-				{
-					// Ver esta precondicion (si o si component ref)	
-					AST_ListAppend(stList , make_when( b, eq->left()->getAsComponentRef() ));
-					return NULL;
-				
-				} 
-		
-			}
-			break;
-		}
-		
-		case EXPCALL:
-		{
-			// Analizar sample y otras llamadas a funcion!!!
-			return NULL;
-		}
-			
-	}
-	AST_Expression _r = toMicro_exp(eq->right(),stList,iMap);
-	return newAST_Equation_Equality( eq->left() , _r );
+	AST_Expression l = eq->left();
+	
+	if (IS_CREF(l) && IS_COMPARE(r)) {
+		AST_ListAppend(stList , make_when( r->getAsBinOp(), l->getAsComponentRef() ));
+		return NULL;
+	} 
+	
+	if (IS_CREF(r) && IS_COMPARE(l)) {
+		AST_ListAppend(stList , make_when( l->getAsBinOp(), r->getAsComponentRef() ));
+		return NULL;
+	} 
+	
+	
+	AST_Expression _r = toMicro_exp(r,stList,iMap);
+	AST_Expression _l = toMicro_exp(l,stList,iMap);
+	return newAST_Equation_Equality( _l , _r );
 }
 
 
@@ -647,3 +630,9 @@ bool MMO_ToMicroModelica_::IndexAccess(AST_Expression e, string i )
 			return true;
 	}	
 } 
+
+
+MMO_ToMicroModelica newMMO_ToMicroModelica(MMO_Class  c )
+{
+	return new MMO_ToMicroModelica_(c);
+}

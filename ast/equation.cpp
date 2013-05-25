@@ -154,15 +154,7 @@ string AST_Equation_For_::print() const {
   AST_EquationListIterator it;
   AST_ForIndexListIterator ind_it;
   MAKE_SPACE;
-  ret << "for ";
-  int size=forIndexList()->size(),i=0;
-  foreach(ind_it,forIndexList()) {
-    i++;
-    AST_ForIndex f= current(ind_it);
-    ret << f;
-    if (i<size) ret << ",";
-  }
-  ret << " loop" << endl;
+  AST_ListPrint(forIndexList(),ret,"for ",",",""," loop\n",false);
   BEGIN_BLOCK;
   foreach(it,eql)
     ret << current(it);

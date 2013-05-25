@@ -51,47 +51,14 @@ int main(int argc, char ** argv)
   
   if (r==0) { // Parsed ok
     AST_Class c = sd->models()->front();
-    cerr << c << "---------------------" << endl;
     MMO_Class  d = newMMO_Class(c, tyEnv);
-
-	 
-	MMO_ToMicroModelica_ * re = new MMO_ToMicroModelica_(d);  
+	MMO_ToMicroModelica re = newMMO_ToMicroModelica(d);  
 	StateVariablesFinder * finder = new StateVariablesFinder(d); 
 	finder->findStateVariables(); 
-	 
-	cerr << "Reduciendo Ecuaciones" << endl;
-	
-	
 	try { 
 		re->transform();
 	} catch (char const * c) {  cerr << c << endl; exit(-1);}
-	cerr << "---------------------" << endl;
-	
-	cerr << *d <<  endl;
-	/*AST_EquationListIterator eqit;
-	cerr << "equation " << endl;
-	
-	foreach(eqit,d->getEquations()) {
-		cerr <<  current(eqit)  ;
-	}
-	
-	cerr << "algothrims " << endl;
-	AST_StatementListIterator stit;
-	foreach(stit,d->getStatements()) {
-		cerr << current(stit) << endl;
-	}
-	*/
-	
-	//cerr << c << "---------------------" << endl;
-	
-   /* cerr << "----------------------" << endl << " Variables: " << endl;
-    AST_ComponentListIterator cit;
-    foreach(cit,d->getComponents()) {
-		cerr << "-> " << current(cit)->name() << ":" <<  d->getVarSymbolTable()->lookup(current(cit)->name())->type() << endl;	
-	}*/
-	//cerr << "-> a:" <<  d->getVariableType(_S("a")) << endl;	
-	
-	
+	cout << d <<  endl;
   }
   
   return 0;

@@ -73,7 +73,7 @@ string AST_Statement_For_::print() const {
   stringstream ret(stringstream::out);
   AST_StatementListIterator it;
   MAKE_SPACE;
-  ret << "for something loop" <<endl;
+  AST_ListPrint(forIndexList(),ret,"for ",",",""," loop\n",false);
   BEGIN_BLOCK;
   foreach(it,statements())
     ret << current(it);
