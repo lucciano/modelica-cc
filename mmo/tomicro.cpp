@@ -23,7 +23,7 @@
 #include <iostream>
 using namespace std;
 
-MMO_ToMicroModelica_::MMO_ToMicroModelica_ (MMO_Class * c): _c(c) {} ;
+MMO_ToMicroModelica_::MMO_ToMicroModelica_ (MMO_Class c): _c(c) {} ;
 
 
 void MMO_ToMicroModelica_::transform()

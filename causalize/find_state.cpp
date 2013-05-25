@@ -12,7 +12,7 @@
 #include <ast/expression.h>
 #include <util/symbol_table.h>
 
-StateVariablesFinder::StateVariablesFinder(MMO_Class *c) {
+StateVariablesFinder::StateVariablesFinder(MMO_Class c) {
 	_c = c;
 	_varSymbolTable = c->getVarSymbolTable();
 }

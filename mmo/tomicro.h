@@ -42,12 +42,12 @@ typedef std::map<string, AST_Expression> 		* IndexMap;
 
 class MMO_ToMicroModelica_ {
 public:
-	MMO_ToMicroModelica_(MMO_Class * c );
+	MMO_ToMicroModelica_(MMO_Class  c );
 	
 	void transform();
 	
 private:
-	MMO_Class * _c;
+	MMO_Class  _c;
 	AST_String  new_label();
 	
 	void transformEqList(AST_EquationList  , AST_StatementList,IndexMap );

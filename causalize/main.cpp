@@ -43,7 +43,7 @@ int main(int argc, char ** argv)
     return -1;
 
   TypeSymbolTable tyEnv = new TypeSymbolTable_;
-  MMO_Class *c = new MMO_Class(sd->models()->front(), tyEnv);
+  MMO_Class c = newMMO_Class(sd->models()->front(), tyEnv);
 
   StateVariablesFinder *stateFinder = new StateVariablesFinder(c);
   stateFinder->findStateVariables();

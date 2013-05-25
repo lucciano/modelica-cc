@@ -23,6 +23,7 @@
 #include <util/symbol_table.h>
 #include <util/type_check.h>
 
+DEFINE_TYPE(MMO_Class);
 
 typedef AST_Equation  MMO_Equation;   // For now the same
 typedef AST_Statement MMO_Statement;  // For now the same
@@ -37,9 +38,9 @@ typedef list<MMO_Equation>::iterator MMO_EquationListIterator;
 #ifndef MMOCLASS_H
 #define MMOCLASS_H
 /* AST_Class Wrapper */
-class MMO_Class {
+class MMO_Class_ {
 public:
-  MMO_Class(AST_Class, TypeSymbolTable ty);
+  MMO_Class_(AST_Class, TypeSymbolTable ty);
   
   void addEquation(MMO_Equation);
   MMO_EquationList getEquations() const; 
@@ -60,7 +61,7 @@ public:
   void addVariable(AST_String name,AST_String tys,AST_ExpressionList); 
   AST_String name() const { return _class->name(); }
   
-  friend ostream & operator<<(ostream &os , const MMO_Class &c );
+  friend ostream & operator<<(ostream &os , const MMO_Class_ &c );
 
 private:
   void addVariable(MMO_Component); 
@@ -72,5 +73,8 @@ private:
   TypeSymbolTable tyEnv;
   TypeCheck_ * _ct;	
 };
+
+ostream & operator<<(ostream &os , const MMO_Class &c );
+MMO_Class newMMO_Class(AST_Class, TypeSymbolTable);
 
 #endif

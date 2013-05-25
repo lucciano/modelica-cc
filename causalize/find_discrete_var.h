@@ -13,12 +13,12 @@
 
 class DiscreteVariablesFinder {
 public:
-  DiscreteVariablesFinder(MMO_Class *c);
+  DiscreteVariablesFinder(MMO_Class c);
   virtual ~DiscreteVariablesFinder();
   void findDiscreteVariables();
 private:
   void findDiscreteVariablesInEquations(MMO_EquationList eqs);
-  MMO_Class *_c;
+  MMO_Class _c;
   VarSymbolTable _varSymbolTable;
 };
 

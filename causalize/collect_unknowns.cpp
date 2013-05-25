@@ -9,7 +9,7 @@
 #include <util/symbol_table.h>
 #include <iostream>
 
-UnknownCollector::UnknownCollector(MMO_Class *c) {
+UnknownCollector::UnknownCollector(MMO_Class c) {
 	_c = c;
 	_unknowns = new list<string>;
 }

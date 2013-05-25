@@ -11,7 +11,7 @@
 #include <assert.h>
 
 
-DiscreteVariablesFinder::DiscreteVariablesFinder(MMO_Class *c) {
+DiscreteVariablesFinder::DiscreteVariablesFinder(MMO_Class c) {
   _c = c;
   _varSymbolTable = c->getVarSymbolTable();
 }

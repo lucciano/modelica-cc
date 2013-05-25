@@ -23,7 +23,7 @@
 #include <iostream>
 using namespace std;
 
-MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
+MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 	_eqs = new list<MMO_Equation>();
 	_comps = new list<MMO_Component>();
 	_stms = new list<MMO_Statement>();
@@ -55,13 +55,19 @@ MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 	foreach(it,cel) {
 		AST_EquationListIterator eqit;
 		AST_ElementListIterator  elit;
+		AST_StatementListIterator stit;
 		
 		// Equations 
 		AST_CompositionElement e = current(it);
         if (e->getEquationsAlgs() != NULL) {
 			AST_EquationList eqs = e->getEquationsAlgs()->getEquations();
 			foreach(eqit,eqs) {
-				AST_ListAppend(_eqs , current(eqit));
+				addEquation(current(eqit));
+			}
+			
+			AST_StatementList sts = e->getEquationsAlgs()->getAlgorithms();
+			foreach(stit,sts) {
+				addStatement(current(stit));
 			}
 		}
 		
@@ -74,31 +80,31 @@ MMO_Class::MMO_Class(AST_Class c, TypeSymbolTable ty):_class(c) {
 	_ct = new TypeCheck_( tyEnv , varEnv );
 }
 
-void MMO_Class::addEquation(MMO_Equation e) {
+void MMO_Class_::addEquation(MMO_Equation e) {
 	AST_ListAppend(_eqs,e);
 }
 
-void MMO_Class::removeEquation(MMO_Equation e) {
+void MMO_Class_::removeEquation(MMO_Equation e) {
 	AST_ListRemove(_eqs,e);
 }
 
-MMO_EquationList MMO_Class::getEquations() const {
+MMO_EquationList MMO_Class_::getEquations() const {
   return _eqs;
 }
 
-void MMO_Class::addStatement(MMO_Statement e) {
+void MMO_Class_::addStatement(MMO_Statement e) {
 	AST_ListAppend(_stms,e);
 }
 
-MMO_StatementList MMO_Class::getStatements() const {
+MMO_StatementList MMO_Class_::getStatements() const {
   return _stms;
 }
 
-void MMO_Class::addComponent(MMO_Component c) {
+void MMO_Class_::addComponent(MMO_Component c) {
 	AST_ListAppend(_comps,c);
 }
 
-MMO_ComponentList MMO_Class::getComponents() const {
+MMO_ComponentList MMO_Class_::getComponents() const {
   return _comps;
 }
 
@@ -114,7 +120,7 @@ Type make_array_type(AST_ExpressionList dims , Type r)
 }
 
 
-void MMO_Class::addVariable(MMO_Component c)
+void MMO_Class_::addVariable(MMO_Component c)
 {
 	Type t = tyEnv->lookup(c->type());
 	if (t == NULL) cerr << "No existe el tipo(" << c->type() << ")!!" << endl;
@@ -134,7 +140,7 @@ void MMO_Class::addVariable(MMO_Component c)
 	}
 }
 
-void MMO_Class::addVariable(AST_String name , AST_String tys, AST_ExpressionList dims)
+void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_ExpressionList dims)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
@@ -144,7 +150,7 @@ void MMO_Class::addVariable(AST_String name , AST_String tys, AST_ExpressionList
 	varEnv->insert(*name, v);
 }
 
-void MMO_Class::addVariable(AST_String name , AST_String tys)
+void MMO_Class_::addVariable(AST_String name , AST_String tys)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
@@ -152,35 +158,35 @@ void MMO_Class::addVariable(AST_String name , AST_String tys)
 	varEnv->insert(*name, v);
 }
 
-void MMO_Class::addVariable(AST_String name , AST_String tys, AST_Expression e)
+void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_Expression e)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
-	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , newAST_ModificationAssign(e) );
+	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , newAST_ModificationEqual(e) );
 	varEnv->insert(*name, v);
 }
 
-VarSymbolTable  MMO_Class::getVarSymbolTable() const
+VarSymbolTable  MMO_Class_::getVarSymbolTable() const
 {
 	return varEnv;
 }
 
-TypeSymbolTable  MMO_Class::getTypeSymbolTable()
+TypeSymbolTable  MMO_Class_::getTypeSymbolTable()
 {
 	return tyEnv;
 }
 
-Type MMO_Class::getExpresionType(AST_Expression e) {
+Type MMO_Class_::getExpresionType(AST_Expression e) {
 	return _ct->check_expression(e);
 }
 
-Type MMO_Class::getVariableType(AST_String name)
+Type MMO_Class_::getVariableType(AST_String name)
 {
 	Type t = varEnv->lookup(*name)->type();
 }
 
 
-ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
+ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   MMO_EquationList  eqs = c.getEquations();
   MMO_StatementList stm = c.getStatements();
 
@@ -202,4 +208,13 @@ ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
   AST_ListPrint(stm,ret,"algorithm\n","","","",true);
   ret  << "end " << c.name() << ";" << endl;
   return ret;
+}
+
+ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
+	ret << *c;
+	return ret;
+}
+
+MMO_Class newMMO_Class(AST_Class c, TypeSymbolTable t){
+	return new MMO_Class_(c,t);
 }
