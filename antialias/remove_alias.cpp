@@ -56,7 +56,7 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
   }
 }
 
-void RemoveAlias::removeAliasEquations(MMO_Class *c) {
+void RemoveAlias::removeAliasEquations(MMO_Class c) {
   _c = c;
 	_varSymbolTable = _c->getVarSymbolTable();
   StateVariablesFinder *finder = new StateVariablesFinder(_c);

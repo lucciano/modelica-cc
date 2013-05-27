@@ -6,10 +6,10 @@ using namespace std;
 
 class RemoveAlias {
 public:
-	void removeAliasEquations(MMO_Class *c);;
+	void removeAliasEquations(MMO_Class c);;
 private:
   void addAlias(AST_Expression, AST_Expression);
-	MMO_Class *_c;
+	MMO_Class _c;
 	VarSymbolTable _varSymbolTable;
 };
 
