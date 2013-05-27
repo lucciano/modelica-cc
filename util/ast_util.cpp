@@ -97,3 +97,27 @@ AST_Expression ReplaceExp::mapTraverseElement(AST_Expression e) {
     return _for_exp;
   return e;
 }
+
+
+ReplaceBoolean::ReplaceBoolean() {}
+
+AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression b1, AST_Expression b2, BinOpType t ) {
+  return newAST_Expression_BinOp(b1,b2,t);
+}
+
+AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression e) {
+  switch (e->expressionType()) {  
+    case EXPBOOLEAN: 
+    {
+		cerr << "Por aca " << endl;
+		AST_Expression_Boolean b = e->getAsBoolean();
+		if (b->value()) return newAST_Expression_Integer(1);
+		else newAST_Expression_Integer(0);
+	}
+	
+	default:
+	{
+		return e;
+	}
+  }
+};

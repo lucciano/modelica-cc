@@ -20,8 +20,10 @@
 
 #include <ast/ast_builder.h>
 #include <ast/class.h>
+#include <ast/modification.h>
 #include <util/symbol_table.h>
 #include <util/type_check.h>
+#include <util/ast_util.h>
 
 DEFINE_TYPE(MMO_Class);
 
@@ -37,6 +39,10 @@ typedef list<MMO_Equation>::iterator MMO_EquationListIterator;
 
 #ifndef MMOCLASS_H
 #define MMOCLASS_H
+
+AST_Modification ChangeModifications(AST_Modification m);
+
+
 /* AST_Class Wrapper */
 class MMO_Class_ {
 public:

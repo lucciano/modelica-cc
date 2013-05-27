@@ -45,6 +45,7 @@ ostream & operator<<(ostream &os , const AST_Modification &e ){
 GET_AS_IMP(Modification,Equal);
 GET_AS_IMP(Modification,Class);
 GET_AS_IMP(Modification,Assign);
+GET_AS_IMP(Argument,Modification);
 
 
 string AST_ModificationEqual_::print() const { 

@@ -135,7 +135,7 @@ void MMO_Class_::addVariable(MMO_Component c)
 		if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
 		
-		VarInfo * v = new VarInfo(t , c->typePrefix() , current(it)->modification() );
+		VarInfo * v = new VarInfo(t , c->typePrefix() , ChangeModifications(current(it)->modification()) );
 		varEnv->insert(current(it)->name(), v);
 	}
 }
@@ -183,6 +183,7 @@ Type MMO_Class_::getExpresionType(AST_Expression e) {
 Type MMO_Class_::getVariableType(AST_String name)
 {
 	Type t = varEnv->lookup(*name)->type();
+	return t;
 }
 
 
@@ -217,4 +218,43 @@ ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
 
 MMO_Class newMMO_Class(AST_Class c, TypeSymbolTable t){
 	return new MMO_Class_(c,t);
+}
+
+
+AST_Modification ChangeModifications(AST_Modification m)
+{
+	if (!m) return m;
+	ReplaceBoolean rb;
+	switch(m->modificationType())
+	{
+		case MODEQUAL:
+		{
+			AST_ModificationEqual eq = m->getAsModificationEqual();
+			return newAST_ModificationEqual( rb.foldTraverse(eq->exp())  );
+		}
+		
+		case MODASSIGN:
+		{
+			AST_ModificationAssign asig = m->getAsModificationAssign();
+			return newAST_ModificationAssign( rb.foldTraverse(asig->exp()));
+		}
+		
+		case MODCLASS:
+		{
+			AST_ModificationClass cc = m->getAsModificationClass();
+			AST_Expression _e = (cc->exp()) ? rb.foldTraverse(cc->exp()) : NULL  ;
+			AST_ArgumentList args = newAST_ArgumentList();
+			if (cc->arguments()->size() > 0) {
+				AST_ArgumentListIterator it;
+				foreach(it, cc->arguments()) {
+					AST_ArgumentModification mm = current(it)->getAsArgumentModification();
+					if ( * mm->name() == "start")	AST_ListAppend(args , newAST_ArgumentModification(mm->name() , ChangeModifications(mm->modification()) )   );
+					else AST_ListAppend(args, (AST_Argument) mm);
+				}
+			}
+			return newAST_ModificationClass(args,_e);
+		}
+		
+	}
+	
 }

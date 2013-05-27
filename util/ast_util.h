@@ -97,4 +97,13 @@ private:
   AST_Expression _rep, _for_exp, _in;
 };
 
+
+class ReplaceBoolean: public AST_Expression_Fold<AST_Expression> {
+public:
+   ReplaceBoolean();
+private:
+  virtual AST_Expression foldTraverseElement(AST_Expression);
+  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+};
+
 #endif

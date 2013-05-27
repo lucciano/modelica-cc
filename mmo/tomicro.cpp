@@ -141,8 +141,7 @@ MMO_Statement MMO_ToMicroModelica_::make_when(AST_Expression cond , AST_Expressi
 	AST_Statement_ElseList elList = newAST_Statement_ElseList();
 	AST_ListAppend(elList,_else );
 
-	return newAST_Statement_When( cond , l1 , elList );
-	
+	return newAST_Statement_When( cond , l1 , elList );	
 }
 
 
@@ -431,6 +430,16 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 			return newAST_Expression_OutputExpressions(lss);
 		}
 		
+		case EXPCOMPREF:
+		{
+			AST_Expression_ComponentReference cf = e->getAsComponentRef();
+			Type t = _c->getVariableType(cf->names()->front());
+			if (t->getType() == TYBOOLEAN) {
+				return GREATER( cf , R(0.5)  );
+			} else 
+				return cf;
+		}
+		
 		case EXPCALL:
 		{
 			AST_Expression_Call call = e->getAsCall();
@@ -444,9 +453,11 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 				AST_ListAppend(ls ,  newAST_Statement_Assign(cr, ADD(  cr ,per )  ) );
 				return GREATER( VAR(_S("time")) , cr );
 			}
+			
 			if ( * call->name() == "initial") {
 				return GREATER( VAR(_S("time")) , I(0) );
 			}
+			
 			return call;
 		}
 		default:
@@ -457,6 +468,7 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 
 MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq) 
 {
+	
 	switch (eq->equationType()) {
 		case EQEQUALITY:
 		{ 
@@ -464,7 +476,8 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 			if (_e->left()->expressionType() == EXPCOMPREF)
 			{
 				AST_Expression_ComponentReference cf = _e->left()->getAsComponentRef(); 
-				VarInfo *varInfo = _c->getVarSymbolTable()->lookup( * (cf->names()->front()));
+				VarInfo *varInfo = _c->getVarSymbolTable()->lookup( * (cf->names()->front()) );
+				if (varInfo == NULL) throw "Variable no encontrada" ;
 				if (varInfo->isState()) {
 					AST_ExpressionList ls = newAST_ExpressionList(); 
 					AST_ListAppend(ls, (AST_Expression)cf );
@@ -494,13 +507,12 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 					AST_ListAppend(elseList,newAST_Statement_Else( _cond , stmList   ) );
 				}	
 			}
-			
 			AST_StatementList stmList = newAST_StatementList();
 			AST_EquationListIterator eqit;
 			foreach(eqit, when->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
 			
 			AST_Expression _cond = whenCondition(when->condition(), stmList);
-			
+			cerr << "SALIIII"  << endl;
 			return newAST_Statement_When( _cond , stmList , elseList);  
 		}
 		

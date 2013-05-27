@@ -130,6 +130,7 @@ enum ModificationType { MODNONE ,MODEQUAL, MODASSIGN, MODCLASS };
 
 /* Argument modification */
 AST_ArgumentList newAST_ArgumentList();
+AST_Argument newAST_ArgumentModification(AST_String,AST_Modification);
 AST_Argument newAST_Redeclaration(AST_Boolean, AST_Boolean, AST_Argument); 
 AST_Argument newAST_ShortClass(AST_ClassPrefix,AST_String, AST_ShortClassExp);
 AST_ShortClassExp newAST_ShortClassExp(AST_TypePrefix, AST_String, AST_ExpressionList, AST_ArgumentList);

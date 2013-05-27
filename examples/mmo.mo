@@ -1,9 +1,9 @@
 model Prueba
 	Real b,c,d,e;
 	parameter Real p = 10;
-	String hola;
+	String hola ;
 	Integer m[4,5,6];
-	Boolean f;
+	Boolean f(y = 0, start= true) = true;
 	Boolean j;
 equation
 	if f then 
@@ -16,9 +16,9 @@ equation
 		m[i] = i > 4;
 	end	for;
 	
-	a = 1 < 10;
-	(if 1 < 10 then p else e ) = b;
-	
+	when f and b < 5 then
+		b = 1;
+	end when ;
 algorithm
    a := 1;
 

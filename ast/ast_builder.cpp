@@ -505,6 +505,11 @@ AST_ArgumentList newAST_ArgumentList() {
   return new list<AST_Argument>();
 }
 
+AST_Argument newAST_ArgumentModification(AST_String s ,AST_Modification m)
+{
+	return new AST_ArgumentModification_(s,m);
+}
+
 AST_ExpressionListList newAST_ExpressionListList() {
   return new list<AST_ExpressionList>();
 }

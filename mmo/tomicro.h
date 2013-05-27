@@ -37,6 +37,7 @@ DEFINE_TYPE(MMO_ToMicroModelica);
 #define MULT(l,r) 	newAST_Expression_BinOp(l, r, BINOPMULT )
 #define SUB(l,r) 	newAST_Expression_BinOp(l, r, BINOPSUB )
 #define I(n) 		newAST_Expression_Integer(n)
+#define R(n) 		newAST_Expression_Real(n)
 #define PA(e)       newAST_Expression_OutputExpressions(e) 
 #define UMENOS(e)   SUB( I(1) , e )
 
