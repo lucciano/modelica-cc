@@ -380,3 +380,5 @@ ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr) 
   return os;
 }
 
+
+GET_AS_IMP(Expression,_Brace);

@@ -2,6 +2,7 @@
 
 #include <antialias/remove_alias.h>
 #include <ast/ast_builder.h>
+#include <ast/modification.h>
 #include <ast/expression.h>
 #include <util/symbol_table.h>
 #include <util/ast_util.h>
@@ -16,19 +17,46 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
   } 
   _varSymbolTable->remove(CREF_NAME(alias));
   AST_Modification m = v->modification();
- if (m!=NULL) {
-  /* add to modificaiton */
- } else {
+  AST_String alias_name;
+  if (IS_UMINUS(alias)) {
+    alias_name = newAST_String(CREF_NAME(alias));
+    alias_name->insert(0,"-");
+  } else {
+    alias_name = newAST_String(CREF_NAME(alias));
+  }
+ 
+  if (m!=NULL) {
+    /* add to modificaiton */
+    switch (m->modificationType()) {
+      case MODCLASS: {
+        AST_ArgumentList al = m->getAsModificationClass()->arguments();
+        AST_ArgumentListIterator it;
+        bool found=false;
+        foreach(it,al) { 
+          if (*current(it)->getAsArgumentModification()->name()=="alias") { 
+            AST_ExpressionList l=current(it)->getAsArgumentModification()->modification()->getAsModificationEqual()->exp()->getAsExpression_Brace()->arguments();
+            found=true;
+            AST_ListAppend(l,newAST_Expression_String(alias_name));
+            break;
+          } 
+        }
+        if (!found) 
+            AST_ListAppend(m->getAsModificationClass()->arguments(),newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
+        break;
+        }
+        case MODEQUAL: {
+          AST_ModificationEqual me=m->getAsModificationEqual(); 
+          AST_ArgumentList al= newAST_ArgumentList();
+          AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
+          m = newAST_ModificationClass(al, me->exp());
+          v->setModification(m);
+          break;
+        }
+      }
+  } else {
     AST_ArgumentList al= newAST_ArgumentList();
-    AST_String alias_name;
-    if (IS_UMINUS(alias)) {
-      alias_name = newAST_String(CREF_NAME(alias));
-      alias_name->insert(0,"-");
-    } else {
-      alias_name = newAST_String(CREF_NAME(alias));
-    }
-    AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
-    m = newAST_ModificationClass(al, newAST_Expression_Null());
+  AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
+   m = newAST_ModificationClass(al, newAST_Expression_Null());
     v->setModification(m); 
   }
   /* Do the replacement */ 

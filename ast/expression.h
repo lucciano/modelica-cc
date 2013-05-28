@@ -46,6 +46,7 @@ public:
   AST_Expression_CallArgs getAsCallArgs();
   AST_Expression_Real getAsReal();
   AST_Expression_Integer getAsInteger();
+  GET_AS(Expression_Brace);
 };
 
 class AST_Expression_Integer_: public AST_Expression_ {
