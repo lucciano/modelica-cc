@@ -135,7 +135,7 @@ void MMO_Class_::addVariable(MMO_Component c)
 		if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
 		
-		VarInfo * v = new VarInfo(t , c->typePrefix() , ChangeModifications(current(it)->modification()) );
+		VarInfo * v = new VarInfo(t , c->typePrefix() , ChangeModifications(current(it)->modification()),current(it)->comment() );
 		varEnv->insert(current(it)->name(), v);
 	}
 }
@@ -146,7 +146,7 @@ void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_ExpressionLis
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
 	if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
-	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , NULL );
+	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , NULL, NULL );
 	varEnv->insert(*name, v);
 }
 
@@ -154,7 +154,7 @@ void MMO_Class_::addVariable(AST_String name , AST_String tys)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
-	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , NULL );
+	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , NULL,NULL );
 	varEnv->insert(*name, v);
 }
 
@@ -162,7 +162,7 @@ void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_Expression e)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
-	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , newAST_ModificationEqual(e) );
+	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , newAST_ModificationEqual(e), NULL );
 	varEnv->insert(*name, v);
 }
 
@@ -201,6 +201,7 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
     MAKE_SPACE;
 	  ret << *var  << " "  << symbolTable->varName(i);
   	if (var->modification()) ret <<  var-> modification() ;
+  	if (var->comment()) ret <<  var-> comment() ;
 	  ret  << ";" << endl;  
   }
   END_BLOCK;

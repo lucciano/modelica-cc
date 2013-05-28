@@ -51,6 +51,7 @@ typedef int                                  AST_ClassPrefix;
 DEFINE_TYPE(AST_Argument);
 DEFINE_TYPE(AST_ArgumentModification);
 DEFINE_TYPE(AST_Class);
+DEFINE_TYPE(AST_Comment) ;
 DEFINE_TYPE(AST_Component) ;
 DEFINE_TYPE(AST_Composition);
 DEFINE_TYPE(AST_CompositionElement);
@@ -138,6 +139,7 @@ AST_ShortClassExp newAST_ShortClassExp_Enum(AST_StringList);
 AST_Argument AST_ArgumentSet(AST_Boolean, AST_Boolean, AST_Argument);
 AST_Argument newAST_ElementModification(AST_String, AST_Modification);
 AST_Argument AST_ArgumentSetReplaceable(AST_Argument);
+AST_Comment newAST_Comment(AST_String, AST_ArgumentList);
 
 /* Strings */
 AST_String newAST_String(AST_String);
@@ -202,7 +204,9 @@ AST_ExtendsClause newAST_ExtendsClause(AST_String);
 AST_Element newAST_Element_ClassWrapper(AST_Class);
 AST_CompositionElementList newAST_CompositionElementList();
 AST_Declaration newAST_Declaration(AST_String,AST_ExpressionList, AST_Modification);
+AST_Declaration AST_Declaration_AddCondComment(AST_Declaration, AST_Expression, AST_Comment);
 AST_DeclarationList newAST_DeclarationList(AST_Declaration);
+
 AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs);
 AST_CompositionElement newAST_CompositionElement(AST_ElementList);
 
@@ -310,6 +314,7 @@ enum ClassPrefix {
 /* Printers */
 #define DEFINE_PRINTER(X) ostream & operator<<(ostream &os , const X &x ) ;
 DEFINE_PRINTER(AST_Argument);
+DEFINE_PRINTER(AST_Comment);
 DEFINE_PRINTER(AST_CompositionElement);
 DEFINE_PRINTER(AST_Composition);
 DEFINE_PRINTER(AST_Class);

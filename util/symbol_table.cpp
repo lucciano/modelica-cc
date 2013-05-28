@@ -21,7 +21,7 @@
 #include <util/symbol_table.h>
 
 
-VarInfo::VarInfo ( Type t, AST_TypePrefix tp, AST_Modification m): _state(false), _discrete(false) , _t(t) , _tp(tp) , _m(m) {
+VarInfo::VarInfo ( Type t, AST_TypePrefix tp, AST_Modification m, AST_Comment c): _state(false), _discrete(false) , _t(t) , _tp(tp) , _m(m),_comm(c) {
 };
 
 bool VarInfo::isState() {return _state;};
@@ -42,7 +42,7 @@ TypeSymbolTable_::TypeSymbolTable_(){
 }
 
 void VarSymbolTable_::initialize(TypeSymbolTable ty) {
-  insert("time",new VarInfo(ty->lookup("Real"),0,NULL));
+  insert("time",new VarInfo(ty->lookup("Real"),0,NULL,NULL));
 }
 
 ostream & operator<<(ostream &ret , const VarInfo &e )

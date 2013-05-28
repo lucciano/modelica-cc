@@ -67,6 +67,7 @@ private:
   AST_Argument                          argument;
   AST_ClassPrefix                       class_prefix;
   AST_Class                             model;
+  AST_Comment                           comment;
   AST_Component                         component;
   AST_Composition                       composition;
   AST_CompositionEqsAlgs                composition_eqs_algs;
@@ -108,9 +109,10 @@ private:
 
 
 %type <argument> argument element_modification_replaceable element_redeclaration element_redeclaration_1 element_redeclaration_2 short_class_definition  component_clause1 element_modification element_replaceable   
-%type <argument_list> opt_argument_list argument_list class_modification opt_class_modification annotation opt_annotation_composition opt_annotation
+%type <argument_list> opt_argument_list argument_list class_modification opt_class_modification annotation opt_annotation_composition opt_annotation 
 %type <class_list> class_definition_list
 %type <class_prefix> class_prefix class_prefixes opt_pure_impure_operator 
+%type <comment> comment
 %type <component> component_clause 
 %type <component_ref> component_reference component_reference_list more_cr
 %type <composition> composition composition_aux_1
@@ -348,7 +350,7 @@ import_list:
 ;
 
 comment:
-  string_comment opt_annotation
+  string_comment opt_annotation { $$ = newAST_Comment($1,$2); }
 ;
 
 element_list:
@@ -439,7 +441,7 @@ component_list:
 ;
 
 component_declaration:
-  declaration opt_condition_attribute comment { $$ = $1; }
+  declaration opt_condition_attribute comment { $$ = AST_Declaration_AddCondComment($1,$2,$3); }
 ;
 
 declaration:

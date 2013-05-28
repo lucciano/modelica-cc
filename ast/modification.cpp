@@ -96,7 +96,10 @@ AST_ArgumentModification_::AST_ArgumentModification_(AST_String name, AST_Modifi
 }
 string AST_ArgumentModification_::print() const { 
   stringstream ret(stringstream::out);
-  ret << name() << modification();
+  if (modification()!=NULL)
+    ret << name() << modification();
+  else
+    ret << name();
   return ret.str();
 }
 

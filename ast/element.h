@@ -70,10 +70,13 @@ public:
   string name() const { return _name; }
   AST_ExpressionList indexes() const { return _indexes;}
   AST_Modification modification() const { return _mod; }
+  void setComment(AST_Comment c) { _comm = c; }
+  AST_Comment comment() const { return _comm; }
 private:
   string _name;
   AST_ExpressionList _indexes;
   AST_Modification _mod;
+  AST_Comment _comm;
 };
 
 class AST_Component_: public AST_Element_ {
@@ -117,5 +120,16 @@ public:
 
 private:
   AST_Class _c; 
+};
+
+class AST_Comment_: public AST_Node {
+public:
+  AST_Comment_(AST_String st, AST_ArgumentList al): _st(st), _al(al) {}
+  AST_ArgumentList arguments() const { return _al; }
+  AST_String string()  const{ return _st; }
+  friend ostream & operator<<(ostream &os , const AST_Comment &c );
+private:
+  AST_String _st;
+  AST_ArgumentList _al;
 };
 #endif

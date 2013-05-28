@@ -659,3 +659,14 @@ AST_Class newAST_ClassModification(AST_String, AST_TypePrefix, AST_String, AST_E
 AST_CompositionEqsAlgs newAST_NullCompositionEquations() {
   return NULL;
 }
+
+AST_Declaration AST_Declaration_AddCondComment(AST_Declaration decl, AST_Expression exp, AST_Comment comment) {
+  decl->setComment(comment);
+  return decl;
+}
+
+AST_Comment newAST_Comment(AST_String st, AST_ArgumentList al) {
+  if (al->size() ||  st!=NULL)
+    return new AST_Comment_(st,al);
+  return NULL;
+}

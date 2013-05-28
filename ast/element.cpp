@@ -58,6 +58,20 @@ ostream & operator<<(ostream &os , const AST_Element &e ) {
   return os;
 }
 
+ostream & operator<<(ostream &os , const AST_Comment_ &c ) {
+  if (c.string())
+    os << " " << c.string();
+  if (c.arguments()->size()) 
+    AST_ListPrint(c.arguments(),os," annotation",",","(",")");
+  return os;
+}
+ostream & operator<<(ostream &os , const AST_Comment &c ) {
+  if (c!=NULL)
+    os << *c;
+  return os;
+}
+
+
 ostream & operator<<(ostream &os , const AST_Element_ &e ){
     os << e.print();  
     return os;
@@ -105,7 +119,6 @@ string AST_Declaration_::print() const {
         if (e!=NULL && e->expressionType()!=EXPNULL)
           ret << " = " << e;
       }
-
     }
     return ret.str();
 }

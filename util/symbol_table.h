@@ -73,9 +73,11 @@ protected:
 
 class VarInfo {
 public:  
-  VarInfo( Type t, AST_TypePrefix tp, AST_Modification);
+  VarInfo( Type t, AST_TypePrefix tp, AST_Modification, AST_Comment);
   AST_TypePrefix typePrefix() {return _tp;};
   AST_Modification modification() {return _m;};
+  AST_Comment comment() { return _comm; }
+  void setComment(AST_Comment c) { _comm=c; }
   void setModification (AST_Modification m) {_m=m;};
   bool isParameter() const { return _tp & TP_PARAMETER; }
   bool isDiscrete() const  { return (_tp & TP_DISCRETE) || _discrete; }
@@ -97,6 +99,7 @@ private:
   Type _t;
   AST_TypePrefix _tp ;
   AST_Modification _m;
+  AST_Comment _comm;
 };
 
 
