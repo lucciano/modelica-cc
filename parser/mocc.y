@@ -106,8 +106,9 @@ private:
 %token <real>   TOKFLOAT 
 %token <string> TOKSTRING TOKID 
 
+
 %type <argument> argument element_modification_replaceable element_redeclaration element_redeclaration_1 element_redeclaration_2 short_class_definition  component_clause1 element_modification element_replaceable   
-%type <argument_list> opt_argument_list argument_list class_modification opt_class_modification
+%type <argument_list> opt_argument_list argument_list class_modification opt_class_modification annotation opt_annotation_composition opt_annotation
 %type <class_list> class_definition_list
 %type <class_prefix> class_prefix class_prefixes opt_pure_impure_operator 
 %type <component> component_clause 
@@ -138,7 +139,7 @@ private:
 %type <statement_list> statement_list opt_else_st 
 %type <statement_elselist> opt_esleif_st opt_else_when_list
 %type <stored_def> stored_definition input
-%type <string> name opt_name type_specifier more_comp_call opt_language_specification opt_within_name enumeration_literal
+%type <string> name opt_name type_specifier more_comp_call opt_language_specification opt_within_name enumeration_literal string_comment string_comment_no_empty
 %type <string_list> enum_list enumeration_args more_ids import_list 
 %type <type_prefix> type_prefix opt_input_output opt_disc_param_const opt_flow_stream base_prefix
 
@@ -298,8 +299,8 @@ opt_external_function_call:
 ;
 
 opt_annotation_composition:
-    /* empty */
-  | annotation TOKSEMICOLON
+    /* empty */         { $$ = newAST_ArgumentList(); }
+  | annotation TOKSEMICOLON { $$ = $1; } 
 ;
 
 composition_aux_1: 
@@ -310,14 +311,14 @@ composition_aux_1:
 ;
 
 string_comment:
-    /* empty */
-  | TOKSTRING                                 {}
-  | TOKSTRING TOKPLUS string_comment_no_empty {}
+    /* empty */                       { $$ = newAST_StringNull(); }
+  | TOKSTRING                                 { $$ = $1; }
+  | TOKSTRING TOKPLUS string_comment_no_empty { /* $$ = AST_StringConcat($1,$3);*/ }
 ;
 
 string_comment_no_empty:
-    TOKSTRING                                 {}
-  | TOKSTRING TOKPLUS string_comment_no_empty {}
+    TOKSTRING                                 { $$ = $1; }
+  | TOKSTRING TOKPLUS string_comment_no_empty { /* $$ = AST_StringConcat($1,$3); */}
 ;
 
 element: 
@@ -584,12 +585,12 @@ array_subscripts:
 ;
 
 opt_annotation:
-    /* empty */
-  | annotation
+    /* empty */         { $$ = newAST_ArgumentList(); }
+  | annotation { $$ = $1; }
 ;
 
 annotation:
-  TOKANNOTATION class_modification
+  TOKANNOTATION class_modification { $$ = $2; } 
 ;
 
 eq_alg_section_init:
