@@ -73,6 +73,9 @@ private:
  
 	IndexMap viewIndex(IndexMap , AST_ForIndexList );
 	bool IndexAccess(AST_Expression e, string i );
+	
+	AST_Modification ChangeModifications(AST_Modification m);
+	Type ChangeToReal(Type m);
 };
 
 MMO_ToMicroModelica newMMO_ToMicroModelica(MMO_Class  c );

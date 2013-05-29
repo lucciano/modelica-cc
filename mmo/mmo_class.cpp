@@ -27,9 +27,9 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 	_eqs = new list<MMO_Equation>();
 	_comps = new list<MMO_Component>();
 	_stms = new list<MMO_Statement>();
-	varEnv = new VarSymbolTable_;
+	varEnv = newVarSymbolTable();
 	tyEnv = ty;
-  varEnv->initialize(ty);
+    varEnv->initialize(ty);
 	
 	AST_Composition comp = c->composition();
 
@@ -135,7 +135,7 @@ void MMO_Class_::addVariable(MMO_Component c)
 		if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
 		
-		VarInfo * v = new VarInfo(t , c->typePrefix() , ChangeModifications(current(it)->modification()),current(it)->comment() );
+		VarInfo  v = newVarInfo(t , c->typePrefix() , current(it)->modification(), current(it)->comment() );
 		varEnv->insert(current(it)->name(), v);
 	}
 }
@@ -146,7 +146,7 @@ void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_ExpressionLis
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
 	if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
-	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , NULL, NULL );
+	VarInfo  v = newVarInfo(t , newAST_TypePrefix() , NULL, NULL );
 	varEnv->insert(*name, v);
 }
 
@@ -154,7 +154,7 @@ void MMO_Class_::addVariable(AST_String name , AST_String tys)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
-	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , NULL,NULL );
+	VarInfo  v = newVarInfo(t , newAST_TypePrefix() , NULL,NULL );
 	varEnv->insert(*name, v);
 }
 
@@ -162,7 +162,7 @@ void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_Expression e)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
-	VarInfo * v = new VarInfo(t , newAST_TypePrefix() , newAST_ModificationEqual(e), NULL );
+	VarInfo  v = newVarInfo(t , newAST_TypePrefix() , newAST_ModificationEqual(e), NULL );
 	varEnv->insert(*name, v);
 }
 
@@ -201,7 +201,7 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   int i; int symbolTableSize = symbolTable->count();
   BEGIN_BLOCK;
   for (i = 0; i<symbolTableSize; i++) {
-	  VarInfo *var = symbolTable->varInfo(i);
+	  VarInfo var = symbolTable->varInfo(i);
     if (var->builtIn()) continue;
     MAKE_SPACE;
 	  ret << *var  << " "  << symbolTable->varName(i);
@@ -226,41 +226,3 @@ MMO_Class newMMO_Class(AST_Class c, TypeSymbolTable t){
 	return new MMO_Class_(c,t);
 }
 
-
-AST_Modification ChangeModifications(AST_Modification m)
-{
-	if (!m) return m;
-	ReplaceBoolean rb;
-	switch(m->modificationType())
-	{
-		case MODEQUAL:
-		{
-			AST_ModificationEqual eq = m->getAsModificationEqual();
-			return newAST_ModificationEqual( rb.foldTraverse(eq->exp())  );
-		}
-		
-		case MODASSIGN:
-		{
-			AST_ModificationAssign asig = m->getAsModificationAssign();
-			return newAST_ModificationAssign( rb.foldTraverse(asig->exp()));
-		}
-		
-		case MODCLASS:
-		{
-			AST_ModificationClass cc = m->getAsModificationClass();
-			AST_Expression _e = (cc->exp()) ? rb.foldTraverse(cc->exp()) : NULL  ;
-			AST_ArgumentList args = newAST_ArgumentList();
-			if (cc->arguments()->size() > 0) {
-				AST_ArgumentListIterator it;
-				foreach(it, cc->arguments()) {
-					AST_ArgumentModification mm = current(it)->getAsArgumentModification();
-					if ( * mm->name() == "start")	AST_ListAppend(args , newAST_ArgumentModification(mm->name() , ChangeModifications(mm->modification()) )   );
-					else AST_ListAppend(args, (AST_Argument) mm);
-				}
-			}
-			return newAST_ModificationClass(args,_e);
-		}
-		
-	}
-	
-}

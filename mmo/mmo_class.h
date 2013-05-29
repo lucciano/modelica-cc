@@ -40,9 +40,6 @@ typedef list<MMO_Equation>::iterator MMO_EquationListIterator;
 #ifndef MMOCLASS_H
 #define MMOCLASS_H
 
-AST_Modification ChangeModifications(AST_Modification m);
-
-
 /* AST_Class Wrapper */
 class MMO_Class_ {
 public:

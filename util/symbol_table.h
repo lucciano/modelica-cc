@@ -27,15 +27,15 @@
 #ifndef SymbolTable_H
 #define SymbolTable_H
 
-class VarSymbolTable_;
-class TypeSymbolTable_;
+
+DEFINE_TYPE(VarSymbolTable);
+DEFINE_TYPE(TypeSymbolTable);
+DEFINE_TYPE(VarInfo);
 
 
 typedef std::string VarName;
 typedef std::string TypeName;
-typedef VarSymbolTable_    * VarSymbolTable;
-typedef TypeSymbolTable_   * TypeSymbolTable;
-//typedef int Type;
+
 
 template<class Key,class Value>
 class SymbolTable {
@@ -71,14 +71,20 @@ protected:
 };
 
 
-class VarInfo {
+class VarInfo_ {
 public:  
-  VarInfo( Type t, AST_TypePrefix tp, AST_Modification, AST_Comment);
+  VarInfo_( Type t, AST_TypePrefix tp, AST_Modification, AST_Comment);
   AST_TypePrefix typePrefix() {return _tp;};
-  AST_Modification modification() {return _m;};
+  
   AST_Comment comment() { return _comm; }
   void setComment(AST_Comment c) { _comm=c; }
+  
+  AST_Modification modification() {return _m;};
   void setModification (AST_Modification m) {_m=m;};
+  
+  Type type();
+  void setType (Type t) {_t=t;};
+  
   bool isParameter() const { return _tp & TP_PARAMETER; }
   bool isDiscrete() const  { return (_tp & TP_DISCRETE) || _discrete; }
   bool builtIn() const { return _builtin; } 
@@ -90,11 +96,11 @@ public:
   bool isConstant() const { return _tp & TP_CONSTANT; }
   bool isInput() const { return _tp & TP_INPUT; }
   bool isOutput() const { return _tp & TP_OUTPUT; }
-  Type type();
+  
   bool isState();
   void setState();
   
-  friend ostream & operator<<(ostream &os , const VarInfo &e );
+  friend ostream & operator<<(ostream &os , const VarInfo_ &e );
 private:
   bool _state;
   bool _discrete;
@@ -106,12 +112,12 @@ private:
 };
 
 
-class VarSymbolTable_: public SymbolTable<VarName, VarInfo * > 
+class VarSymbolTable_: public SymbolTable<VarName, VarInfo  > 
 {
 public:
 	VarSymbolTable_() {};
   void initialize(TypeSymbolTable); 
-  VarInfo *varInfo(int i) { return val(i); }
+  VarInfo varInfo(int i) { return val(i); }
   VarName varName(int i) { return key(i); }
 };
 
@@ -121,5 +127,8 @@ public:
 	TypeSymbolTable_();
 };
 
+VarInfo newVarInfo( Type t, AST_TypePrefix tp, AST_Modification, AST_Comment);
+VarSymbolTable  newVarSymbolTable();
+TypeSymbolTable newTypeSymbolTable();
 
 #endif

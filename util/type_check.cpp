@@ -116,7 +116,7 @@ Type TypeCheck_::check_expression(AST_Expression e)
 		{
 			AST_Expression_ComponentReference b = e->getAsComponentRef();
 			
-			VarInfo * tt = varEnv->lookup( * (b->names()->front()) );
+			VarInfo  tt = varEnv->lookup( * (b->names()->front()) );
 						
 			if (tt == NULL) {
          cerr << "Var:" <<  b->names()->front() << ":";

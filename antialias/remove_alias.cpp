@@ -10,7 +10,7 @@
 
 void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
   
-  VarInfo *v = _varSymbolTable->lookup(CREF_NAME(var));
+  VarInfo v = _varSymbolTable->lookup(CREF_NAME(var));
   if (v==NULL) {
     cerr << "Unknown variable " << CREF_NAME(var)<< endl;
     return;

@@ -45,7 +45,7 @@ int main(int argc, char ** argv)
     cerr << "Usage:\n\tmcc file.mo\n";
     return -1;
   }
-  TypeSymbolTable tyEnv = new TypeSymbolTable_;
+  TypeSymbolTable tyEnv = newTypeSymbolTable();
   
   AST_StoredDefinition sd = parseFile(argv[1],&r);
   

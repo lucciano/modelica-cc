@@ -21,18 +21,21 @@
 #include <util/symbol_table.h>
 
 
-VarInfo::VarInfo ( Type t, AST_TypePrefix tp, AST_Modification m, AST_Comment c): _state(false), _discrete(false) , _t(t) , _tp(tp) , _m(m),_comm(c), _builtin(false) {
+VarInfo_::VarInfo_ ( Type t, AST_TypePrefix tp, AST_Modification m, AST_Comment c): _state(false), _discrete(false) , _t(t) , _tp(tp) , _m(m),_comm(c), _builtin(false) {
 };
 
-bool VarInfo::isState() {return _state;};
 
-void VarInfo::setState() { _state = true; };
 
-void VarInfo::setDiscrete() {
+
+bool VarInfo_::isState() {return _state;};
+
+void VarInfo_::setState() { _state = true; };
+
+void VarInfo_::setDiscrete() {
 	_discrete = true;
 }
 
-Type VarInfo::type() {return _t;};
+Type VarInfo_::type() {return _t;};
 
 TypeSymbolTable_::TypeSymbolTable_(){
 	insert("String",  new Type_String_()  );
@@ -42,12 +45,12 @@ TypeSymbolTable_::TypeSymbolTable_(){
 }
 
 void VarSymbolTable_::initialize(TypeSymbolTable ty) {
-  VarInfo *v=new VarInfo(ty->lookup("Real"),0,NULL,NULL);
+  VarInfo v=newVarInfo(ty->lookup("Real"),0,NULL,NULL);
   v->setBuiltIn();
   insert("time",v);
 }
 ;
-ostream & operator<<(ostream &ret , const VarInfo &e )
+ostream & operator<<(ostream &ret , const VarInfo_ &e )
 {
 	if (e.isParameter()) ret << "parameter ";
 	if (e.isDiscrete())  ret << "discrete ";
@@ -57,4 +60,18 @@ ostream & operator<<(ostream &ret , const VarInfo &e )
 	ret << e._t;
 	//if (e._m != NULL) os << e._m->print();
 	return ret;
+}
+
+
+VarInfo newVarInfo( Type t, AST_TypePrefix tp, AST_Modification m , AST_Comment c){
+	return new VarInfo_(t,tp,m,c);
+}
+
+VarSymbolTable newVarSymbolTable()
+{
+	return new VarSymbolTable_;
+}
+TypeSymbolTable newTypeSymbolTable()
+{
+	return new TypeSymbolTable_;
 }

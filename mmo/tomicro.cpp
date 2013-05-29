@@ -30,6 +30,13 @@ void MMO_ToMicroModelica_::transform()
 {
 	/* Aca comienza todo el ciclo */
 	transformEqList(_c->getEquations(), _c->getStatements(),NULL );
+	
+	for(int i = 0; i < _c->getVarSymbolTable()->count();i++) {
+		VarInfo  v = _c->getVarSymbolTable()->varInfo(i);
+		v->setModification( ChangeModifications(v->modification()));
+		if ( ( !v->isConstant() && !v->isParameter() ) || v->type()->getType() == TYBOOLEAN) v->setType(ChangeToReal(v->type()));
+	}
+	
 }
 
 
@@ -476,7 +483,7 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 			if (_e->left()->expressionType() == EXPCOMPREF)
 			{
 				AST_Expression_ComponentReference cf = _e->left()->getAsComponentRef(); 
-				VarInfo *varInfo = _c->getVarSymbolTable()->lookup( * (cf->names()->front()) );
+				VarInfo varInfo = _c->getVarSymbolTable()->lookup( * (cf->names()->front()) );
 				if (varInfo == NULL) throw "Variable no encontrada" ;
 				if (varInfo->isState()) {
 					AST_ExpressionList ls = newAST_ExpressionList(); 
@@ -643,6 +650,58 @@ bool MMO_ToMicroModelica_::IndexAccess(AST_Expression e, string i )
 	}	
 } 
 
+Type MMO_ToMicroModelica_::ChangeToReal(Type m)
+{
+	switch(m->getType()) {
+		case TYREAL:
+		case TYBOOLEAN:
+		case TYINTEGER:
+			return _c->getTypeSymbolTable()->lookup("Real");
+		case TYARRAY:
+			return new Type_Array_( ChangeToReal(m->getAsArray()->arrayOf())  ,  m->getAsArray()->dimension() );
+		default:
+			return m;
+	}
+	
+}
+
+AST_Modification MMO_ToMicroModelica_::ChangeModifications(AST_Modification m)
+{
+	if (!m) return m;
+	ReplaceBoolean rb;
+	switch(m->modificationType())
+	{
+		case MODEQUAL:
+		{
+			AST_ModificationEqual eq = m->getAsModificationEqual();
+			return newAST_ModificationEqual( rb.foldTraverse(eq->exp())  );
+		}
+		
+		case MODASSIGN:
+		{
+			AST_ModificationAssign asig = m->getAsModificationAssign();
+			return newAST_ModificationAssign( rb.foldTraverse(asig->exp()));
+		}
+		
+		case MODCLASS:
+		{
+			AST_ModificationClass cc = m->getAsModificationClass();
+			AST_Expression _e = (cc->exp()) ? rb.foldTraverse(cc->exp()) : NULL  ;
+			AST_ArgumentList args = newAST_ArgumentList();
+			if (cc->arguments()->size() > 0) {
+				AST_ArgumentListIterator it;
+				foreach(it, cc->arguments()) {
+					AST_ArgumentModification mm = current(it)->getAsArgumentModification();
+					if ( * mm->name() == "start")	AST_ListAppend(args , newAST_ArgumentModification(mm->name() , ChangeModifications(mm->modification()) )   );
+					else AST_ListAppend(args, (AST_Argument) mm);
+				}
+			}
+			return newAST_ModificationClass(args,_e);
+		}
+		
+	}
+	
+}
 
 MMO_ToMicroModelica newMMO_ToMicroModelica(MMO_Class  c )
 {

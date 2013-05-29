@@ -21,7 +21,7 @@ list<string> *UnknownCollector::collectUnknowns() {
   VarSymbolTable symbolTable = _c->getVarSymbolTable();
 	int i; int symbolTableSize = symbolTable->count();
 	for (i = 0; i<symbolTableSize; i++) {
-		VarInfo *varInfo = symbolTable->varInfo(i);
+		VarInfo varInfo = symbolTable->varInfo(i);
 		if (varInfo->type()->getType() == TYREAL
 				&& !varInfo->isConstant()
 				&& !varInfo->isDiscrete()

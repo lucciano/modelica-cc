@@ -5,6 +5,8 @@ model Prueba
 	Integer m[4,5,6];
 	Boolean f(y = 0, start= true) = true;
 	Boolean j;
+	parameter Integer pp;
+	parameter Boolean tt;
 equation
 	if f then 
 		a = 1;

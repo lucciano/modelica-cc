@@ -41,7 +41,7 @@ int main(int argc, char ** argv)
   if (r!=0) 
     return -1;
 
-  TypeSymbolTable tyEnv = new TypeSymbolTable_;
+  TypeSymbolTable tyEnv = newTypeSymbolTable();
   MMO_Class c = newMMO_Class(sd->models()->front(), tyEnv);
   ra.removeAliasEquations(c);
   cout << c;
