@@ -58,7 +58,7 @@ class buck
   Real idealclosingswitch1__T_heatPort(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) "Temperature of HeatPort";
   parameter Real idealclosingswitch1__Ron(quantity = "Resistance", unit = "Ohm", min = 0.0) = 0.00001 "Closed switch resistance";
   parameter Real idealclosingswitch1__Goff(quantity = "Conductance", unit = "S", min = 0.0) = 0.00001 "Opened switch conductance";
-  input Boolean idealclosingswitch1__control "true => p--n connected, false => switch open";
+  Boolean idealclosingswitch1__control "true => p--n connected, false => switch open";
   protected Real idealclosingswitch1__s(unit = "1") "Auxiliary variable";
   protected constant Real idealclosingswitch1__unitVoltage(quantity = "ElectricPotential", unit = "V") = 1.0;
   protected constant Real idealclosingswitch1__unitCurrent(quantity = "ElectricCurrent", unit = "A") = 1.0;
@@ -69,7 +69,7 @@ class buck
   Real constantvoltage1__n__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
   Real constantvoltage1__n__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
   parameter Real constantvoltage1__V(quantity = "ElectricPotential", unit = "V", start = 1.0) = 12.0 "Value of constant voltage";
-  output Boolean booleanpulse1__y "Connector of Boolean output signal";
+  Boolean booleanpulse1__y "Connector of Boolean output signal";
   parameter Real booleanpulse1__width(min = 1e-60, max = 100.0) = 50.0 "Width of pulse in % of period";
   parameter Real booleanpulse1__period(quantity = "Time", unit = "s", min = 1e-60, start = 1.0) = 0.0001 "Time for one period";
   parameter Real booleanpulse1__startTime(quantity = "Time", unit = "s") = 0.0 "Time instant of first pulse";
