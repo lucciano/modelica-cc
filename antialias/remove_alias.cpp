@@ -16,7 +16,7 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
     return;
   } 
   _varSymbolTable->remove(CREF_NAME(alias));
-  AST_Modification m = v->modification();
+  AST_Comment c = v->comment();
   AST_String alias_name;
   if (IS_UMINUS(alias)) {
     alias_name = newAST_String(CREF_NAME(alias));
@@ -25,39 +25,26 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
     alias_name = newAST_String(CREF_NAME(alias));
   }
  
-  if (m!=NULL) {
-    /* add to modificaiton */
-    switch (m->modificationType()) {
-      case MODCLASS: {
-        AST_ArgumentList al = m->getAsModificationClass()->arguments();
-        AST_ArgumentListIterator it;
-        bool found=false;
-        foreach(it,al) { 
-          if (*current(it)->getAsArgumentModification()->name()=="alias") { 
-            AST_ExpressionList l=current(it)->getAsArgumentModification()->modification()->getAsModificationEqual()->exp()->getAsExpression_Brace()->arguments();
+  if (c!=NULL) {
+    /* add to comment */
+    AST_ArgumentList al = c->arguments();
+    AST_ArgumentListIterator it;
+    bool found=false;
+    foreach(it,al) { 
+      if (*current(it)->getAsArgumentModification()->name()=="alias") { 
             found=true;
+            AST_ExpressionList l=current(it)->getAsArgumentModification()->modification()->getAsModificationEqual()->exp()->getAsExpression_Brace()->arguments();
             AST_ListAppend(l,newAST_Expression_String(alias_name));
             break;
-          } 
-        }
-        if (!found) 
-            AST_ListAppend(m->getAsModificationClass()->arguments(),newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
-        break;
-        }
-        case MODEQUAL: {
-          AST_ModificationEqual me=m->getAsModificationEqual(); 
-          AST_ArgumentList al= newAST_ArgumentList();
-          AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
-          m = newAST_ModificationClass(al, me->exp());
-          v->setModification(m);
-          break;
-        }
-      }
+      } 
+    }
+    if (!found) 
+      AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
   } else {
     AST_ArgumentList al= newAST_ArgumentList();
-  AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
-   m = newAST_ModificationClass(al, newAST_Expression_Null());
-    v->setModification(m); 
+    AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
+    c = newAST_Comment(NULL,al);
+    v->setComment(c); 
   }
   /* Do the replacement */ 
   ReplaceExp rep;

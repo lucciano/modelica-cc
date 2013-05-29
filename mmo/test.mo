@@ -1,9 +1,14 @@
-
-model a
-  Real a;
+model aa 
+  parameter Integer N=10;
+  Real a;
+  Real b;
+  Real k;
 equation
-  a.f.e = fede.ad[3]+f[3].xd;
-  a = b;
-public
-  Real b;
+  if time > 3 then
+    a+k=b+456;
+    b=345;
+  else
+    b=456;
+    a+b=456;
+  end if;
 end a;

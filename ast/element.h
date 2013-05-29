@@ -127,6 +127,7 @@ public:
   AST_Comment_(AST_String st, AST_ArgumentList al): _st(st), _al(al) {}
   AST_ArgumentList arguments() const { return _al; }
   AST_String string()  const{ return _st; }
+  void setAnnotation(AST_ArgumentList al) { _al=al;}
   friend ostream & operator<<(ostream &os , const AST_Comment &c );
 private:
   AST_String _st;

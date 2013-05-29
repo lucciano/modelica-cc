@@ -60,7 +60,7 @@ ostream & operator<<(ostream &os , const AST_Element &e ) {
 
 ostream & operator<<(ostream &os , const AST_Comment_ &c ) {
   if (c.string())
-    os << " " << c.string();
+    os << " \"" << c.string() << "\" "; 
   if (c.arguments()->size()) 
     AST_ListPrint(c.arguments(),os," annotation",",","(",")");
   return os;
