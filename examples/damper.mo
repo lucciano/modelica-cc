@@ -93,7 +93,6 @@ equation
   damper1__s_rel = damper1__flange_b__s - damper1__flange_a__s;
   damper1__v_rel = der(damper1__s_rel);
   damper1__flange_b__f = damper1__f;
-  der(damper1__flange_b__f) = 10;
   damper1__flange_a__f = -damper1__f;
   fixed1__flange__s = fixed1__s0;
   mass2__v = der(mass2__s);
