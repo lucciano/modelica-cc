@@ -519,7 +519,6 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 			foreach(eqit, when->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
 			
 			AST_Expression _cond = whenCondition(when->condition(), stmList);
-			cerr << "SALIIII"  << endl;
 			return newAST_Statement_When( _cond , stmList , elseList);  
 		}
 		
@@ -573,8 +572,18 @@ IndexMap MMO_ToMicroModelica_::viewIndex(IndexMap imap, AST_ForIndexList list)
 		for(it = imap->begin() ;  it !=  imap->end(); it++)
 			(*i)[ it->first ] = it->second;   
 	}
-	foreach(forit,list) 
-		(*i)[*(current(forit)->variable()) ] = I(99);  // jUST FOR NOW 
+	foreach(forit,list) {
+		AST_Expression aux;
+		// For Now, get the back
+		if (current(forit)->in_exp()->expressionType() == EXPBRACE )
+			aux = current(forit)->in_exp()->getAsExpression_Brace()-> arguments()->back();
+		if (current(forit)->in_exp()->expressionType() == EXPRANGE ) 
+			aux = current(forit)->in_exp()->getAsRange()-> expressionList()->back();	
+		
+		current(i)[ *(current(forit)->variable()) ] = aux; 
+
+
+	}
 	return i;
 }
 

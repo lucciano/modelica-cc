@@ -13,7 +13,7 @@ equation
 	else
 		a = 2;
 	end if;
-	for i in 1:10 loop
+	for i in {1,2,3} loop
 		m[i] = if i < 4 then 1 else 2;
 		m[i] = i > 4;
 	end	for;
