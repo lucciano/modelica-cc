@@ -7,7 +7,6 @@ model RLC
   Real u0;
   Real i0;
   Real i1;
-  Real x;
   Real iL;
   Real uC;
   parameter Real R1;
