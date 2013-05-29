@@ -29,7 +29,7 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 	_stms = new list<MMO_Statement>();
 	varEnv = new VarSymbolTable_;
 	tyEnv = ty;
-//  varEnv->initialize(ty);
+  varEnv->initialize(ty);
 	
 	AST_Composition comp = c->composition();
 
@@ -182,6 +182,10 @@ Type MMO_Class_::getExpresionType(AST_Expression e) {
 
 Type MMO_Class_::getVariableType(AST_String name)
 {
+  if (varEnv->lookup(*name)==NULL) {
+    cerr << "Variable " << name << " not found" << endl;
+    exit(-1);
+  } 
 	Type t = varEnv->lookup(*name)->type();
 	return t;
 }
@@ -198,6 +202,7 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   BEGIN_BLOCK;
   for (i = 0; i<symbolTableSize; i++) {
 	  VarInfo *var = symbolTable->varInfo(i);
+    if (var->builtIn()) continue;
     MAKE_SPACE;
 	  ret << *var  << " "  << symbolTable->varName(i);
   	if (var->modification()) ret <<  var-> modification() ;

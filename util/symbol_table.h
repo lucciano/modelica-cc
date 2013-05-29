@@ -81,10 +81,12 @@ public:
   void setModification (AST_Modification m) {_m=m;};
   bool isParameter() const { return _tp & TP_PARAMETER; }
   bool isDiscrete() const  { return (_tp & TP_DISCRETE) || _discrete; }
+  bool builtIn() const { return _builtin; } 
   /**
   * Para el caso de una variable real la cual es asignada en una clausula when.
   */
   void setDiscrete();
+  void setBuiltIn() { _builtin=true; } 
   bool isConstant() const { return _tp & TP_CONSTANT; }
   bool isInput() const { return _tp & TP_INPUT; }
   bool isOutput() const { return _tp & TP_OUTPUT; }
@@ -96,6 +98,7 @@ public:
 private:
   bool _state;
   bool _discrete;
+  bool _builtin;
   Type _t;
   AST_TypePrefix _tp ;
   AST_Modification _m;
