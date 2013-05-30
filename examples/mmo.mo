@@ -18,7 +18,7 @@ equation
 		m[i] = i > 4;
 	end	for;
 	
-	when f and b < 5 then
+	when  sample(1,2) then
 		b = 1;
 	end when ;
 algorithm

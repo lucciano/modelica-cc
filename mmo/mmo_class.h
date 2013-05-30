@@ -59,9 +59,9 @@ public:
   TypeSymbolTable getTypeSymbolTable();
   Type getExpresionType(AST_Expression e) ;
   Type getVariableType(AST_String name);
-  void addVariable(AST_String name,AST_String tys); 
-  void addVariable(AST_String name,AST_String tys,AST_Expression); 
-  void addVariable(AST_String name,AST_String tys,AST_ExpressionList); 
+  void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp); 
+  void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_Expression); 
+  void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_ExpressionList); 
   AST_String name() const { return _class->name(); }
   
   friend ostream & operator<<(ostream &os , const MMO_Class_ &c );

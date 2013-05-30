@@ -118,13 +118,13 @@ AST_Expression negar_cond(AST_Expression cond)
 	switch (b->binopType())
 	{
 		case BINOPLOWER: 
-			return newAST_Expression_BinOp(b->left(),b->right(), BINOPGREATER );
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPGREATEREQ  );
 		case BINOPLOWEREQ: 
-			return newAST_Expression_BinOp(b->left(),b->right(), BINOPGREATEREQ );
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPGREATER );
 		case BINOPGREATER: 
-			return newAST_Expression_BinOp(b->left(),b->right(), BINOPLOWER );
-		case BINOPGREATEREQ: 
 			return newAST_Expression_BinOp(b->left(),b->right(), BINOPLOWEREQ );
+		case BINOPGREATEREQ: 
+			return newAST_Expression_BinOp(b->left(),b->right(), BINOPLOWER  );
 		case BINOPCOMPNE: 
 			return newAST_Expression_BinOp(b->left(),b->right(), BINOPCOMPEQ );
 		case BINOPCOMPEQ: 
@@ -221,15 +221,19 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 					AST_String name = new_label();
 					AST_Expression_ComponentReference cr;
 					if (sList->size() == 0 ) {
-						_c->addVariable( name , _S("Real"));	
+						_c->addVariable( name , _S("Real"),  newAST_TypePrefix(TP_DISCRETE));	
 						cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();	
 					}else{ 
-						_c->addVariable( name , _S("Real"),indexList);	
+						_c->addVariable( name , _S("Real"),newAST_TypePrefix(TP_DISCRETE), indexList);	
 						cr = AST_Expression_ComponentReference_Add(newAST_Expression_ComponentReference(),name,sList)->getAsComponentRef();
 					}
 					AST_Expression _b = newAST_Expression_BinOp( e1 , e2 ,b->binopType()  );
 					AST_ListAppend(stList, make_when( _b, cr ));
-					return cr;
+					
+					AST_ExpressionList ls = newAST_ExpressionList();
+					AST_ListAppend(ls, (AST_Expression) cr);
+					//newAST_Expression_Call(_S("pre"), newAST_SimepleList(cr));
+					return newAST_Expression_Call(_S("pre"), NULL , ls);;
 					
 				}
 				
@@ -452,7 +456,7 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 			AST_Expression_Call call = e->getAsCall();
 			if ( * call->name() == "sample") {
 				AST_String name = new_label();   // TNEXT
-				_c->addVariable( name , _S("Real") , current(call->arguments()->begin()) );	
+				_c->addVariable( name , _S("Real") , newAST_TypePrefix(TP_DISCRETE) , current(call->arguments()->begin()) );	
 				AST_Expression_ComponentReference cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();
 				
 				AST_Expression per =   current (  ++call->arguments()->begin()   );

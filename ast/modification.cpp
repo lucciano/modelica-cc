@@ -63,6 +63,7 @@ string AST_ModificationAssign_::print() const {
 string AST_ModificationClass_::print() const { 
   stringstream ret(stringstream::out);
   
+  
   AST_ListPrint(arguments(),ret,"",",","(",")");
   /*AST_ArgumentListIterator it;
   if (arguments()->size()) {

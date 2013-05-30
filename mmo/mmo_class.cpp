@@ -140,29 +140,33 @@ void MMO_Class_::addVariable(MMO_Component c)
 	}
 }
 
-void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_ExpressionList dims)
+void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_TypePrefix tp, AST_ExpressionList dims)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
 	if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
-	VarInfo  v = newVarInfo(t , newAST_TypePrefix() , NULL, NULL );
+	VarInfo  v = newVarInfo(t , tp , NULL, NULL );
 	varEnv->insert(*name, v);
 }
 
-void MMO_Class_::addVariable(AST_String name , AST_String tys)
+void MMO_Class_::addVariable(AST_String name , AST_String tys,AST_TypePrefix tp)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
-	VarInfo  v = newVarInfo(t , newAST_TypePrefix() , NULL,NULL );
+	VarInfo  v = newVarInfo(t , tp , NULL, NULL );
+	v->setDiscrete();
 	varEnv->insert(*name, v);
 }
 
-void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_Expression e)
+void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_TypePrefix tp,AST_Expression e)
 {
 	Type t = tyEnv->lookup(*tys);
 	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
-	VarInfo  v = newVarInfo(t , newAST_TypePrefix() , newAST_ModificationEqual(e), NULL );
+	
+	AST_ArgumentList m = newAST_ArgumentList(); 
+	AST_ListAppend(m,newAST_ArgumentModification(_S("start"),newAST_ModificationEqual(e)));
+	VarInfo  v = newVarInfo(t , tp , newAST_ModificationClass(m , newAST_Expression_Null()) , NULL );
 	varEnv->insert(*name, v);
 }
 

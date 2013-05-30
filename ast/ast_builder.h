@@ -351,6 +351,13 @@ list<T1> * AST_ListConcat(list<T1> *l1,list<T1> *l2) {
 }
 
 template <typename T1>
+list<T1> * newAST_SimpleList(T1  t) {
+	list<T1> * ls = new list<T1>;
+	ls->push_back(t);
+	return ls;
+}
+
+template <typename T1>
 list<T1> * AST_ListPrint(list<T1> *l1, ostream &ret, string sec_name="", string separator=" ", string opener="",string closer="", bool block=false) {
   typename list<T1>::iterator it;
   int size=l1->size(),i=1;
