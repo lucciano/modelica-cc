@@ -1,4 +1,5 @@
-class switching_interleaved
+/*DEPRECATED: modelicaOutput option no longer needed*/
+class switching__interleaved
   Real constantvoltage1__v(quantity = "ElectricPotential", unit = "V") "Voltage drop between the two pins (= p.v - n.v)";
   Real constantvoltage1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing from pin p to pin n";
   Real constantvoltage1__p__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
@@ -14,7 +15,7 @@ class switching_interleaved
   Real buckbranch1__negativepin1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
   Real buckbranch1__pin_n__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
   Real buckbranch1__pin_n__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
-  input Boolean buckbranch1__u;
+  Boolean buckbranch1__u;
   Real buckbranch1__idealclosingswitch1__v(quantity = "ElectricPotential", unit = "V") "Voltage drop between the two pins (= p.v - n.v)";
   Real buckbranch1__idealclosingswitch1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing from pin p to pin n";
   Real buckbranch1__idealclosingswitch1__p__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
@@ -27,7 +28,7 @@ class switching_interleaved
   Real buckbranch1__idealclosingswitch1__T_heatPort(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) "Temperature of HeatPort";
   parameter Real buckbranch1__idealclosingswitch1__Ron(quantity = "Resistance", unit = "Ohm", min = 0.0) = 0.00001 "Closed switch resistance";
   parameter Real buckbranch1__idealclosingswitch1__Goff(quantity = "Conductance", unit = "S", min = 0.0) = 0.00001 "Opened switch conductance";
-  input Boolean buckbranch1__idealclosingswitch1__control "true => p--n connected, false => switch open";
+  Boolean buckbranch1__idealclosingswitch1__control "true => p--n connected, false => switch open";
   protected Real buckbranch1__idealclosingswitch1__s(unit = "1") "Auxiliary variable";
   protected constant Real buckbranch1__idealclosingswitch1__unitVoltage(quantity = "ElectricPotential", unit = "V") = 1.0;
   protected constant Real buckbranch1__idealclosingswitch1__unitCurrent(quantity = "ElectricCurrent", unit = "A") = 1.0;
@@ -61,7 +62,7 @@ class switching_interleaved
   Real buckbranch2__negativepin1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
   Real buckbranch2__pin_n__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
   Real buckbranch2__pin_n__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
-  input Boolean buckbranch2__u;
+  Boolean buckbranch2__u;
   Real buckbranch2__idealclosingswitch1__v(quantity = "ElectricPotential", unit = "V") "Voltage drop between the two pins (= p.v - n.v)";
   Real buckbranch2__idealclosingswitch1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing from pin p to pin n";
   Real buckbranch2__idealclosingswitch1__p__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
@@ -74,7 +75,7 @@ class switching_interleaved
   Real buckbranch2__idealclosingswitch1__T_heatPort(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) "Temperature of HeatPort";
   parameter Real buckbranch2__idealclosingswitch1__Ron(quantity = "Resistance", unit = "Ohm", min = 0.0) = 0.00001 "Closed switch resistance";
   parameter Real buckbranch2__idealclosingswitch1__Goff(quantity = "Conductance", unit = "S", min = 0.0) = 0.00001 "Opened switch conductance";
-  input Boolean buckbranch2__idealclosingswitch1__control "true => p--n connected, false => switch open";
+  Boolean buckbranch2__idealclosingswitch1__control "true => p--n connected, false => switch open";
   protected Real buckbranch2__idealclosingswitch1__s(unit = "1") "Auxiliary variable";
   protected constant Real buckbranch2__idealclosingswitch1__unitVoltage(quantity = "ElectricPotential", unit = "V") = 1.0;
   protected constant Real buckbranch2__idealclosingswitch1__unitCurrent(quantity = "ElectricCurrent", unit = "A") = 1.0;
@@ -108,7 +109,7 @@ class switching_interleaved
   Real buckbranch3__negativepin1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
   Real buckbranch3__pin_n__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
   Real buckbranch3__pin_n__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
-  input Boolean buckbranch3__u;
+  Boolean buckbranch3__u;
   Real buckbranch3__idealclosingswitch1__v(quantity = "ElectricPotential", unit = "V") "Voltage drop between the two pins (= p.v - n.v)";
   Real buckbranch3__idealclosingswitch1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing from pin p to pin n";
   Real buckbranch3__idealclosingswitch1__p__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
@@ -121,7 +122,7 @@ class switching_interleaved
   Real buckbranch3__idealclosingswitch1__T_heatPort(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) "Temperature of HeatPort";
   parameter Real buckbranch3__idealclosingswitch1__Ron(quantity = "Resistance", unit = "Ohm", min = 0.0) = 0.00001 "Closed switch resistance";
   parameter Real buckbranch3__idealclosingswitch1__Goff(quantity = "Conductance", unit = "S", min = 0.0) = 0.00001 "Opened switch conductance";
-  input Boolean buckbranch3__idealclosingswitch1__control "true => p--n connected, false => switch open";
+  Boolean buckbranch3__idealclosingswitch1__control "true => p--n connected, false => switch open";
   protected Real buckbranch3__idealclosingswitch1__s(unit = "1") "Auxiliary variable";
   protected constant Real buckbranch3__idealclosingswitch1__unitVoltage(quantity = "ElectricPotential", unit = "V") = 1.0;
   protected constant Real buckbranch3__idealclosingswitch1__unitCurrent(quantity = "ElectricCurrent", unit = "A") = 1.0;
@@ -155,7 +156,7 @@ class switching_interleaved
   Real buckbranch4__negativepin1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
   Real buckbranch4__pin_n__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
   Real buckbranch4__pin_n__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
-  input Boolean buckbranch4__u;
+  Boolean buckbranch4__u;
   Real buckbranch4__idealclosingswitch1__v(quantity = "ElectricPotential", unit = "V") "Voltage drop between the two pins (= p.v - n.v)";
   Real buckbranch4__idealclosingswitch1__i(quantity = "ElectricCurrent", unit = "A") "Current flowing from pin p to pin n";
   Real buckbranch4__idealclosingswitch1__p__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
@@ -168,7 +169,7 @@ class switching_interleaved
   Real buckbranch4__idealclosingswitch1__T_heatPort(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) "Temperature of HeatPort";
   parameter Real buckbranch4__idealclosingswitch1__Ron(quantity = "Resistance", unit = "Ohm", min = 0.0) = 0.00001 "Closed switch resistance";
   parameter Real buckbranch4__idealclosingswitch1__Goff(quantity = "Conductance", unit = "S", min = 0.0) = 0.00001 "Opened switch conductance";
-  input Boolean buckbranch4__idealclosingswitch1__control "true => p--n connected, false => switch open";
+  Boolean buckbranch4__idealclosingswitch1__control "true => p--n connected, false => switch open";
   protected Real buckbranch4__idealclosingswitch1__s(unit = "1") "Auxiliary variable";
   protected constant Real buckbranch4__idealclosingswitch1__unitVoltage(quantity = "ElectricPotential", unit = "V") = 1.0;
   protected constant Real buckbranch4__idealclosingswitch1__unitCurrent(quantity = "ElectricCurrent", unit = "A") = 1.0;
@@ -210,29 +211,29 @@ class switching_interleaved
   Real resistor1__n__v(quantity = "ElectricPotential", unit = "V") "Potential at the pin";
   Real resistor1__n__i(quantity = "ElectricCurrent", unit = "A") "Current flowing into the pin";
   parameter Boolean resistor1__useHeatPort = false "=true, if HeatPort is enabled";
+  parameter Real resistor1__T(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) = resistor1__T_ref "Fixed device temperature if useHeatPort = false";
   Real resistor1__LossPower(quantity = "Power", unit = "W") "Loss power leaving component via HeatPort";
   Real resistor1__T_heatPort(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) "Temperature of HeatPort";
   parameter Real resistor1__R(quantity = "Resistance", unit = "Ohm", start = 1.0) = 10.0 "Resistance at temperature T_ref";
   parameter Real resistor1__T_ref(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) = 300.15 "Reference temperature";
   parameter Real resistor1__alpha(quantity = "LinearTemperatureCoefficient", unit = "1/K") = 0.0 "Temperature coefficient of resistance (R_actual = R*(1 + alpha*(T_heatPort - T_ref))";
   Real resistor1__R_actual(quantity = "Resistance", unit = "Ohm") "Actual resistance = R*(1 + alpha*(T_heatPort - T_ref))";
-  parameter Real resistor1__T(quantity = "ThermodynamicTemperature", unit = "K", displayUnit = "degC", min = 0.0, start = 288.15, nominal = 300.0) = resistor1__T_ref "Fixed device temperature if useHeatPort = false";
-  input Boolean booleandelay2__u "Connector of Boolean input signal";
-  output Boolean booleandelay2__y(start = false) "Connector of Boolean output signal";
+  Boolean booleandelay2__u "Connector of Boolean input signal";
+  Boolean booleandelay2__y(start = false) "Connector of Boolean output signal";
   Real booleandelay2__lastTrueTime(start = 1e+20);
   Real booleandelay2__lastFalseTime(start = 0.0);
   parameter Real booleandelay2__T = 0.000025;
-  input Boolean booleandelay3__u "Connector of Boolean input signal";
-  output Boolean booleandelay3__y(start = false) "Connector of Boolean output signal";
+  Boolean booleandelay3__u "Connector of Boolean input signal";
+  Boolean booleandelay3__y(start = false) "Connector of Boolean output signal";
   Real booleandelay3__lastTrueTime(start = 1e+20);
   Real booleandelay3__lastFalseTime(start = 0.0);
   parameter Real booleandelay3__T = 0.000025;
-  input Boolean booleandelay1__u "Connector of Boolean input signal";
-  output Boolean booleandelay1__y(start = false) "Connector of Boolean output signal";
+  Boolean booleandelay1__u "Connector of Boolean input signal";
+  Boolean booleandelay1__y(start = false) "Connector of Boolean output signal";
   Real booleandelay1__lastTrueTime(start = 1e+20);
   Real booleandelay1__lastFalseTime(start = 0.0);
   parameter Real booleandelay1__T = 0.000025;
-  output Boolean booleanpulse1__y "Connector of Boolean output signal";
+  Boolean booleanpulse1__y "Connector of Boolean output signal";
   parameter Real booleanpulse1__width(min = 1e-60, max = 100.0) = 12.5 "Width of pulse in % of period";
   parameter Real booleanpulse1__period(quantity = "Time", unit = "s", min = 1e-60, start = 1.0) = 0.0001 "Time for one period";
   parameter Real booleanpulse1__startTime(quantity = "Time", unit = "s") = 0.0 "Time instant of first pulse";
@@ -326,6 +327,7 @@ equation
   capacitor1__v = capacitor1__p__v - capacitor1__n__v;
   0.0 = capacitor1__p__i + capacitor1__n__i;
   capacitor1__i = capacitor1__p__i;
+  assert(1.0 + resistor1__alpha * (resistor1__T_heatPort - resistor1__T_ref) >= 0.000000000000001,"Temperature outside scope of model!");
   resistor1__R_actual = resistor1__R * (1.0 + resistor1__alpha * (resistor1__T_heatPort - resistor1__T_ref));
   resistor1__v = resistor1__R_actual * resistor1__i;
   resistor1__LossPower = resistor1__v * resistor1__i;
@@ -333,10 +335,10 @@ equation
   0.0 = resistor1__p__i + resistor1__n__i;
   resistor1__i = resistor1__p__i;
   resistor1__T_heatPort = resistor1__T;
-  when booleandelay2__u then
+when booleandelay2__u then
   booleandelay2__lastTrueTime = time;
   end when;
-  when not booleandelay2__u then
+when not booleandelay2__u then
   booleandelay2__lastFalseTime = time;
   end when;
 when time > booleandelay2__lastTrueTime + booleandelay2__T then
@@ -344,10 +346,10 @@ when time > booleandelay2__lastTrueTime + booleandelay2__T then
  elsewhen time > booleandelay2__lastFalseTime + booleandelay2__T then
   booleandelay2__y = false;
   end when;
-  when booleandelay3__u then
+when booleandelay3__u then
   booleandelay3__lastTrueTime = time;
   end when;
-  when not booleandelay3__u then
+when not booleandelay3__u then
   booleandelay3__lastFalseTime = time;
   end when;
 when time > booleandelay3__lastTrueTime + booleandelay3__T then
@@ -355,10 +357,10 @@ when time > booleandelay3__lastTrueTime + booleandelay3__T then
  elsewhen time > booleandelay3__lastFalseTime + booleandelay3__T then
   booleandelay3__y = false;
   end when;
-  when booleandelay1__u then
+when booleandelay1__u then
   booleandelay1__lastTrueTime = time;
   end when;
-  when not booleandelay1__u then
+when not booleandelay1__u then
   booleandelay1__lastFalseTime = time;
   end when;
 when time > booleandelay1__lastTrueTime + booleandelay1__T then
@@ -366,7 +368,7 @@ when time > booleandelay1__lastTrueTime + booleandelay1__T then
  elsewhen time > booleandelay1__lastFalseTime + booleandelay1__T then
   booleandelay1__y = false;
   end when;
-  when sample(booleanpulse1__startTime, booleanpulse1__period) then
+when sample(booleanpulse1__startTime, booleanpulse1__period) then
   booleanpulse1__pulsStart = time;
   end when;
   booleanpulse1__y = time >= booleanpulse1__pulsStart and time < booleanpulse1__pulsStart + booleanpulse1__Twidth;
@@ -436,4 +438,4 @@ when time > booleandelay1__lastTrueTime + booleandelay1__T then
   buckbranch1__pin_p__v = buckbranch3__pin_p__v;
   buckbranch1__pin_p__v = buckbranch4__pin_p__v;
   buckbranch1__pin_p__v = constantvoltage1__p__v;
-end switching_interleaved;
+end switching__interleaved;
