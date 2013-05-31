@@ -55,10 +55,18 @@ public:
   void addStatement(MMO_Statement);
   MMO_StatementList getStatements() const;
   
+  void addIniEquation(MMO_Equation);
+  MMO_EquationList getIniEquations() const; 
+  void addIniStatement(MMO_Statement);
+  MMO_StatementList getIniStatements() const;
+  
+  
   VarSymbolTable getVarSymbolTable() const;
   TypeSymbolTable getTypeSymbolTable();
   Type getExpresionType(AST_Expression e) ;
   Type getVariableType(AST_String name);
+  VarInfo getVarInfo(AST_String name);
+  
   void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp); 
   void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_Expression); 
   void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_ExpressionList); 
@@ -71,6 +79,10 @@ private:
   MMO_EquationList _eqs;
   MMO_ComponentList _comps;
   MMO_StatementList _stms;
+  
+  MMO_EquationList  _Inieqs;
+  MMO_StatementList _Inistms;
+  
   AST_Class _class;
   VarSymbolTable  varEnv;
   TypeSymbolTable tyEnv;

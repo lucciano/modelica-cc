@@ -1,26 +1,19 @@
 model Prueba
-	Real b,c,d,e;
+	Real b,c,d,e,a;
 	parameter Real p = 10;
 	String hola ;
 	Integer m[4,5,6];
-	Boolean f(y = 0, start= true) = true;
+	Boolean f(y = 0, start= true) = false;
 	Boolean j;
 	parameter Integer pp;
 	parameter Boolean tt;
 equation
-	if f then 
-		a = 1;
-	else
-		a = 2;
-	end if;
+	j = f and pp;
 	for i in {1,2,3} loop
-		m[i] = if i < 4 then 1 else 2;
+		m[i] = if tt then 1 else 2;
 		m[i] = i > 4;
 	end	for;
-	
-	when  sample(1,2) then
-		b = 1;
-	end when ;
+
 algorithm
    a := 1;
 

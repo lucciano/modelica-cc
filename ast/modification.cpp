@@ -50,7 +50,7 @@ GET_AS_IMP(Argument,Modification);
 
 string AST_ModificationEqual_::print() const { 
   stringstream ret(stringstream::out);
-  ret << " = " << _e;
+  ret << " = " << _e ;
   return ret.str();
 }
 

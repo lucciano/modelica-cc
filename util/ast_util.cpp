@@ -117,7 +117,7 @@ AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression e) {
     {
 		AST_Expression_Boolean b = e->getAsBoolean();
 		if (b->value()) return newAST_Expression_Integer(1);
-		else newAST_Expression_Integer(0);
+		else return newAST_Expression_Integer(0);
 	}
 	
 	default:

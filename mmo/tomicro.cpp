@@ -29,7 +29,8 @@ MMO_ToMicroModelica_::MMO_ToMicroModelica_ (MMO_Class c): _c(c) {} ;
 void MMO_ToMicroModelica_::transform()
 {
 	/* Aca comienza todo el ciclo */
-	transformEqList(_c->getEquations(), _c->getStatements(),NULL );
+	transformEqList(_c->getIniEquations() , _c->getIniStatements(), NULL );
+	transformEqList(_c->getEquations()    , _c->getStatements()   , NULL );
 	
 	for(int i = 0; i < _c->getVarSymbolTable()->count();i++) {
 		VarInfo  v = _c->getVarSymbolTable()->varInfo(i);
@@ -260,9 +261,9 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 		case EXPOUTPUT :
 		{
 			AST_Expression_Output b = e->getAsOutput();
-			AST_ExpressionList ls = new list < AST_Expression > ();
-			AST_ListAppend(ls,toMicro_exp(b->expressionList()->front(),stList ,iMap) )	;
-			return newAST_Expression_OutputExpressions(ls);
+			/*AST_ExpressionList ls = new list < AST_Expression > ();
+			AST_ListAppend(ls,toMicro_exp(b->expressionList()->front(),stList ,iMap) )	;*/
+			return newAST_Expression_OutputExpressions(newAST_SimpleList(toMicro_exp(b->expressionList()->front(),stList ,iMap)));
 		}
 		
 		case EXPCALL:
@@ -272,7 +273,13 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 		}
 		
 		case EXPCOMPREF:
+		{
+			AST_Expression_ComponentReference cr = e->getAsComponentRef();
+			if (_c->getVariableType(cr->names()->front())->getType() == TYBOOLEAN)
+				return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(e));
 			return e;
+		}
+			
 			
 		case EXPBOOLEANNOT:	
 		{
@@ -432,9 +439,9 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 		case EXPOUTPUT:
 		{
 			AST_Expression_Output b = e->getAsOutput();
-			AST_ExpressionList lss = new list < AST_Expression > ();
-			AST_ListAppend(lss,whenCondition(b->expressionList()->front() , ls ) )	;
-			return newAST_Expression_OutputExpressions(lss);
+			/*AST_ExpressionList lss = new list < AST_Expression > ();
+			AST_ListAppend(lss,whenCondition(b->expressionList()->front() , ls ) )	;*/
+			return newAST_Expression_OutputExpressions(newAST_SimpleList(whenCondition(b->expressionList()->front() , ls )));
 		}
 		
 		case EXPCOMPREF:

@@ -27,6 +27,9 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 	_eqs = new list<MMO_Equation>();
 	_comps = new list<MMO_Component>();
 	_stms = new list<MMO_Statement>();
+	_Inieqs = new list<MMO_Equation>();
+	_Inistms = new list<MMO_Statement>();
+	
 	varEnv = newVarSymbolTable();
 	tyEnv = ty;
     varEnv->initialize(ty);
@@ -59,15 +62,14 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 		
 		// Equations 
 		AST_CompositionElement e = current(it);
-        if (e->getEquationsAlgs() != NULL) {
-			AST_EquationList eqs = e->getEquationsAlgs()->getEquations();
-			foreach(eqit,eqs) {
-				addEquation(current(eqit));
-			}
-			
-			AST_StatementList sts = e->getEquationsAlgs()->getAlgorithms();
-			foreach(stit,sts) {
-				addStatement(current(stit));
+		AST_CompositionEqsAlgs eqA = e->getEquationsAlgs();
+        if (eqA != NULL) {
+			if  (eqA->isInitial()) {
+				foreach(eqit,eqA->getEquations())  addIniEquation(current(eqit));
+				foreach(stit,eqA->getAlgorithms()) addIniStatement(current(stit));
+			} else {
+				foreach(eqit,eqA->getEquations())  addEquation(current(eqit));
+				foreach(stit,eqA->getAlgorithms()) addStatement(current(stit));
 			}
 		}
 		
@@ -92,12 +94,30 @@ MMO_EquationList MMO_Class_::getEquations() const {
   return _eqs;
 }
 
+void MMO_Class_::addIniEquation(MMO_Equation e) {
+	AST_ListAppend(_Inieqs,e);
+}
+
+
+MMO_EquationList MMO_Class_::getIniEquations() const {
+  return _Inieqs;
+}
+
+
 void MMO_Class_::addStatement(MMO_Statement e) {
 	AST_ListAppend(_stms,e);
 }
 
 MMO_StatementList MMO_Class_::getStatements() const {
   return _stms;
+}
+
+void MMO_Class_::addIniStatement(MMO_Statement e) {
+	AST_ListAppend(_Inistms,e);
+}
+
+MMO_StatementList MMO_Class_::getIniStatements() const {
+  return _Inistms;
 }
 
 void MMO_Class_::addComponent(MMO_Component c) {
@@ -184,21 +204,28 @@ Type MMO_Class_::getExpresionType(AST_Expression e) {
 	return _ct->check_expression(e);
 }
 
-Type MMO_Class_::getVariableType(AST_String name)
+
+VarInfo MMO_Class_::getVarInfo(AST_String name)
 {
   if (varEnv->lookup(*name)==NULL) {
     cerr << "Variable " << name << " not found" << endl;
     exit(-1);
   } 
-	Type t = varEnv->lookup(*name)->type();
-	return t;
+	return varEnv->lookup(*name);
+}
+
+Type MMO_Class_::getVariableType(AST_String name)
+{
+	return getVarInfo(name)->type();
 }
 
 
 ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   MMO_EquationList  eqs = c.getEquations();
   MMO_StatementList stm = c.getStatements();
-
+  MMO_EquationList  Inieqs = c.getIniEquations();
+  MMO_StatementList Inistm = c.getIniStatements();
+  	
   ret << "class " << c.name() << endl;
   
   VarSymbolTable symbolTable = c.getVarSymbolTable();
@@ -214,8 +241,9 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
 	  ret  << ";" << endl;  
   }
   END_BLOCK;
-
+  AST_ListPrint(Inieqs,ret,"initial equation\n","","","",true);	
   AST_ListPrint(eqs,ret,"equation\n","","","",true);
+  AST_ListPrint(Inistm,ret,"initial algorithm\n","","","",true);
   AST_ListPrint(stm,ret,"algorithm\n","","","",true);
   ret  << "end " << c.name() << ";" << endl;
   return ret;
