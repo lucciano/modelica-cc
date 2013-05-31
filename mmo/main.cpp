@@ -32,34 +32,46 @@
 #include <mmo/tomicro.h>
 #include <causalize/find_state.h>
 
-
+#include <fstream>   
 #include <iostream>
+#include <ostream>
 using namespace std;
 
 
 int main(int argc, char ** argv)
 {
-  int r;
-  ReplaceIf rep_sum;
-  if (argc<2) {
-    cerr << "Usage:\n\tmcc file.mo\n";
-    return -1;
-  }
-  TypeSymbolTable tyEnv = newTypeSymbolTable();
+	int r;
+	if (argc<2) {
+		cerr << "Usage:\n\tmcc file.mo\n";
+		return -1;
+	}
+
+	fstream fs;
+	if (argc>=3) {
+		fs.open (argv[2], fstream::out | fstream::out);
+	}
+
   
-  AST_StoredDefinition sd = parseFile(argv[1],&r);
+	TypeSymbolTable tyEnv = newTypeSymbolTable();
+	AST_StoredDefinition sd = parseFile(argv[1],&r);
   
-  if (r==0) { // Parsed ok
-    AST_Class c = sd->models()->front();
-    MMO_Class  d = newMMO_Class(c, tyEnv);
-	MMO_ToMicroModelica re = newMMO_ToMicroModelica(d);  
-	StateVariablesFinder * finder = new StateVariablesFinder(d); 
-	finder->findStateVariables(); 
-	try { 
-		re->transform();
-	} catch (char const * c) {  cerr << c << endl; exit(-1);}
-	cout << d <<  endl;
-  }
+	if (r==0) { // Parsed ok
+    
+		AST_Class c = sd->models()->front();
+		MMO_Class  d = newMMO_Class(c, tyEnv);
+		MMO_ToMicroModelica re = newMMO_ToMicroModelica(d);  
+		StateVariablesFinder * finder = new StateVariablesFinder(d); 
+		finder->findStateVariables(); 
+	
+		try { 
+			re->transform();
+		} catch (char const * c) {  cerr << c << endl; exit(-1);}
+	
+		if (fs.is_open())
+			fs << d << endl;
+		else 	
+			cout << d <<  endl;
+	}
   
-  return 0;
+	return 0;
 }

@@ -60,7 +60,7 @@ private:
 	void transformEqList(AST_EquationList  , AST_StatementList,IndexMap );
 	
 	AST_EquationList 	toMicro_eq_if(AST_Equation_If,MMO_StatementList,IndexMap );
-	MMO_Statement		toMicro_eq_when (AST_Equation );
+	MMO_Statement		toMicro_eq_when (AST_Equation,MMO_StatementList );
 	MMO_Equation 		toMicro_eq_equality(AST_Equation_Equality , MMO_StatementList,IndexMap); 
 	MMO_Equation		toMicro_eq_for(AST_Equation_For,MMO_StatementList,IndexMap);
 	AST_Expression 		toMicro_exp(AST_Expression , AST_StatementList,IndexMap);

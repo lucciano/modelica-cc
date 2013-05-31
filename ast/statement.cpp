@@ -51,7 +51,7 @@ string AST_Statement_Assign_::print() const {
   MAKE_SPACE;
   if (exp()->expressionType()!=EXPCALLARG)
     ret << lhs() << ":=" << exp() << ";"<<endl;
-  else if (exp()->expressionType()==EXPCALLARG) {
+  else if (exp()->expressionType()==EXPCALLARG) {	   	  
     ret << lhs() << "(";
     int size=exp()->getAsCallArgs()->arguments()->size(),i=0;
     foreach(it,exp()->getAsCallArgs()->arguments()) {
@@ -87,8 +87,10 @@ string AST_Statement_When_::print() const {
   stringstream ret(stringstream::out);
   AST_StatementListIterator it;
   AST_Statement_ElseListIterator else_it;
+  
   MAKE_SPACE;
   ret << "when " << condition() << " then"<<endl;
+  
   BEGIN_BLOCK;
   foreach(it,statements())
     ret << current(it);

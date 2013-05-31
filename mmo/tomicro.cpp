@@ -68,7 +68,7 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 			case EQWHEN:
 			{
 				AST_Equation_When when = eq->getAsWhen();
-				AST_ListAppend(stList,toMicro_eq_when(when));
+				toMicro_eq_when(when,stList);
 				AST_ListAppend(del,eqit);
 				break;
 			}
@@ -88,6 +88,12 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 				current(eqit) = _e;
 				break;
 			}
+			
+			case EQCALL:
+			{			
+				AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
+				break;
+			}	
 			
 			default:
 				cerr << "Error: "  << eq->equationType() << endl;
@@ -480,7 +486,7 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 } 
  
 
-MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq) 
+MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_StatementList stms) 
 {
 	
 	switch (eq->equationType()) {
@@ -496,7 +502,8 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 					AST_ExpressionList ls = newAST_ExpressionList(); 
 					AST_ListAppend(ls, (AST_Expression)cf );
 					AST_ListAppend(ls, _e->right() );
-					return newAST_Statement_Assign(AST_Expression_ComponentReference(_S("reinit")), newAST_Expression_FunctionCallArgs(ls) );
+					AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp(_S("reinit"))->getAsComponentRef();
+					return newAST_Statement_Assign( aux , newAST_Expression_FunctionCallArgs(ls) );
 				} else 
 					return newAST_Statement_Assign( cf  , _e->right() );
 			}
@@ -515,7 +522,7 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 					
 					AST_StatementList stmList = newAST_StatementList();
 					AST_EquationListIterator eqit;
-					foreach(eqit, qelse->equations()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
+					foreach(eqit, qelse->equations()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit),stms) );
 					
 					AST_Expression _cond = whenCondition(qelse->condition(), stmList);
 					AST_ListAppend(elseList,newAST_Statement_Else( _cond , stmList   ) );
@@ -523,10 +530,23 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 			}
 			AST_StatementList stmList = newAST_StatementList();
 			AST_EquationListIterator eqit;
-			foreach(eqit, when->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
+			foreach(eqit, when->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit),stms) );
 			
-			AST_Expression _cond = whenCondition(when->condition(), stmList);
-			return newAST_Statement_When( _cond , stmList , elseList);  
+			if (when->condition()->expressionType() == EXPBRACE) {
+				AST_ExpressionList cs = when->condition()->getAsExpression_Brace()->arguments();
+				AST_ExpressionListIterator csit;
+				foreach(csit,cs)  {
+					AST_StatementList ctmList = newAST_StatementList();
+					ctmList->assign(stmList->begin(), stmList->end());
+					AST_Expression _cond = whenCondition( current(csit), ctmList);
+					AST_ListAppend(stms,newAST_Statement_When( _cond , ctmList , elseList));
+				}
+				
+			} else {	
+				AST_Expression _cond = whenCondition(when->condition(), stmList);
+				AST_ListAppend(stms,newAST_Statement_When( _cond , stmList , elseList));
+			}	
+			return NULL ;  
 		}
 		
 		case EQIF:
@@ -540,7 +560,7 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 					
 					AST_StatementList stmList = newAST_StatementList();
 					AST_EquationListIterator eqit;
-					foreach(eqit, qelse->equations()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
+					foreach(eqit, qelse->equations()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit),stms) );
 					
 					AST_ListAppend(elseList,newAST_Statement_Else( qelse->condition() , stmList   ) );
 				}	
@@ -548,10 +568,10 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 			
 			AST_StatementList stmList = newAST_StatementList();
 			AST_EquationListIterator eqit;
-			foreach(eqit, i->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
+			foreach(eqit, i->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit),stms) );
 			
 			AST_StatementList stmElseList = newAST_StatementList();
-			foreach(eqit, i->equationElseList()) AST_ListAppend(stmElseList,toMicro_eq_when(current(eqit)) );
+			foreach(eqit, i->equationElseList()) AST_ListAppend(stmElseList,toMicro_eq_when(current(eqit),stms) );
 			
 			return newAST_Statement_If( i->condition() , stmList , elseList,stmElseList); 
 			
@@ -562,10 +582,16 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq)
 			AST_Equation_For f = eq->getAsFor();
 			AST_StatementList stmList = newAST_StatementList();
 			AST_EquationListIterator eqit;
-			foreach(eqit, f->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit)) );
+			foreach(eqit, f->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current(eqit),stms) );
 			return newAST_Statement_For(f->forIndexList() , stmList );
 		}
 		
+		case EQCALL:
+		{			
+			AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
+			AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp( copyAST_String(c->name()) )->getAsComponentRef();
+			return newAST_Statement_Assign( aux , newAST_Expression_FunctionCallArgs(c->arguments()) );
+		}	
 	}	 
 }
 

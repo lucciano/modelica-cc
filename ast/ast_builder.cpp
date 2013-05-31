@@ -57,6 +57,11 @@ AST_String newAST_String(AST_String s) {
   return ret;
 }
 
+AST_String copyAST_String(AST_String s) {
+  AST_String ret = new string(*s);
+  return ret;
+}
+
 AST_String newAST_DotString(AST_String s) {
   AST_String ret = new string(*s);
   ret->insert(0,".");

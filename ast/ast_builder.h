@@ -151,7 +151,7 @@ AST_String newAST_String(AST_String);
 AST_String newAST_DotString(AST_String);
 AST_String AST_StringDotAppend(AST_String,AST_String);
 AST_StringList newAST_StringList();
-
+AST_String copyAST_String(AST_String);
 
 /* Classes */
 AST_Class newAST_Class(AST_String, AST_Composition);

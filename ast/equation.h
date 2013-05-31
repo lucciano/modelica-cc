@@ -37,6 +37,7 @@ public:
   AST_Equation_When getAsWhen();
   AST_Equation_If getAsIf();
   AST_Equation_For getAsFor();
+  AST_Equation_Call getAsCall();
 };
 
 class AST_Equation_Equality_: public AST_Equation_
@@ -71,7 +72,7 @@ class AST_Equation_Call_: public AST_Equation_ {
 public:
   AST_Equation_Call_(AST_Expression e);
   string print() const;
-  virtual EquationType equationType() { return EQCONNECT; }
+  virtual EquationType equationType() { return EQCALL; }
   AST_Expression call() const;
 
 private:

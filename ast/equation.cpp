@@ -42,6 +42,10 @@ AST_Equation_For AST_Equation_::getAsFor() {
 	return dynamic_cast<AST_Equation_For_*>(this);
 }
 
+AST_Equation_Call AST_Equation_::getAsCall() {
+	return dynamic_cast<AST_Equation_Call_*>(this);
+}
+
 AST_Expression AST_Equation_Equality_::left() const {
   return _left;
 }
