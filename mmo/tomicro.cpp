@@ -219,7 +219,7 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 					}
 					
 					AST_String name = new_label();
-					AST_Expression_ComponentReference cr;
+					AST_Expression cr;
 					if (sList->size() == 0 ) {
 						_c->addVariable( name , _S("Real"),  newAST_TypePrefix(TP_DISCRETE));	
 						cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();	
@@ -228,12 +228,8 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 						cr = AST_Expression_ComponentReference_Add(newAST_Expression_ComponentReference(),name,sList)->getAsComponentRef();
 					}
 					AST_Expression _b = newAST_Expression_BinOp( e1 , e2 ,b->binopType()  );
-					AST_ListAppend(stList, make_when( _b, cr ));
-					
-					AST_ExpressionList ls = newAST_ExpressionList();
-					AST_ListAppend(ls, (AST_Expression) cr);
-					//newAST_Expression_Call(_S("pre"), newAST_SimepleList(cr));
-					return newAST_Expression_Call(_S("pre"), NULL , ls);;
+					AST_ListAppend(stList, make_when( _b, cr->getAsComponentRef() ));
+					return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(cr));
 					
 				}
 				
