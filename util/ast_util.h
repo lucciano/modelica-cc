@@ -29,7 +29,7 @@
 #define IS_UMINUS_VAR(X) (IS_UMINUS(X) && IS_CREF((X)->getAsUMinus()->exp()))
 #define UMINUS_EXP(X) ((X)->getAsUMinus()->exp())
 #define CREF_NAME(X) ( IS_UMINUS(X) ?  UMINUS_EXP(X)->getAsComponentRef()->name() : (X)->getAsComponentRef()->name() )
-#define IS_VAR(X) (IS_CREF(X) || IS_UMINUS_VAR(X))
+#define IS_VAR(X) ((IS_CREF(X) || IS_UMINUS_VAR(X)) && (!IS_PARAMETER(X)))
 #define IS_ZERO_REAL(X) ((X)->expressionType()==EXPREAL && (X)->getAsReal()->val()==0.0)
 #define IS_ZERO_INT(X) ((X)->expressionType()==EXPINTEGER && (X)->getAsInteger()->val()==0)
 #define IS_ZERO(X) (IS_ZERO_REAL(X) || IS_ZERO_INT(X))
@@ -39,7 +39,9 @@
 #define IS_SUB(X) ((X)->expressionType()==EXPBINOP && (X)->getAsBinOp()->binopType()==BINOPSUB)
 #define IS_SUM_(X) (IS_SUB(X) || IS_ADD(X))
 #define IS_SUM_OF_VARS(X) (IS_SUM_(X) && (IS_VAR((X)->getAsBinOp()->left()) && IS_VAR((X)->getAsBinOp()->right())))
-#define IS_STATE(X) (_varSymbolTable->lookup(X)!=NULL && _varSymbolTable->lookup(X)->isState())
+#define IS_STATE(X) (_varSymbolTable->lookup(CREF_NAME(X))!=NULL && _varSymbolTable->lookup(CREF_NAME(X))->isState())
+#define IS_PARAMETER(X) (IS_UMINUS(X) ? _varSymbolTable->lookup(CREF_NAME(UMINUS_EXP(X)))!=NULL && _varSymbolTable->lookup(CREF_NAME(UMINUS_EXP(X)))->isParameter() :  _varSymbolTable->lookup(CREF_NAME(X))!=NULL && _varSymbolTable->lookup(CREF_NAME(X))->isParameter())
+
 
 
 
