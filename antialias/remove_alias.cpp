@@ -47,7 +47,6 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
     v->setComment(c); 
   }
   /* Do the replacement */ 
-  ReplaceExp rep;
   MMO_EquationList eqs = _c->getEquations();
   MMO_EquationListIterator eqit;
   if (IS_UMINUS(alias) && !IS_UMINUS(var)) {
@@ -58,19 +57,31 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
     var = UMINUS_EXP(var);
   }
   if (eqs != NULL) {
-    foreach(eqit, eqs) {
-      AST_Equation eq = current(eqit);
-      switch(eq->equationType()) {
-        case EQEQUALITY:
-	        AST_Equation_Equality eqeq =  eq->getAsEquality();
-          eqeq->setLeft(rep.replaceExp(alias,var,eqeq->left()));
-          eqeq->setRight(rep.replaceExp(alias,var,eqeq->right()));
-          break;
-      }
-    }
+    foreach(eqit, eqs) 
+      replaceExpInEq(alias,var,current(eqit));
   }
 }
 
+void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_Equation eq) {
+  ReplaceExp rep;
+  switch(eq->equationType()) {
+    case EQEQUALITY: {
+	    AST_Equation_Equality eqeq =  eq->getAsEquality();
+      eqeq->setLeft(rep.replaceExp(alias,var,eqeq->left()));
+      eqeq->setRight(rep.replaceExp(alias,var,eqeq->right()));
+      break;
+    }
+    case EQWHEN: {
+	    AST_Equation_When eqwhen =  eq->getAsWhen();
+      MMO_EquationListIterator eqit;
+      MMO_EquationList eqs = eqwhen->equationList();
+      eqwhen->setCondition(rep.replaceExp(alias,var,eqwhen->condition()));
+      foreach(eqit, eqs) 
+        replaceExpInEq(alias,var,current(eqit));
+      break;
+    }
+  }
+}
 void RemoveAlias::removeAliasEquations(MMO_Class c) {
   _c = c;
 	_varSymbolTable = _c->getVarSymbolTable();

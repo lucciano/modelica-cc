@@ -32,13 +32,19 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
       {
         AST_Expression_BinOp b = e2->getAsBinOp();
         return newAST_Expression_BinOp(mapTraverse(b->left()),mapTraverse(b->right()), b->binopType());
-        
       }
+    case EXPBOOLEANNOT: 
+      {
+        AST_Expression_BooleanNot n = e2->getAsBooleanNot();
+        return newAST_Expression_BooleanNot(mapTraverse(n->exp()));
+      }
+
     case EXPUMINUS: 
       {
         AST_Expression_UMinus m = e2->getAsUMinus();
         return newAST_Expression_UnaryMinus(mapTraverse(m->exp()));
       }
+    
     
     case EXPOUTPUT :
 	{

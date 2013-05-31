@@ -141,6 +141,7 @@ public:
   AST_EquationList equationList() const { return _eql; };
   virtual EquationType equationType() { return EQWHEN; }
   AST_Equation_ElseList equationElseWhen() const { return _else_when;}
+  void setCondition(AST_Expression e) { _cond=e; }
 
 private:
   AST_Expression _cond;
