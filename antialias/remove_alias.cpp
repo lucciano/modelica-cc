@@ -6,7 +6,7 @@
 #include <ast/expression.h>
 #include <util/symbol_table.h>
 #include <util/ast_util.h>
-#include <causalize/find_state.h>
+#include <causalize/state_variables_finder.h>
 
 void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
   
