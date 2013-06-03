@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include <causalize/find_state.h>
+#include <causalize/state_variables_finder.h>
 #include <ast/ast_builder.h>
 #include <ast/expression.h>
 #include <util/symbol_table.h>
@@ -95,7 +95,7 @@ AST_Expression StateVariablesFinder::mapTraverseElement(AST_Expression e) {
 					}
 				}
 					break;
-				// TODO [Moya] ver como es el manejo de errores y/o excepciones.
+					// TODO [Moya] Puede haber otro tipo de expresión como argumento de la función der?
 			}
 
 	}

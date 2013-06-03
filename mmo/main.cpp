@@ -30,7 +30,7 @@
 #include <util/symbol_table.h>
 #include <util/type_check.h>
 #include <mmo/tomicro.h>
-#include <causalize/find_state.h>
+#include <causalize/state_variables_finder.h>
 
 #include <fstream>   
 #include <iostream>

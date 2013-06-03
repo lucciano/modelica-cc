@@ -62,12 +62,39 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
   }  
   return e2;
 }
-bool EqualExp::isEqual(AST_Expression a, AST_Expression b) {
+
+bool EqualExp::equalTraverse(AST_Expression a, AST_Expression b) {
   if (a->expressionType()!=b->expressionType()) return false;
-  if (a->expressionType()==EXPCOMPREF) 
-    return CREF_NAME(a)==CREF_NAME(b);
-    
-} 
+  switch (a->expressionType()) {
+    case EXPBINOP:
+    {
+      AST_Expression_BinOp binOpA = a->getAsBinOp();
+      AST_Expression_BinOp binOpB = b->getAsBinOp();
+      equalTraverse(binOpA->left(), binOpB->left()) && equalTraverse(binOpA->right(), binOpB->right());
+    }
+      break;
+    default:
+      return equalTraverseElement(a, b);
+  }
+  return false;
+}
+
+bool EqualExp::equalTraverseElement(AST_Expression a, AST_Expression b) {
+  if (a->expressionType()!=b->expressionType()) return false;
+  switch (a->expressionType()) {
+    case EXPCOMPREF:
+      return CREF_NAME(a)==CREF_NAME(b);
+      break;
+    case EXPDERIVATIVE:
+      AST_Expression_ComponentReference compRef1 = a->getAsDerivative()->arguments()->front()->getAsComponentRef();
+      AST_Expression_ComponentReference compRef2 = b->getAsDerivative()->arguments()->front()->getAsComponentRef();
+      return CREF_NAME(compRef1)==CREF_NAME(compRef2);
+      break;
+      // TODO faltan casos a considerar.
+  }
+  return false;
+}
+
 bool IsConstant::foldTraverseElement(bool b1, bool b2, BinOpType ) {
   return b1 && b2;
 }
@@ -99,7 +126,7 @@ AST_Expression ReplaceExp::replaceExp(AST_Expression rep, AST_Expression for_exp
   return mapTraverse(in);
 } 
 AST_Expression ReplaceExp::mapTraverseElement(AST_Expression e) {
-  if (EqualExp::isEqual(e,_rep))
+  if (EqualExp::equalTraverse(e,_rep))
     return _for_exp;
   return e;
 }

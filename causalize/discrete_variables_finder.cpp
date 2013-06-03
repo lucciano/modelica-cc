@@ -5,7 +5,7 @@
  *      Author: fede
  */
 
-#include <causalize/find_discrete_var.h>
+#include <causalize/discrete_variables_finder.h>
 #include <ast/ast_builder.h>
 #include <ast/expression.h>
 #include <assert.h>

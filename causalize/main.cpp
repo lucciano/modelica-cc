@@ -25,9 +25,10 @@
 #include <ast/class.h>
 #include <util/symbol_table.h>
 #include <mmo/mmo_class.h>
-#include <causalize/find_state.h>
-#include <causalize/find_discrete_var.h>
-#include <causalize/collect_unknowns.h>
+#include <causalize/state_variables_finder.h>
+#include <causalize/discrete_variables_finder.h>
+#include <causalize/unknowns_collector.h>
+#include <causalize/causalization_strategy.h>
 
 using namespace std;
 
@@ -49,13 +50,19 @@ int main(int argc, char ** argv)
   stateFinder->findStateVariables();
   DiscreteVariablesFinder *discreteVarFinder = new DiscreteVariablesFinder(c);
   discreteVarFinder->findDiscreteVariables();
-  UnknownCollector *collector = new UnknownCollector(c);
-  list<string> *unknowns = collector->collectUnknowns();
-  list<string>::iterator unknownsIter;
-  cout << "Unknowns: ";
-  foreach(unknownsIter, unknowns) {
-    cout << current(unknownsIter) << " ";
-  }
-  cout << endl;
+  UnknownsCollector *collector = new UnknownsCollector(c);
+  AST_ExpressionList unknowns = collector->collectUnknowns();
+  CausalizationStrategy *strategy = new CausalizationStrategy(c->getEquations(), unknowns);
+  strategy->causalize();
+
+//  UnknownsCollector *collector = new UnknownsCollector(c);
+//  list<string> *unknowns = collector->collectUnknowns();
+//  list<string>::iterator unknownsIter;
+//  cout << "Unknowns: ";
+//  foreach(unknownsIter, unknowns) {
+//    cout << current(unknownsIter) << " ";
+//  }
+//  cout << endl;
+
   return 0;
 }

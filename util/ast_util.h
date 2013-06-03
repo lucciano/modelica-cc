@@ -72,14 +72,11 @@ private:
 
 };
 
-class EqualExp  {
+class EqualExp {
 public:
-  static bool isEqual(AST_Expression, AST_Expression);
-/*
+  static bool equalTraverse(AST_Expression a, AST_Expression b);
 private:
-  virtual bool foldTraverseElement(AST_Expression);
-  virtual bool foldTraverseElement(bool , bool , BinOpType);
-*/
+  static bool equalTraverseElement(AST_Expression a, AST_Expression b);
 };
 
 class IsConstant: public AST_Expression_Fold<bool> {

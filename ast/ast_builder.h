@@ -113,6 +113,7 @@ DEFINE_LIST(AST_Equation);
 DEFINE_LIST(AST_Equation_Else);
 DEFINE_LIST(AST_Expression);
 DEFINE_LIST(AST_ExpressionList);
+DEFINE_LIST(AST_Expression_ComponentReference);
 DEFINE_LIST(AST_ForIndex);
 DEFINE_LIST(AST_Statement);
 DEFINE_LIST(AST_Statement_Else);
