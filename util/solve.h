@@ -18,33 +18,14 @@
 
 ******************************************************************************/
 
-#include <iostream>
+#ifndef Solve_H
+#define Solve_H
 
-#include <parser/parse.h>
-#include <antialias/remove_alias.h>
-#include <util/solve.h>
+#include <ast/ast_builder.h>
 
-using namespace std;
+class EquationSolver {
+public:
+  static AST_Equation_Equality solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr);
+};
 
-int main(int argc, char ** argv)
-{
-  RemoveAlias ra;
-  TypeSymbolTable tyEnv = newTypeSymbolTable();
-  int r;
-
-  if (argc<2) {
-    cerr << "Usage:\nantialias file.mo\n";
-    return -1;
-  }
-  AST_Class c = parseClass(argv[1],&r);
-  if (r!=0)  
-    return -1;
-
-  MMO_Class mc = newMMO_Class(c,tyEnv);
-  ra.removeAliasEquations(mc);
-  cout << mc;
-  delete mc;
-  delete tyEnv;
-
-  return 0;
-}
+#endif

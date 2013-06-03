@@ -48,22 +48,16 @@ AST_StoredDefinition parseFile(string filename, int *r) {
 
 AST_Expression parseExpression(string exp, int *r) {
   fstream in;   
-  MCC_Parser parser(false);
   in.open("/tmp/t",fstream::out);
   in << "model A equation x = " << exp << "; end A;";
   in.close();
-  in.open("/tmp/t",fstream::in);
-  if (in.fail()) {
-    exit(-1);
-  }
-  int ret = parser.parseFile(&in);
+  int ret;
+  AST_Class c=parseClass("/tmp/t",&ret);
   if (ret==0) {
     *r=0;
-    in.close();
-    return parser.root()->models()->front()->composition()->compositionList()->front()->getEquationsAlgs()->getEquations()->front()->getAsEquality()->right();
+    return c->composition()->compositionList()->front()->getEquationsAlgs()->getEquations()->front()->getAsEquality()->right();
   }
   *r=-1;
-  in.close();
   return NULL;
 }
 
