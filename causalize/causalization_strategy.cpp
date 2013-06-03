@@ -22,14 +22,14 @@ CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations,
 	_equationByIndex = new MMO_Equation[_N];
 	MMO_EquationListIterator eqIter;
 	int i = 0;
-	foreach(eqIter, equations); {
+	foreach(eqIter, equations) {
 		MMO_Equation eq = current(eqIter);
 		_equationByIndex[i++] = eq;
 	}
 	_expressionByIndex = new AST_Expression[_N];
 	AST_ExpressionListIterator expIter;
 	  int j = 0;
-	  foreach(expIter, _unknowns); {
+	  foreach(expIter, _unknowns) {
 	    AST_Expression exp = current(expIter);
 	    _expressionByIndex[j++] = exp;
 	}
