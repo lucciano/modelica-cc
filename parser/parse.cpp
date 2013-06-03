@@ -67,3 +67,11 @@ AST_Expression parseExpression(string exp, int *r) {
   return NULL;
 }
 
+
+AST_Class parseClass(string filename, int *r) {
+  AST_StoredDefinition sd = parseFile(filename,r);
+  if (r[0]==0)
+    return sd->models()->front();
+  return NULL;
+
+} 

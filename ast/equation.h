@@ -127,6 +127,7 @@ class AST_Equation_Else_: public AST_Node {
 public:
   AST_Equation_Else_ (AST_Expression cond, AST_EquationList eqs): _cond(cond), _eqs(eqs) {}
   AST_Expression condition() const { return _cond; }
+  void setCondition(AST_Expression e) { _cond=e; }
   AST_EquationList equations() const { return _eqs; }
   
 private:

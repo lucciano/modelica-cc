@@ -21,31 +21,30 @@
 #include <iostream>
 
 #include <parser/parse.h>
-#include <ast/stored_definition.h>
-#include <ast/class.h>
-#include <util/symbol_table.h>
-#include <mmo/mmo_class.h>
 #include <antialias/remove_alias.h>
+#include <util/solve.h>
 
 using namespace std;
 
 int main(int argc, char ** argv)
 {
   RemoveAlias ra;
+  TypeSymbolTable tyEnv = newTypeSymbolTable();
   int r;
+
   if (argc<2) {
     cerr << "Usage:\nantialias file.mo\n";
     return -1;
   }
-  AST_StoredDefinition sd = parseFile(argv[1],&r);
-  if (r!=0) 
+  AST_Class c = parseClass(argv[1],&r);
+  if (r!=0)  
     return -1;
 
-  TypeSymbolTable tyEnv = newTypeSymbolTable();
-  MMO_Class c = newMMO_Class(sd->models()->front(), tyEnv);
-  ra.removeAliasEquations(c);
-  cout << c;
-  delete c;
+  MMO_Class mc = newMMO_Class(c,tyEnv);
+  ra.removeAliasEquations(mc);
+  EquationSolver::solve(mc->getEquations()->front()->getAsEquality(),newAST_Expression_ComponentReferenceExp(newAST_String("a"))->getAsComponentRef());
+  cout << mc;
+  delete mc;
   delete tyEnv;
 
   return 0;

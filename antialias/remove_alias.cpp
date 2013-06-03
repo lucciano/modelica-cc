@@ -73,11 +73,18 @@ void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_E
     }
     case EQWHEN: {
 	    AST_Equation_When eqwhen =  eq->getAsWhen();
+      AST_Equation_ElseList elseeq=eqwhen->equationElseWhen();
+      AST_Equation_ElseListIterator else_it;
       MMO_EquationListIterator eqit;
       MMO_EquationList eqs = eqwhen->equationList();
       eqwhen->setCondition(rep.replaceExp(alias,var,eqwhen->condition()));
       foreach(eqit, eqs) 
         replaceExpInEq(alias,var,current(eqit));
+      foreach(else_it,elseeq) { 
+        current(else_it)->setCondition(rep.replaceExp(alias,var, current(else_it)->condition()));
+        foreach(eqit, current(else_it)->equations()) 
+          replaceExpInEq(alias,var,current(eqit));
+      }
       break;
     }
   }
