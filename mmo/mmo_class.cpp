@@ -43,7 +43,7 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 		switch (current(elit)->elementType()) {
 			case COMPONENT:
 			
-				AST_ListAppend(_comps , current(elit)->getAsComponent() ) ;
+				//AST_ListAppend(_comps , current(elit)->getAsComponent() ) ;
 				addVariable(current(elit)->getAsComponent());
 				break;
 			default:
@@ -75,7 +75,7 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 		
 		// Elements 
 		foreach(elit,e->getElementList()) {
-			AST_ListAppend(_comps , current(elit)->getAsComponent() );
+			//AST_ListAppend(_comps , current(elit)->getAsComponent() );
 			addVariable(current(elit)->getAsComponent());
 		}
 	}	
@@ -120,6 +120,7 @@ MMO_StatementList MMO_Class_::getIniStatements() const {
   return _Inistms;
 }
 
+/*
 void MMO_Class_::addComponent(MMO_Component c) {
 	AST_ListAppend(_comps,c);
 }
@@ -127,7 +128,7 @@ void MMO_Class_::addComponent(MMO_Component c) {
 MMO_ComponentList MMO_Class_::getComponents() const {
   return _comps;
 }
-
+*/
 
 Type make_array_type(AST_ExpressionList dims , Type r)
 {
@@ -162,32 +163,31 @@ void MMO_Class_::addVariable(MMO_Component c)
 
 void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_TypePrefix tp, AST_ExpressionList dims)
 {
-	Type t = tyEnv->lookup(*tys);
-	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
+	Type t = tyEnv->lookup(toStr(tys));
+	if (t == NULL) throw "addVariable: Nombre de tipo no encontrado" ;
 	if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
 	VarInfo  v = newVarInfo(t , tp , NULL, NULL );
-	varEnv->insert(*name, v);
+	varEnv->insert(toStr(name), v);
 }
 
 void MMO_Class_::addVariable(AST_String name , AST_String tys,AST_TypePrefix tp)
 {
-	Type t = tyEnv->lookup(*tys);
-	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
+	Type t = tyEnv->lookup(toStr(tys));
+	if (t == NULL) throw "addVariable: Nombre de tipo no encontrado" ;
 	VarInfo  v = newVarInfo(t , tp , NULL, NULL );
-	v->setDiscrete();
-	varEnv->insert(*name, v);
+	varEnv->insert(toStr(name), v);
 }
 
 void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_TypePrefix tp,AST_Expression e)
 {
-	Type t = tyEnv->lookup(*tys);
-	if (t == NULL) cerr << "No existe el tipo(" << tys << ")!!" << endl;
+	Type t = tyEnv->lookup(toStr(tys));
+	if (t == NULL) throw "addVariable: Nombre de tipo no encontrado" ;
 	
 	AST_ArgumentList m = newAST_ArgumentList(); 
 	AST_ListAppend(m,newAST_ArgumentModification(_S("start"),newAST_ModificationEqual(e)));
 	VarInfo  v = newVarInfo(t , tp , newAST_ModificationClass(m , newAST_Expression_Null()) , NULL );
-	varEnv->insert(*name, v);
+	varEnv->insert(toStr(name), v);
 }
 
 VarSymbolTable  MMO_Class_::getVarSymbolTable() const
@@ -200,18 +200,16 @@ TypeSymbolTable  MMO_Class_::getTypeSymbolTable()
 	return tyEnv;
 }
 
-Type MMO_Class_::getExpresionType(AST_Expression e) {
+Type MMO_Class_::getExpresionType(AST_Expression e) 
+{
 	return _ct->check_expression(e);
 }
 
 
 VarInfo MMO_Class_::getVarInfo(AST_String name)
 {
-  if (varEnv->lookup(*name)==NULL) {
-    cerr << "Variable " << name << " not found" << endl;
-    exit(-1);
-  } 
-	return varEnv->lookup(*name);
+  if (varEnv->lookup(toStr(name))==NULL) throw ("getVarInfo: Variable " + toStr(name) + " no encontrada") ;
+	return varEnv->lookup(toStr(name));
 }
 
 Type MMO_Class_::getVariableType(AST_String name)
@@ -249,12 +247,14 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   return ret;
 }
 
-ostream & operator<<(ostream &ret  , const MMO_Class &c ) {
+ostream & operator<<(ostream &ret  , const MMO_Class &c ) 
+{
 	ret << *c;
 	return ret;
 }
 
-MMO_Class newMMO_Class(AST_Class c, TypeSymbolTable t){
+MMO_Class newMMO_Class(AST_Class c, TypeSymbolTable t)
+{
 	return new MMO_Class_(c,t);
 }
 

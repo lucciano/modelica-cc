@@ -8,7 +8,7 @@ model Prueba
 	parameter Integer pp;
 	parameter Boolean tt;
 equation
-	j = f and pp;
+	j = if b < 50 then 1 else 5;
 	for i in {1,2,3} loop
 		m[i] = if tt then 1 else 2;
 		m[i] = i > 4;

@@ -108,7 +108,7 @@ Type TypeCheck_::check_expression(AST_Expression e)
 		{
 			// Añadir las funciones en la listaaaa de variables
 			AST_Expression_Call c = e->getAsCall();
-			if ( *c->name() == "sample" ) return  T("Boolean");
+			if ( toStr(c->name()) == "sample" ) return  T("Boolean");
 			
 		}
 		
@@ -116,7 +116,7 @@ Type TypeCheck_::check_expression(AST_Expression e)
 		{
 			AST_Expression_ComponentReference b = e->getAsComponentRef();
 			
-			VarInfo  tt = varEnv->lookup( * (b->names()->front()) );
+			VarInfo  tt = varEnv->lookup(  toStr(b->names()->front()) );
 						
 			if (tt == NULL) {
          cerr << "Var:" <<  b->names()->front() << ":";

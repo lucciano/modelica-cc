@@ -43,50 +43,59 @@ typedef list<MMO_Equation>::iterator MMO_EquationListIterator;
 /* AST_Class Wrapper */
 class MMO_Class_ {
 public:
-  MMO_Class_(AST_Class, TypeSymbolTable ty);
+	MMO_Class_(AST_Class, TypeSymbolTable ty);
   
-  void addEquation(MMO_Equation);
-  MMO_EquationList getEquations() const; 
-  void removeEquation(MMO_Equation);
+	void addEquation(MMO_Equation);
+	MMO_EquationList getEquations() const; 
+	void removeEquation(MMO_Equation);
   
-  void addComponent(MMO_Component);
-  MMO_ComponentList getComponents() const;
+  /*void addComponent(MMO_Component);
+  MMO_ComponentList getComponents() const;*/
   
-  void addStatement(MMO_Statement);
-  MMO_StatementList getStatements() const;
+	void addStatement(MMO_Statement);
+	MMO_StatementList getStatements() const;
   
-  void addIniEquation(MMO_Equation);
-  MMO_EquationList getIniEquations() const; 
-  void addIniStatement(MMO_Statement);
-  MMO_StatementList getIniStatements() const;
+	void addIniEquation(MMO_Equation);
+	MMO_EquationList getIniEquations() const; 
+  
+	void addIniStatement(MMO_Statement);
+	MMO_StatementList getIniStatements() const;
   
   
-  VarSymbolTable getVarSymbolTable() const;
-  TypeSymbolTable getTypeSymbolTable();
-  Type getExpresionType(AST_Expression e) ;
-  Type getVariableType(AST_String name);
-  VarInfo getVarInfo(AST_String name);
+	VarSymbolTable getVarSymbolTable() const;
+	TypeSymbolTable getTypeSymbolTable();
   
-  void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp); 
-  void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_Expression); 
-  void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_ExpressionList); 
-  AST_String name() const { return _class->name(); }
+	Type getExpresionType(AST_Expression e) ;
+	Type getVariableType(AST_String name);
+	VarInfo getVarInfo(AST_String name);
   
-  friend ostream & operator<<(ostream &os , const MMO_Class_ &c );
+/* Agrega una variable */ 
+	void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp); 
+  
+/* Agrega una variable con modifications  (start = e) */ 
+	void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_Expression); 
+  
+/* Agrega una array con sus dimensiones y tipo */ 
+	void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_ExpressionList); 
+  
+	AST_String name() const { return _class->name(); }
+  
+	friend ostream & operator<<(ostream &os , const MMO_Class_ &c );
 
 private:
-  void addVariable(MMO_Component); 
-  MMO_EquationList _eqs;
-  MMO_ComponentList _comps;
-  MMO_StatementList _stms;
+	/* Agrega una variables desde una Componet (solo para inicializar la clase) */
+	void addVariable(MMO_Component); 
+	MMO_EquationList _eqs;
+	MMO_ComponentList _comps;
+	MMO_StatementList _stms;
   
-  MMO_EquationList  _Inieqs;
-  MMO_StatementList _Inistms;
+	MMO_EquationList  _Inieqs;
+	MMO_StatementList _Inistms;
   
-  AST_Class _class;
-  VarSymbolTable  varEnv;
-  TypeSymbolTable tyEnv;
-  TypeCheck_ * _ct;	
+	AST_Class _class;
+	VarSymbolTable  varEnv;
+	TypeSymbolTable tyEnv;
+	TypeCheck_ * _ct;	
 };
 
 ostream & operator<<(ostream &os , const MMO_Class &c );

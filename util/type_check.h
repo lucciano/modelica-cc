@@ -39,6 +39,8 @@ private:
 	TypeSymbolTable tyEnv;
 	VarSymbolTable varEnv;
 	Type check_binop( AST_Expression l , AST_Expression r , BinOpType op  );
+	
+	/* Mira si dos tipos son iguales (Real == Integer === true) */
 	bool check_equal( Type t1 , Type t2 );
 };
 

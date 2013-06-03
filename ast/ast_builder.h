@@ -153,6 +153,7 @@ AST_String newAST_DotString(AST_String);
 AST_String AST_StringDotAppend(AST_String,AST_String);
 AST_StringList newAST_StringList();
 AST_String copyAST_String(AST_String);
+#define toStr(it) (*it)
 
 /* Classes */
 AST_Class newAST_Class(AST_String, AST_Composition);
@@ -328,9 +329,11 @@ DEFINE_PRINTER(AST_StoredDefinition);
 DEFINE_PRINTER(AST_String);
 
 /* List uitls */
+
 #define current(it) (*it)
 #define foreach(it,list) for (it=list->begin();it!=list->end();it++)
 #define foreachReverse(it,list) for (it=list->rbegin();it!=list->rend();it++)
+
 
 template <typename T1>
 list<T1> * AST_ListAppend(list<T1> *l, T1 e) { l->push_back(e); return l; }

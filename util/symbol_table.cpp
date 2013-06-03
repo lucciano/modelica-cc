@@ -58,7 +58,6 @@ ostream & operator<<(ostream &ret , const VarInfo_ &e )
 	if (e.isInput())     ret << "input ";
 	if (e.isOutput())    ret << "output ";
 	ret << e._t;
-	//if (e._m != NULL) os << e._m->print();
 	return ret;
 }
 
