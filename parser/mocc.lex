@@ -174,7 +174,7 @@ within				  TOK(WITHIN);
 printf("\n");
 #endif
 }
-[ \t] 
+[ \t\r] 
 
 
 <str>[^\\\n\"]+ {
