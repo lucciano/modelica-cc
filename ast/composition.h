@@ -35,9 +35,8 @@ public:
   AST_ElementList elementList() const;
 
 private:
-  AST_ElementList _element_list;
   AST_CompositionElementList _composition_list;
- 
+  AST_ElementList _element_list;
 };
 
 class AST_CompositionElement_: public AST_Node
@@ -67,8 +66,8 @@ public:
   bool isInitial() { return _initial; }
 
 private:
+  bool _initial;
   AST_EquationList _eq;
   AST_StatementList _st;
-  bool _initial;
 };
 #endif

@@ -76,6 +76,7 @@ ostream & operator<<(ostream &ret , const AST_Class_ &cl )  {
     END_BLOCK;
     MAKE_SPACE;
     ret <<"end " << cl.name() << ";" << endl;
+    return ret;
 }
 
 /*

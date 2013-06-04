@@ -126,7 +126,6 @@ string AST_Declaration_::print() const {
 AST_Component_::AST_Component_ (AST_DeclarationList decl_list, string type, AST_TypePrefix tp,AST_ExpressionList indexes):_decl_list(decl_list), 
                                                                                           _type(type), 
                                                                                           _indexes(indexes), 
-                                                                                          _inherited(false), 
                                                                                           _origin(NULL),
                                                                                           _tp(tp) {
 }

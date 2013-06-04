@@ -137,7 +137,7 @@ ostream & operator<<(ostream &os , const AST_Statement &s ) {
 
 
 AST_Statement_If_::AST_Statement_If_(AST_Expression cond, AST_StatementList true_st, AST_Statement_ElseList else_list, AST_StatementList false_st): 
-  _cond(cond), _true_st(true_st), _else_list(else_list), _false_st(false_st) {
+  _cond(cond), _true_st(true_st), _false_st(false_st), _else_list(else_list){
 }
 string AST_Statement_If_::print() const {
   stringstream ret(stringstream::out);

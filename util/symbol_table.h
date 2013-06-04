@@ -104,11 +104,11 @@ public:
 private:
 	bool _state;
 	bool _discrete;
-	bool _builtin;
 	Type _t;
 	AST_TypePrefix _tp ;
 	AST_Modification _m;
 	AST_Comment _comm;
+	bool _builtin;
 };
 
 

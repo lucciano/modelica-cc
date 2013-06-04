@@ -420,6 +420,8 @@ AST_Equation newAST_EquationFor(AST_ForIndexList ind, AST_EquationList eql) {
 }
 
 AST_Expression newAST_Expression_Else(AST_Expression,AST_Expression) {
+  /* TODO */
+  return NULL;
 }
 
 AST_ForIndex newAST_ForIndex(AST_String ident, AST_Expression exp) {
@@ -464,6 +466,8 @@ AST_Expression AST_Expression_ComponentReferenceExpAdd(AST_Expression_ComponentR
 }
 
 AST_Expression newAST_Expression_NamedArgument(AST_String, AST_Expression) {
+  /* TODO */
+  return NULL;
 }
 
 AST_Expression newAST_Expression_FunctionCallArgs(AST_ExpressionList el) {
@@ -473,6 +477,8 @@ AST_Expression newAST_Expression_FunctionCallArgs(AST_ExpressionList el) {
 
 
 AST_Expression newAST_Expression_Function(AST_String, AST_ExpressionList) {
+  /* TODO */
+  return NULL;
 }
 
 AST_Equation_ElseList newAST_Equation_ElseIfList() {

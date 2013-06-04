@@ -186,8 +186,8 @@ public:
   virtual ExpressionType expressionType() { return EXPBINOP; }
   BinOpType binopType() const { return _t;}
 private:
-  BinOpType _t;
   AST_Expression _e1,_e2;
+  BinOpType _t;
 };
 
 class AST_Expression_If_: public AST_Expression_ {
@@ -212,7 +212,7 @@ public:
 
 class AST_Expression_Null_: public AST_Expression_ {
 public:
-  virtual string print() const {};
+  virtual string print() const { return "NULLEXP!!!";};
   virtual ExpressionType expressionType() { return EXPNULL; }
 };
 

@@ -59,8 +59,8 @@ public:
   AST_Expression exp() const { return _exp; }
   AST_Expression_ComponentReference lhs() const { return _lhs; }
 private:
-  AST_Expression _exp;
   AST_Expression_ComponentReference _lhs;
+  AST_Expression _exp;
 };
 
 class AST_Statement_If_: public AST_Statement_ {

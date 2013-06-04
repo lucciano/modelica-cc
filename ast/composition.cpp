@@ -27,7 +27,7 @@
 AST_CompositionElement_::AST_CompositionElement_(AST_CompositionEqsAlgs eqs_algs): _eqs_algs(eqs_algs), _el(newAST_ElementList()) {
 }
 
-AST_CompositionElement_::AST_CompositionElement_(AST_ElementList el): _el(el), _eqs_algs(newAST_NullCompositionEquations()) { 
+AST_CompositionElement_::AST_CompositionElement_(AST_ElementList el):  _eqs_algs(newAST_NullCompositionEquations()) , _el(el){ 
 }
 
 
@@ -103,16 +103,16 @@ ostream & operator<<(ostream &os , const AST_Composition_ &cm )  {
 }
 
 
-AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_EquationList eq): _eq(eq), _initial(false) , _st(newAST_StatementList()){
+AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_EquationList eq):  _initial(false) ,_eq(eq), _st(newAST_StatementList()){
 }
 
-AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_EquationList eq, bool i): _eq(eq), _initial(i), _st(newAST_StatementList()) {
+AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_EquationList eq, bool i):  _initial(i) ,_eq(eq), _st(newAST_StatementList()) {
 }
 
-AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_StatementList st, bool i): _st(st), _initial(i), _eq(newAST_EquationList()) {
+AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_StatementList st, bool i):   _initial(i) ,_eq(newAST_EquationList()),_st(st) {
 }
 
-AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_StatementList st): _st(st), _initial(false), _eq(newAST_EquationList()) {
+AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_StatementList st):  _initial(false) , _eq(newAST_EquationList()) , _st(st){
 }
 ostream & operator<<(ostream &os , const AST_CompositionEqsAlgs &ceqa ) 
 {

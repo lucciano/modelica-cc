@@ -362,7 +362,7 @@ list<T1> * newAST_SimpleList(T1  t) {
 }
 
 template <typename T1>
-list<T1> * AST_ListPrint(list<T1> *l1, ostream &ret, string sec_name="", string separator=" ", string opener="",string closer="", bool block=false) {
+void AST_ListPrint(list<T1> *l1, ostream &ret, string sec_name="", string separator=" ", string opener="",string closer="", bool block=false) {
   typename list<T1>::iterator it;
   int size=l1->size(),i=1;
   if (size) {

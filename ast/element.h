@@ -90,8 +90,6 @@ public:
   bool isFlow() const { return _tp & TP_FLOW; }
   bool isStream() const { return _tp & TP_STREAM; }
   bool isConstant() const { return _tp & TP_CONSTANT; }
-  bool isInherited() const { return _inherited; }
-  void setInherited() { _inherited=true; }
   string type() { return _type; };
   virtual ElementType elementType() { return COMPONENT; }
   string name() { return _decl_list->front()->name(); }
@@ -102,12 +100,11 @@ public:
   AST_ExpressionList indexes() const {return _indexes;}
 
 private:
-  bool _inherited;
+  AST_DeclarationList _decl_list;
+  string _type;
+  AST_ExpressionList _indexes;
   AST_Class _origin;
   AST_TypePrefix _tp;
-  AST_DeclarationList _decl_list;
-  AST_ExpressionList _indexes;
-  string _type;
   
 };
 

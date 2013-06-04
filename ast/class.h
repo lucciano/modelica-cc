@@ -64,10 +64,10 @@ public:
 private:
   AST_ComponentList _components;
   AST_StringList    _extends_list;
+  AST_String        _name;
   AST_Composition   _composition;
   AST_ClassList     _sub_classes;
   AST_Class         _father;
-  AST_String        _name;
   AST_Boolean _basic,_final,_encapsulated;
   AST_ClassPrefix _prefix;
 };
