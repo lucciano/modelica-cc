@@ -251,9 +251,9 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 		
 		case EXPCOMPREF:
 		{
-			AST_Expression_ComponentReference cr = e->getAsComponentRef();
+			/*AST_Expression_ComponentReference cr = e->getAsComponentRef();
 			if (_c->getVariableType(cr->names()->front())->getType() == TYBOOLEAN)
-				return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(e));
+				return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(e));*/
 			return e;
 		}
 			

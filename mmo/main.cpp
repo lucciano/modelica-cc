@@ -21,7 +21,6 @@
 
 
 #include <ast/ast_builder.h>
-#include <mmo/traverse_example.h>
 #include <mmo/mmo_class.h>
 #include <parser/parse.h>
 #include <ast/stored_definition.h>
