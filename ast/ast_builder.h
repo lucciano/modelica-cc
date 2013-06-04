@@ -328,7 +328,7 @@ DEFINE_PRINTER(AST_Statement);
 DEFINE_PRINTER(AST_StoredDefinition);
 DEFINE_PRINTER(AST_String);
 
-/* List uitls */
+/* List utils */
 
 #define current(it) (*it)
 #define foreach(it,list) for (it=list->begin();it!=list->end();it++)

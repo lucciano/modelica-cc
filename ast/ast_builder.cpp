@@ -146,7 +146,7 @@ AST_Expression newAST_Expression_Integer(int i) {
 
 AST_ExpressionList newAST_ExpressionList(AST_Expression e) {
   AST_ExpressionList l=new list<AST_Expression>();
-  l->push_back(e);
+  AST_ListAppend(l,e);
   return l;
 }
 
@@ -211,8 +211,7 @@ AST_Declaration newAST_Declaration(AST_String s,AST_ExpressionList indexes, AST_
 
 AST_DeclarationList newAST_DeclarationList(AST_Declaration d) {
   AST_DeclarationList dl = new list<AST_Declaration>();
-  dl->push_back(d);
-  return dl;
+  return AST_ListAppend(dl,d);
 }
 
 AST_CompositionElement newAST_CompositionElement(AST_ElementList el) {

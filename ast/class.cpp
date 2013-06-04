@@ -33,7 +33,7 @@ AST_ComponentList AST_Class_::getComponents() {
 }
 
 void AST_Class_::addComponent(AST_Component c) { 
-  _components->push_back(c);
+  AST_ListAppend(_components,c);
 }
 
 AST_Class_::AST_Class_(AST_String n,AST_Composition comp): _name(n), _composition(comp), _basic(false), _final(false) { 
@@ -88,7 +88,7 @@ void AST_Class_::removeEquation(AST_Equation e) {
 */
 
 void AST_Class_::addClass(AST_Class c) { 
-  _sub_classes->push_back(c); 
+  AST_ListAppend(_sub_classes,c); 
   c->setFather(this);
 }          
 
@@ -105,7 +105,7 @@ AST_Class AST_Class_::father() const {
 }
 
 void AST_Class_::addExtends(AST_String e) {
-  _extends_list->push_back(e);
+  AST_ListAppend(_extends_list,e);
 }
 AST_StringList AST_Class_::getExtends() {
   return _extends_list;
