@@ -29,13 +29,18 @@ using namespace std;
 
 AST_StoredDefinition parseFile(string filename, int *r) {
   fstream in;   
+  int ret;
   MCC_Parser parser(false);
-  in.open(filename.c_str(),fstream::in);
-  if (in.fail()) {
-    cerr << "Could not open file " << filename.c_str() << endl;
-    exit(-1);
+  if (filename.size()) {
+    in.open(filename.c_str(),fstream::in);
+    if (in.fail()) {
+      cerr << "Could not open file " << filename.c_str() << endl;
+      exit(-1);
+    }
+    ret = parser.parseFile(&in);
+  } else { // read from stdin
+    ret = parser.parseFile(&cin);
   }
-  int ret = parser.parseFile(&in);
   if (ret==0) {
     *r=0;
     in.close();

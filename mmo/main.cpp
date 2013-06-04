@@ -32,6 +32,7 @@
 #include <mmo/tomicro.h>
 #include <causalize/state_variables_finder.h>
 
+#include <unistd.h>
 #include <fstream>   
 #include <iostream>
 #include <ostream>
@@ -41,23 +42,32 @@ using namespace std;
 int main(int argc, char ** argv)
 {
 	int r;
-	if (argc<2) {
-		cerr << "Usage:\n\tmcc file.mo\n";
-		return -1;
-	}
+  int opt;
+  char *out=NULL;
+
+  while ((opt = getopt(argc, argv, "o:")) != -1) {
+    switch (opt) {
+     case 'o':
+       out = optarg;
+       break;
+    }
+  }
 
 	fstream fs;
-	if (argc>=3) {
-		fs.open (argv[2], fstream::out | fstream::out);
+	if (out!=NULL) {
+		fs.open (out, fstream::out | fstream::out);
 	}
 
   
 	TypeSymbolTable tyEnv = newTypeSymbolTable();
-	AST_StoredDefinition sd = parseFile(argv[1],&r);
+  AST_Class c;
+  if (argv[optind]!=NULL) 
+    c=parseClass(argv[optind],&r);
+  else
+    c=parseClass("",&r);
   
 	if (r==0) { // Parsed ok
     
-		AST_Class c = sd->models()->front();
 		MMO_Class  d = newMMO_Class(c, tyEnv);
 		MMO_ToMicroModelica re = newMMO_ToMicroModelica(d);  
 		StateVariablesFinder * finder = new StateVariablesFinder(d); 
@@ -67,9 +77,10 @@ int main(int argc, char ** argv)
 			re->transform();
 		} catch (char const * c) {  cerr << c << endl; exit(-1);}
 	
-		if (fs.is_open())
+		if (fs.is_open()) {
 			fs << d << endl;
-		else 	
+      fs.close();
+    } else 	
 			cout << d <<  endl;
 	}
   
