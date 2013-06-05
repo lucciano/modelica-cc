@@ -22,7 +22,6 @@
 
 #include <parser/parse.h>
 #include <antialias/remove_alias.h>
-#include <util/solve.h>
 
 using namespace std;
 
