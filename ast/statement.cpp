@@ -26,6 +26,12 @@
 
 using namespace std;
 
+GET_AS_IMP(Statement,_While);
+GET_AS_IMP(Statement,_If);
+GET_AS_IMP(Statement,_For);
+GET_AS_IMP(Statement,_When);
+GET_AS_IMP(Statement,_Assign);
+
 ostream & operator<<(ostream &os , const AST_Statement_ &s ) {
   os << s.print();  
   return os;

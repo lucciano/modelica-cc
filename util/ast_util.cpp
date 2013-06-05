@@ -59,6 +59,8 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
         AST_Expression_If i = e2->getAsIf();
         return newAST_Expression_If(mapTraverse(i->condition()), mapTraverse(i->then()), i->elseif_list(), mapTraverse(i->else_exp()));
       }
+     default:
+		break;
   }  
   return e2;
 }
@@ -83,14 +85,20 @@ bool EqualExp::equalTraverseElement(AST_Expression a, AST_Expression b) {
   if (a->expressionType()!=b->expressionType()) return false;
   switch (a->expressionType()) {
     case EXPCOMPREF:
+    {
       return CREF_NAME(a)==CREF_NAME(b);
       break;
+    }  
     case EXPDERIVATIVE:
+    {
       AST_Expression_ComponentReference compRef1 = a->getAsDerivative()->arguments()->front()->getAsComponentRef();
       AST_Expression_ComponentReference compRef2 = b->getAsDerivative()->arguments()->front()->getAsComponentRef();
       return CREF_NAME(compRef1)==CREF_NAME(compRef2);
       break;
+    }  
       // TODO faltan casos a considerar.
+     default:
+		break;  
   }
   return false;
 }
@@ -107,11 +115,15 @@ bool IsConstant::foldTraverseElement(AST_Expression e) {
     case EXPBOOLEAN: 
       return true;
     case EXPCOMPREF:
+    {
       AST_Expression_ComponentReference cr = e->getAsComponentRef();
       VarInfo v = _st->lookup(cr->name());
       if (v->isParameter()) return true;
       // Check symbol table!!!
       return false;
+     } 
+     default:
+		break;
   }
   return false;
 };

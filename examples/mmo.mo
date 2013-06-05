@@ -16,5 +16,8 @@ equation
 
 algorithm
    a := 1;
+   when not f then 
+	a := 1;
+	end when ;
 
 end Prueba;     

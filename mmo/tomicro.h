@@ -21,6 +21,7 @@
 #include <ast/ast_builder.h>
 #include <mmo/mmo_class.h>
 #include <ast/equation.h>
+#include <ast/statement.h>
 #include <util/type.h>
 
 
@@ -76,7 +77,7 @@ private:
 	MMO_Statement		toMicro_eq_when (AST_Equation,MMO_StatementList );
 	
 	/* Niega las primeras i-th condiciones (Utilizado en el IF )*/
-	AST_Expression 		makeCondition(AST_ExpressionList  , int  );
+	AST_Expression 		makeCondition(AST_ExpressionList  , unsigned int  );
 	
 	/* Genera una Equacion desde un listado de equaciones y Condiciones (Utilizado en el IF ) */
 	AST_Equation 		makeEquation(AST_EquationList  , AST_ExpressionList ,MMO_StatementList,IndexMap ); 
@@ -98,6 +99,9 @@ private:
 	
 	/* Cambia un tipo a REAL */ 
 	Type ChangeToReal(Type m);
+	
+	/* Analiza los statements */
+	void checkStatement(MMO_StatementList ls);
 };
 
 MMO_ToMicroModelica newMMO_ToMicroModelica(MMO_Class  c );

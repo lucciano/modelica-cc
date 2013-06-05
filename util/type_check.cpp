@@ -21,7 +21,7 @@
 #include <util/type_check.h>
 #define T(s) tyEnv->lookup(s)
 
-TypeCheck_::TypeCheck_(TypeSymbolTable t, VarSymbolTable v): varEnv(v) , tyEnv(t) {};
+TypeCheck_::TypeCheck_(TypeSymbolTable t, VarSymbolTable v): tyEnv(t) , varEnv(v)  {};
 
 bool TypeCheck_::check_equal( Type t1 , Type t2 ){
 	if ( *t1 == T("Integer") ) {
@@ -67,6 +67,7 @@ Type TypeCheck_::check_binop( AST_Expression l , AST_Expression r , BinOpType op
 			if (check_equal(t1,t2) and check_equal(t1 , T("Boolean")) ) return t1;
 			throw "Type Error (2)"; 
 	}
+	throw "Error! (TypeCheck_::check_binop)";
 }
 
 Type TypeCheck_::check_expression(AST_Expression e)
@@ -153,5 +154,8 @@ Type TypeCheck_::check_expression(AST_Expression e)
 			if ( !check_equal(t, T("Boolean")) ) throw "Type Error (6)"; 
 			return t;
 		}
+		default:
+			throw "No implrementado aun! (check_expression)";
+		
 	}
 }

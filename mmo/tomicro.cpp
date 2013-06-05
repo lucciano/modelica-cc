@@ -31,6 +31,8 @@ void MMO_ToMicroModelica_::transform()
 	/* Aca comienza todo el ciclo */
 	transformEqList(_c->getIniEquations() , _c->getIniStatements(), NULL );
 	transformEqList(_c->getEquations()    , _c->getStatements()   , NULL );
+	checkStatement(_c->getStatements());
+	checkStatement(_c->getIniStatements());
 	/* Cambiamos los tipos y constantes Booleanas */ 
 	for(int i = 0; i < _c->getVarSymbolTable()->count();i++) {
 		VarInfo  v = _c->getVarSymbolTable()->varInfo(i);
@@ -90,7 +92,7 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 			
 			case EQCALL:
 			{			
-				AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
+				//AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
 				break;
 			}	
 			
@@ -133,6 +135,8 @@ AST_Expression negar_cond(AST_Expression cond)
 			return newAST_Expression_BinOp(b->left(),b->right(), BINOPCOMPEQ );
 		case BINOPCOMPEQ: 
 			return newAST_Expression_BinOp(b->left(),b->right(), BINOPCOMPNE );
+		default:
+			throw "No deberia pasar";
 	}
 }
 
@@ -307,10 +311,10 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 }
 
 
-AST_Expression MMO_ToMicroModelica_::makeCondition(AST_ExpressionList ls , int n )
+AST_Expression MMO_ToMicroModelica_::makeCondition(AST_ExpressionList ls , unsigned int n )
 {
 	AST_ExpressionListIterator exit =  ls->begin();
-	int i;
+	unsigned int i;
 	if (n==0) return  current(exit);
 	AST_Expression e = UMENOS(current(exit)) ;
 	exit++;
@@ -326,7 +330,7 @@ AST_Expression MMO_ToMicroModelica_::makeCondition(AST_ExpressionList ls , int n
 
 AST_Equation  MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_ExpressionList cond,MMO_StatementList stList,IndexMap iMap)
 {
-	int i = 0;
+	unsigned int i = 0;
 	AST_Expression e1,e2;
 	AST_EquationListIterator eqit = ls->begin();
 	e1 = MULT( toMicro_exp(current(eqit)->getAsEquality()->left(),stList,iMap)   , makeCondition(cond,0) );
@@ -545,6 +549,9 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_Statem
 			AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp( copyAST_String(c->name()) )->getAsComponentRef();
 			return newAST_Statement_Assign( aux , newAST_Expression_FunctionCallArgs(c->arguments()) );
 		}	
+		
+		default:
+			throw "No implementado aun (toMicro_eq_when) ";
 	}	 
 }
 
@@ -660,6 +667,43 @@ Type MMO_ToMicroModelica_::ChangeToReal(Type m)
 	
 }
 
+
+void MMO_ToMicroModelica_::checkStatement(MMO_StatementList ls)
+{
+	AST_StatementListIterator it;
+	foreach(it,ls) {
+		AST_Statement st = current(it);
+		switch ( st->statementType() )
+		{
+			
+			case STFOR:
+			{
+				AST_Statement_For f = st->getAsStatement_For():
+				checkStatement( f->statements() );
+				break;
+			}
+			
+			case STWHEN:
+			{
+				AST_Statement_When  w = st->getAsStatement_When();
+				AST_Statement_ElseList elList = newAST_Statement_ElseList();
+				if (w->else_when()->size() > 0 ) {
+					AST_Statement_ElseListIterator elseIt;
+					foreach ( elseIt , w->else_when() )
+						AST_ListAppend(elList , newAST_Statement_Else( whenCondition(current(elseIt)->condition(), current(elseIt)->statements()) , current(elseIt)->statements() )   );
+				}
+				current(it) = newAST_Statement_When( whenCondition(w->condition(),w->statements()) , w->statements()  , elList  );
+				break;
+				
+			}
+			
+			default:
+				break;
+		}
+	}
+}
+
+
 AST_Modification MMO_ToMicroModelica_::ChangeModifications(AST_Modification m)
 {
 	if (!m) return m;
@@ -694,9 +738,10 @@ AST_Modification MMO_ToMicroModelica_::ChangeModifications(AST_Modification m)
 			}
 			return newAST_ModificationClass(args,_e);
 		}
-		
+		case MODNONE:
+			throw "Error! (MMO_ToMicroModelica_::ChangeModifications)";
 	}
-	
+	return NULL;
 }
 
 MMO_ToMicroModelica newMMO_ToMicroModelica(MMO_Class  c )

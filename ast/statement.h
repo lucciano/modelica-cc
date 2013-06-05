@@ -28,15 +28,23 @@ class AST_Statement_: public AST_Node
 public:
   friend ostream & operator<<(ostream &os , const AST_Statement_ &s );
   virtual string print() const =0;
+  virtual StatementType statementType() ;
+  GET_AS(Statement_While);
+  GET_AS(Statement_If);
+  GET_AS(Statement_For);
+  GET_AS(Statement_When);
+  GET_AS(Statement_Assign);
 };
 
 
 class AST_Statement_Return_: public AST_Statement_ {
   string print() const;
+  virtual StatementType statementType() {return STRETURN;}
 };
 
 class AST_Statement_Break_: public AST_Statement_ {
   string print() const;
+  virtual StatementType statementType() {return STBREAK;}
 };
 
 class AST_Statement_When_: public AST_Statement_ {
@@ -46,6 +54,7 @@ public:
   AST_Expression condition() const { return _cond; }
   AST_StatementList statements() const { return _sts; }
   AST_Statement_ElseList else_when() const { return _else_list; } 
+  virtual StatementType statementType() {return STWHEN;}
 private:
   AST_Expression _cond;
   AST_StatementList _sts;
@@ -58,6 +67,7 @@ public:
   string print() const;
   AST_Expression exp() const { return _exp; }
   AST_Expression_ComponentReference lhs() const { return _lhs; }
+  virtual StatementType statementType() {return STASSING;}
 private:
   AST_Expression_ComponentReference _lhs;
   AST_Expression _exp;
@@ -71,6 +81,7 @@ public:
   AST_StatementList statements() const { return _true_st; }
   AST_StatementList else_statements()const  { return _false_st; }
   AST_Statement_ElseList else_if() const { return _else_list; } 
+  virtual StatementType statementType() {return STIF;}
 private:
   AST_Expression _cond;
   AST_StatementList _true_st, _false_st;
@@ -83,6 +94,7 @@ public:
   string print() const;
   AST_Expression condition() const { return _cond; }
   AST_StatementList statements() const { return _sts; }
+  virtual StatementType statementType() {return STWHILE;}
 private:
   AST_Expression _cond;
   AST_StatementList _sts;
@@ -94,6 +106,7 @@ public:
   string print() const;
   AST_StatementList statements() const { return _sts; }
   AST_ForIndexList forIndexList() const { return _ind; }
+  virtual StatementType statementType() {return STFOR;}
 private:
   AST_StatementList _sts;
   AST_ForIndexList _ind;
@@ -106,6 +119,7 @@ public:
   AST_ExpressionList out_expressions() const { return _out_exps; }
   AST_Expression_ComponentReference function() const { return _func; }
   AST_ExpressionList arguments() const { return _args; }
+  virtual StatementType statementType() {return STOUTASSING;}
 private:
   AST_ExpressionList _out_exps;
   AST_Expression_ComponentReference _func;
