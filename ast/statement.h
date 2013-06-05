@@ -28,7 +28,7 @@ class AST_Statement_: public AST_Node
 public:
   friend ostream & operator<<(ostream &os , const AST_Statement_ &s );
   virtual string print() const =0;
-  virtual StatementType statementType() ;
+  virtual StatementType statementType() = 0;
   GET_AS(Statement_While);
   GET_AS(Statement_If);
   GET_AS(Statement_For);
