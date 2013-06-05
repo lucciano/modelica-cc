@@ -23,7 +23,7 @@
 #include <ast/equation.h>
 #include <ast/statement.h>
 #include <util/type.h>
-
+#include <set>
 
 #ifndef TOMICRO_H
 #define TOMICRO_H
@@ -47,7 +47,7 @@ DEFINE_TYPE(MMO_ToMicroModelica);
 
 typedef std::map<string, AST_Expression> 		IndexMap_;
 typedef std::map<string, AST_Expression> 		* IndexMap;
-
+typedef std::set<string> 		                VarSet;
 
 class MMO_ToMicroModelica_ {
 public:
@@ -58,6 +58,7 @@ public:
 private:
 	MMO_Class  _c;
 	AST_String  new_label();
+	VarSet disVarSet; 
 	
 	void transformEqList(AST_EquationList  , AST_StatementList,IndexMap );
 	

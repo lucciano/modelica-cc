@@ -18,6 +18,7 @@
 
 ******************************************************************************/
 
+#include <ast/ast_builder.h>
 #include <ast/statement.h>
 #include <ast/expression.h>
 #include <iostream>

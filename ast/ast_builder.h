@@ -25,6 +25,7 @@
 #include <list>
 #include <string>
 
+
 #define DEFINE_TYPE(X) class X##_; typedef X##_ *X;
 #define DEFINE_LIST(X) typedef std::list<X>  *X##List; typedef std::list<X>::iterator X##ListIterator; typedef std::list<X>::reverse_iterator X##ListReverseIterator;
 #define _S(s) newAST_String(s)
