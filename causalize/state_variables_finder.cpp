@@ -30,7 +30,7 @@ void StateVariablesFinder::findStateVariablesInEquations(MMO_EquationList eqs) {
   MMO_EquationListIterator eqIter;
   if (eqs != NULL) {
     foreach(eqIter, eqs) {
-      MMO_Equation eq = current(eqIter);
+      MMO_Equation eq = current_element(eqIter);
       switch(eq->equationType()) {
         case EQEQUALITY:
         {
@@ -46,7 +46,7 @@ void StateVariablesFinder::findStateVariablesInEquations(MMO_EquationList eqs) {
           AST_Equation_ElseList elseWhenList = eqWhen->equationElseWhen();
           AST_Equation_ElseListIterator elseWhenListIter;
           foreach(elseWhenListIter, elseWhenList) {
-            AST_Equation_Else eqElse = current(elseWhenListIter);
+            AST_Equation_Else eqElse = current_element(elseWhenListIter);
             findStateVariablesInEquations(eqElse->equations());
           }
         }

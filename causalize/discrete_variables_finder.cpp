@@ -25,7 +25,7 @@ void DiscreteVariablesFinder::findDiscreteVariables() {
   MMO_EquationListIterator eqIter;
     if (eqs != NULL) {
       foreach(eqIter, eqs) {
-        MMO_Equation eq = current(eqIter);
+        MMO_Equation eq = current_element(eqIter);
         if(eq->equationType() == EQWHEN) {
           AST_Equation_When eqWhen = eq->getAsWhen();
           findDiscreteVariablesInEquations(eqWhen->equationList());
@@ -33,7 +33,7 @@ void DiscreteVariablesFinder::findDiscreteVariables() {
           if(elseWhenList != NULL) {
             AST_Equation_ElseListIterator elseWhenListIter;
             foreach(elseWhenListIter, elseWhenList) {
-              AST_Equation_Else eqElse = current(elseWhenListIter);
+              AST_Equation_Else eqElse = current_element(elseWhenListIter);
               findDiscreteVariablesInEquations(eqElse->equations());
             }
           }
@@ -46,7 +46,7 @@ void DiscreteVariablesFinder::findDiscreteVariablesInEquations(MMO_EquationList 
   assert(eqs != NULL);
   MMO_EquationListIterator eqIter;
   foreach(eqIter, eqs) {
-    MMO_Equation eq = current(eqIter);
+    MMO_Equation eq = current_element(eqIter);
     switch(eq->equationType()) {
       case EQEQUALITY:
       {

@@ -40,11 +40,11 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 	AST_ElementList el = comp->elementList();
 	AST_ElementListIterator elit;
 	foreach(elit,el) {
-		switch (current(elit)->elementType()) {
+		switch (current_element(elit)->elementType()) {
 			case COMPONENT:
 			
-				//AST_ListAppend(_comps , current(elit)->getAsComponent() ) ;
-				addVariable(current(elit)->getAsComponent());
+				//AST_ListAppend(_comps , current_element(elit)->getAsComponent() ) ;
+				addVariable(current_element(elit)->getAsComponent());
 				break;
 			default:
 				break;
@@ -61,22 +61,22 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 		AST_StatementListIterator stit;
 		
 		// Equations 
-		AST_CompositionElement e = current(it);
+		AST_CompositionElement e = current_element(it);
 		AST_CompositionEqsAlgs eqA = e->getEquationsAlgs();
         if (eqA != NULL) {
 			if  (eqA->isInitial()) {
-				foreach(eqit,eqA->getEquations())  addIniEquation(current(eqit));
-				foreach(stit,eqA->getAlgorithms()) addIniStatement(current(stit));
+				foreach(eqit,eqA->getEquations())  addIniEquation(current_element(eqit));
+				foreach(stit,eqA->getAlgorithms()) addIniStatement(current_element(stit));
 			} else {
-				foreach(eqit,eqA->getEquations())  addEquation(current(eqit));
-				foreach(stit,eqA->getAlgorithms()) addStatement(current(stit));
+				foreach(eqit,eqA->getEquations())  addEquation(current_element(eqit));
+				foreach(stit,eqA->getAlgorithms()) addStatement(current_element(stit));
 			}
 		}
 		
 		// Elements 
 		foreach(elit,e->getElementList()) {
-			//AST_ListAppend(_comps , current(elit)->getAsComponent() );
-			addVariable(current(elit)->getAsComponent());
+			//AST_ListAppend(_comps , current_element(elit)->getAsComponent() );
+			addVariable(current_element(elit)->getAsComponent());
 		}
 	}	
 	_ct = new TypeCheck_( tyEnv , varEnv );
@@ -135,7 +135,7 @@ Type make_array_type(AST_ExpressionList dims , Type r)
 	Type _t = r;
 	AST_ExpressionListIterator exit;
 	foreach(exit, dims){
-		_t = new Type_Array_(_t , current(exit) );
+		_t = new Type_Array_(_t , current_element(exit) );
 	}
 	return _t;
 }
@@ -150,14 +150,14 @@ void MMO_Class_::addVariable(MMO_Component c)
 	foreach(it , c->nameList()) {
 		
 		AST_ExpressionList dims = newAST_ExpressionList();
-		AST_ListConcat(dims, current(it)->indexes() );
+		AST_ListConcat(dims, current_element(it)->indexes() );
 		AST_ListConcat(dims, c->indexes() );
 		
 		if (dims->size() > 0 ) 
 			t = make_array_type(  dims, t  );
 		
-		VarInfo  v = newVarInfo(t , c->typePrefix() , current(it)->modification(), current(it)->comment() );
-		varEnv->insert(current(it)->name(), v);
+		VarInfo  v = newVarInfo(t , c->typePrefix() , current_element(it)->modification(), current_element(it)->comment() );
+		varEnv->insert(current_element(it)->name(), v);
 	}
 }
 

@@ -106,7 +106,7 @@ string AST_Declaration_::print() const {
       int size=indexes()->size(),i=0;
       foreach (it,indexes()) {
         i++;
-        ret << current(it);
+        ret << current_element(it);
         if (i<size) ret << ",";
       }
       ret << "]";
@@ -155,7 +155,7 @@ string AST_Component_::print() const {
       int size=indexes()->size(),i=0;
       foreach (exp_it,indexes()) {
         i++;
-        ret << current(exp_it);
+        ret << current_element(it);
         if (i<size) ret << ",";
       }
       ret << "]";
@@ -164,7 +164,7 @@ string AST_Component_::print() const {
     for (it=_decl_list->begin();it!=_decl_list->end();it++) {
       itt=it;
       itt++;
-      ret << current(it) << (itt==_decl_list->end() ? "" : ",");
+      ret << current_element(it) << (itt==_decl_list->end() ? "" : ",");
     }
     ret << ";"; 
     return ret.str();

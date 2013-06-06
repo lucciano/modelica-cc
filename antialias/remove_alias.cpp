@@ -31,9 +31,9 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
     AST_ArgumentListIterator it;
     bool found=false;
     foreach(it,al) { 
-      if (*current(it)->getAsArgumentModification()->name()=="alias") { 
+      if (*current_element(it)->getAsArgumentModification()->name()=="alias") {
             found=true;
-            AST_ExpressionList l=current(it)->getAsArgumentModification()->modification()->getAsModificationEqual()->exp()->getAsExpression_Brace()->arguments();
+            AST_ExpressionList l=current_element(it)->getAsArgumentModification()->modification()->getAsModificationEqual()->exp()->getAsExpression_Brace()->arguments();
             AST_ListAppend(l,newAST_Expression_String(alias_name));
             break;
       } 
@@ -58,7 +58,7 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
   }
   if (eqs != NULL) {
     foreach(eqit, eqs) 
-      replaceExpInEq(alias,var,current(eqit));
+      replaceExpInEq(alias,var,current_element(eqit));
   }
 }
 
@@ -79,11 +79,11 @@ void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_E
       MMO_EquationList eqs = eqwhen->equationList();
       eqwhen->setCondition(rep.replaceExp(alias,var,eqwhen->condition()));
       foreach(eqit, eqs) 
-        replaceExpInEq(alias,var,current(eqit));
+        replaceExpInEq(alias,var,current_element(eqit));
       foreach(else_it,elseeq) { 
-        current(else_it)->setCondition(rep.replaceExp(alias,var, current(else_it)->condition()));
-        foreach(eqit, current(else_it)->equations()) 
-          replaceExpInEq(alias,var,current(eqit));
+        current_element(else_it)->setCondition(rep.replaceExp(alias,var, current_element(else_it)->condition()));
+        foreach(eqit, current_element(else_it)->equations())
+          replaceExpInEq(alias,var,current_element(eqit));
       }
       break;
     }
@@ -123,7 +123,7 @@ void RemoveAlias::removeAliasEquations(MMO_Class c) {
 
   if (eqs != NULL) {
     foreach(eqit, eqs) {
-      AST_Equation eq = (AST_Equation) current(eqit);
+      AST_Equation eq = (AST_Equation) current_element(eqit);
       switch(eq->equationType()) {
         case EQEQUALITY:
 	        AST_Equation_Equality eqeq =  eq->getAsEquality();
@@ -180,7 +180,7 @@ void RemoveAlias::removeAliasEquations(MMO_Class c) {
   	  }
     }
     foreach(eqit, remove) 
-      _c->removeEquation(current(eqit));  
+      _c->removeEquation(current_element(eqit));
   }
 }
 

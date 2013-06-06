@@ -62,7 +62,7 @@ string AST_Statement_Assign_::print() const {
     ret << lhs() << "(";
     int size=exp()->getAsCallArgs()->arguments()->size(),i=0;
     foreach(it,exp()->getAsCallArgs()->arguments()) {
-      ret << current(it) << (++i<size ? "," : "");
+      ret << current_element(it) << (++i<size ? "," : "");
     }
     ret << ");" << endl;
   }
@@ -83,7 +83,7 @@ string AST_Statement_For_::print() const {
   AST_ListPrint(forIndexList(),ret,"for ",",",""," loop\n",false);
   BEGIN_BLOCK;
   foreach(it,statements())
-    ret << current(it);
+    ret << current_element(it);
   END_BLOCK;
   MAKE_SPACE;
   ret << "end for;" <<endl;
@@ -100,14 +100,14 @@ string AST_Statement_When_::print() const {
   
   BEGIN_BLOCK;
   foreach(it,statements())
-    ret << current(it);
+    ret << current_element(it);
   END_BLOCK;
   foreach(else_it,else_when()) {
     MAKE_SPACE;
-    ret << "elsewhen " << current(else_it)->condition() << " then" << endl ;
+    ret << "elsewhen " << current_element(else_it)->condition() << " then" << endl ;
     BEGIN_BLOCK;
-    foreach(it, current(else_it)->statements())
-      ret << current(it);
+    foreach(it, current_element(else_it)->statements())
+      ret << current_element(it);
     END_BLOCK;
   }
  
@@ -123,7 +123,7 @@ string AST_Statement_While_::print() const {
   ret << "while " << condition() << " loop"<<endl;
   BEGIN_BLOCK;
   foreach(it,statements())
-    ret << current(it);
+    ret << current_element(it);
   END_BLOCK;
   MAKE_SPACE;
   ret << "end while;" <<endl;
@@ -154,14 +154,14 @@ string AST_Statement_If_::print() const {
   ret << "if " << condition() << " then"<<endl;
   BEGIN_BLOCK;
   foreach(it,statements())
-    ret << current(it);
+    ret << current_element(it);
   END_BLOCK;
   foreach(else_it,else_if()) {
     MAKE_SPACE;
-    ret << "elseif " << current(else_it)->condition() << " then" << endl ;
+    ret << "elseif " << current_element(else_it)->condition() << " then" << endl ;
     BEGIN_BLOCK;
-    foreach(it, current(else_it)->statements())
-      ret << current(it);
+    foreach(it, current_element(else_it)->statements())
+      ret << current_element(it);
     END_BLOCK;
   }
  
@@ -171,7 +171,7 @@ string AST_Statement_If_::print() const {
   }
   BEGIN_BLOCK;
   foreach(it,else_statements())
-    ret << current(it);
+    ret << current_element(it);
   END_BLOCK;
   MAKE_SPACE;
   ret << "end if;" <<endl;
@@ -191,7 +191,7 @@ string AST_Statement_OutputAssigment_::print () const {
   int size=out_expressions()->size(),i=0;
   foreach(it,out_expressions()) {
     i++;
-    ret << current(it);
+    ret << current_element(it);
     ret << (i<size ? "," : "");
   }
   ret << "):=";
@@ -201,7 +201,7 @@ string AST_Statement_OutputAssigment_::print () const {
   i=0;
   foreach(it,arguments()) {
     i++;
-    ret << current(it);
+    ret << current_element(it);
     ret << (i<size ? "," : "");
   }
   ret << ");" << endl;

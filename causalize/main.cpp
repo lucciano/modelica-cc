@@ -60,7 +60,7 @@ int main(int argc, char ** argv)
 //  list<string>::iterator unknownsIter;
 //  cout << "Unknowns: ";
 //  foreach(unknownsIter, unknowns) {
-//    cout << current(unknownsIter) << " ";
+//    cout << current_element(unknownsIter) << " ";
 //  }
 //  cout << endl;
 

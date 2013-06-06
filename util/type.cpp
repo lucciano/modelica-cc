@@ -75,7 +75,7 @@ string Type_Array_ :: print() const
 	AST_ExpressionListIterator exit = exls->begin();
 	int s = exls->size();
 	for(int i = 0; i < s; i++)
-		ret << current(exit++) <<  ( i + 1 < s ? "," :   "") ;
+		ret << current_element(exit++) <<  ( i + 1 < s ? "," :   "") ;
 	
 	ret << "]" ;
     return ret.str();
@@ -114,7 +114,7 @@ int operator==( Type_ &e1 ,  Type_ &e2 )
 				if ( t2->tupla()->size() != t1->tupla()->size() ) return 0;
 				TypeListIterator it1 = t1->tupla()->begin() , it2 = t1->tupla()->begin();
 				foreach(it1,t1->tupla()) {
-					if ( *current(it1)  != current(it2) ) return 0;
+					if ( *current_element(it1)  != current_element(it2) ) return 0;
 					it2++;
 				}
 				return 1;
@@ -156,7 +156,7 @@ string Type_Tupla_ :: print() const
 	ret << "< " ;
 	foreach(tyit , _tyl) {
 		i++;
-		ret << current(tyit);
+		ret << current_element(tyit);
 		if (i < s) ret << " , " ;
 	}
 	ret << " > " ;
@@ -176,7 +176,7 @@ string Type_Function_ :: print() const
 	ret << "( " ;
 	foreach(tyit , _input) {
 		i++;
-		ret << current(tyit);
+		ret << current_element(tyit);
 		if (i < s) ret << " , " ;
 	}
 	ret << " ) " ;

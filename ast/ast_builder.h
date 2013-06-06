@@ -338,7 +338,7 @@ DEFINE_PRINTER(AST_String);
 
 /* List utils */
 
-#define current(it) (*it)
+#define current_element(it) (*it)
 #define foreach(it,list) for (it=list->begin();it!=list->end();it++)
 #define foreachReverse(it,list) for (it=list->rbegin();it!=list->rend();it++)
 
@@ -388,7 +388,7 @@ void AST_ListPrint(list<T1> *l1, ostream &ret, string sec_name="", string separa
     if (block) BEGIN_BLOCK;
     ret << opener;
     foreach(it,l1)  {
-      ret << current(it);
+      ret << current_element(it);
       ret << (i<size ? separator : "");
       i++;
     }

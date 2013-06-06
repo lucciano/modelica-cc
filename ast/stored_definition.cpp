@@ -36,7 +36,7 @@ ostream & operator<<(ostream &os , const AST_StoredDefinition_ &sd )  {
   if (sd.within()!=NULL)
     os << "within " << sd.within() << endl; 
   foreach(it,cl)
-    os << current(it);
+    os << current_element(it);
   return os;
 }
 

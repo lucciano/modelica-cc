@@ -63,14 +63,14 @@ string AST_Equation_When_::print() const {
   ret << "when " << condition() << " then" << endl;
   BEGIN_BLOCK;
   foreach(it,eql) 
-    ret << current(it);
+    ret << current_element(it);
   END_BLOCK;
   foreach(else_it,equationElseWhen()) {
     MAKE_SPACE;
-    ret << "elsewhen " << current(else_it)->condition() << " then" << endl ;
+    ret << "elsewhen " << current_element(else_it)->condition() << " then" << endl ;
     BEGIN_BLOCK;
-    foreach(it, current(else_it)->equations())
-      ret << current(it);
+    foreach(it, current_element(else_it)->equations())
+      ret << current_element(it);
     END_BLOCK;
   }
  
@@ -88,14 +88,14 @@ string AST_Equation_If_::print() const {
   ret << "if (" << condition() << ") then " << endl;
   BEGIN_BLOCK;
   foreach(it,equationList())
-    ret << current(it);
+    ret << current_element(it);
   END_BLOCK;
   foreach(else_it,equationElseIf()) {
     MAKE_SPACE;
-    ret << "elseif " << current(else_it)->condition() << " then" << endl ;
+    ret << "elseif " << current_element(else_it)->condition() << " then" << endl ;
     BEGIN_BLOCK;
-    foreach(it, current(else_it)->equations())
-      ret << current(it);
+    foreach(it, current_element(else_it)->equations())
+      ret << current_element(it);
     END_BLOCK;
 
   }
@@ -104,7 +104,7 @@ string AST_Equation_If_::print() const {
     ret << "else" << endl;
     BEGIN_BLOCK;
     foreach(it,equationElseList()) 
-      ret << current(it);
+      ret << current_element(it);
     END_BLOCK;
   }
   MAKE_SPACE;
@@ -161,7 +161,7 @@ string AST_Equation_For_::print() const {
   AST_ListPrint(forIndexList(),ret,"for ",",",""," loop\n",false);
   BEGIN_BLOCK;
   foreach(it,eql)
-    ret << current(it);
+    ret << current_element(it);
   END_BLOCK;
   MAKE_SPACE;
   ret << "end for;"<< endl;

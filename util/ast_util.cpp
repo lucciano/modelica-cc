@@ -61,7 +61,7 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
         AST_ExpressionList args = newAST_ExpressionList();
         AST_ExpressionListIterator args_it;
         foreach(args_it,c->arguments()) { 
-          AST_ListAppend(args,mapTraverse(current(args_it)));
+          AST_ListAppend(args,mapTraverse(current_element(args_it)));
         }
         return newAST_Expression_Call(c->name(),newAST_StringNull(),args);
       }

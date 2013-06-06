@@ -62,7 +62,7 @@ ostream & operator<<(ostream &ret , const AST_CompositionElement_ &ce )
     }
     BEGIN_BLOCK;
     foreach (it,ce._eqs_algs->getEquations())  
-        ret << current(it); 
+        ret << current_element(it);
     END_BLOCK;
     if (ce._eqs_algs->getAlgorithms()->size()>0) {
       MAKE_SPACE;
@@ -71,7 +71,7 @@ ostream & operator<<(ostream &ret , const AST_CompositionElement_ &ce )
     }
     BEGIN_BLOCK;
     foreach (st_it,ce._eqs_algs->getAlgorithms())  
-        ret << current(st_it); 
+        ret << current_element(st_it);
     END_BLOCK;
   }
   AST_ElementListIterator et;
@@ -79,7 +79,7 @@ ostream & operator<<(ostream &ret , const AST_CompositionElement_ &ce )
 	if (ce._el->size() > 0)
 		ret  << "public" << endl;
 	foreach (et,ce._el )  
-        ret << "  " << current(et) << endl; 
+        ret << "  " << current_element(et) << endl;
   }
   
   return ret;
@@ -95,9 +95,9 @@ ostream & operator<<(ostream &os , const AST_Composition_ &cm )  {
     AST_CompositionElementListIterator  it;
     AST_ElementListIterator             el_it;
     foreach(el_it,cm.elementList()) 
-      os << current(el_it) << endl;
+      os << current_element(el_it) << endl;
     foreach (it,cm.compositionList()) {
-      os << current(it);
+      os << current_element(it);
     }
     return os;
 }

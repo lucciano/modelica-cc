@@ -158,7 +158,7 @@ string AST_Expression_Call_::print() const {
   int size = arguments()->size(),i=0;
   foreach(it,arguments()) {   
     i++;
-    ret << current(it);
+    ret << current_element(it);
     ret << (i<size ? "," : "");
   }
   ret << ")";
@@ -175,12 +175,12 @@ string AST_Expression_ComponentReference_::print() const {
   int size=names()->size(),i=0;
   foreach (it, names()) {
     i++;
-    ret << current(it);
-    if (current(exp_it)->size()) {
+    ret << current_element(it);
+    if (current_element(exp_it)->size()) {
       ret << "[";
-      int size2=current(exp_it)->size(),i2=0;
-      foreach (exp_it2,current(exp_it))
-        ret << current(exp_it2) << (++i2<size2 ? "," : "");
+      int size2=current_element(exp_it)->size(),i2=0;
+      foreach (exp_it2,current_element(exp_it))
+        ret << current_element(exp_it2) << (++i2<size2 ? "," : "");
       ret << "]";
     }
     ret << (i<size ? "." : "");
@@ -308,7 +308,7 @@ string AST_Expression_If_::print () const {
   ret << "if "<< condition() << " then " << then() ;
   if (! elseif_list()->empty())
   foreach(it , elseif_list() )
-	  ret << current(it)->getAsElseIf() ;
+	  ret << current_element(it)->getAsElseIf() ;
   ret << " else " << else_exp() ;
   return ret.str();
 }
@@ -342,7 +342,7 @@ string AST_Expression_Range_::print () const {
   int size=_list->size(),i=0;
   foreach (it,_list) {
     i++;
-    ret << current(it);
+    ret << current_element(it);
     ret << (i==size ? "" : ":");
   }
   return ret.str();
@@ -356,7 +356,7 @@ string AST_Expression_Output_::print () const {
   int size=_list->size(),i=0;
   foreach (it,_list) {
     i++;
-    ret << current(it);
+    ret << current_element(it);
     ret << (i==size ? "" : ",");
   }
   ret << ")";
