@@ -13,11 +13,7 @@ equation
 		m[i] = if tt then 1 else 2;
 		m[i] = i > 4;
 	end	for;
-
-algorithm
-   a := 1;
-   when not f then 
-	a := 1;
-	end when ;
-
+	when {f , sample(0,1)} then 
+		a=1;
+	end when;
 end Prueba;     

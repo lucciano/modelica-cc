@@ -208,13 +208,14 @@ Type MMO_Class_::getExpresionType(AST_Expression e)
 
 VarInfo MMO_Class_::getVarInfo(AST_String name)
 {
-  if (varEnv->lookup(toStr(name))==NULL) throw ("getVarInfo: Variable " + toStr(name) + " no encontrada") ;
+  if (varEnv->lookup(toStr(name))==NULL) return NULL; //throw ("getVarInfo: Variable " + toStr(name) + " no encontrada") ;
 	return varEnv->lookup(toStr(name));
 }
 
 Type MMO_Class_::getVariableType(AST_String name)
 {
-	return getVarInfo(name)->type();
+	VarInfo v = getVarInfo(name);
+	return v ? getVarInfo(name)->type() : NULL;
 }
 
 

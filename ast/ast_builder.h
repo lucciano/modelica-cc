@@ -362,6 +362,15 @@ list<T1> * AST_ListConcat(list<T1> *l1,list<T1> *l2) {
 	return l1;
 }
 
+/* Crea una copia de la lista*/
+template <typename T1>
+list<T1> * AST_ListCopy(list<T1> *l1 ) {
+	list<T1> * ls = new list<T1>;
+	ls->assign(l1->begin(), l1->end());
+	return ls;
+}
+
+/* Genera una lista con un solo elemento */
 template <typename T1>
 list<T1> * newAST_SimpleList(T1  t) {
 	list<T1> * ls = new list<T1>;
@@ -369,6 +378,7 @@ list<T1> * newAST_SimpleList(T1  t) {
 	return ls;
 }
 
+/* Imprime una lista */
 template <typename T1>
 void AST_ListPrint(list<T1> *l1, ostream &ret, string sec_name="", string separator=" ", string opener="",string closer="", bool block=false) {
   typename list<T1>::iterator it;

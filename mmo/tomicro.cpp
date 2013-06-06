@@ -29,10 +29,11 @@ MMO_ToMicroModelica_::MMO_ToMicroModelica_ (MMO_Class c): _c(c) {} ;
 void MMO_ToMicroModelica_::transform()
 {
 	/* Aca comienza todo el ciclo */
-	transformEqList(_c->getIniEquations() , _c->getIniStatements(), NULL );
-	transformEqList(_c->getEquations()    , _c->getStatements()   , NULL );
 	checkStatement(_c->getStatements());
 	checkStatement(_c->getIniStatements());
+	transformEqList(_c->getIniEquations() , _c->getIniStatements(), NULL );
+	transformEqList(_c->getEquations()    , _c->getStatements()   , NULL );
+	
 	/* Cambiamos los tipos y constantes Booleanas */ 
 	for(int i = 0; i < _c->getVarSymbolTable()->count();i++) {
 		VarInfo  v = _c->getVarSymbolTable()->varInfo(i);
@@ -49,7 +50,7 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 	
     foreach(eqit,eqList) {		
 		AST_Equation eq = current(eqit);
-				
+
 		switch (eq->equationType()) 
 		{
 			case EQEQUALITY:
@@ -100,8 +101,7 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 				cerr << "Error: "  << eq->equationType() << endl;
 				throw "Not implemented yet!!";
 			
-		}
-			
+		}		
 	}
 	
 	list<AST_EquationListIterator>::iterator delIt;
@@ -415,7 +415,7 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 		{
 			AST_Expression_ComponentReference cf = e->getAsComponentRef();
 			Type t = _c->getVariableType(cf->names()->front());
-			if (t->getType() == TYBOOLEAN) {
+			if (t != NULL && t->getType() == TYBOOLEAN) {
 				return GREATER( cf , R(0.5)  );
 			} else 
 				return cf;
@@ -495,8 +495,7 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_Statem
 				AST_ExpressionList cs = when->condition()->getAsExpression_Brace()->arguments();
 				AST_ExpressionListIterator csit;
 				foreach(csit,cs)  {
-					AST_StatementList ctmList = newAST_StatementList();
-					ctmList->assign(stmList->begin(), stmList->end());
+					AST_StatementList ctmList =  AST_ListCopy(stmList);
 					AST_Expression _cond = whenCondition( current(csit), ctmList);
 					AST_ListAppend(stms,newAST_Statement_When( _cond , ctmList , elseList));
 				}

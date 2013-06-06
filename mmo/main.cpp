@@ -72,10 +72,11 @@ int main(int argc, char ** argv)
 		StateVariablesFinder * finder = new StateVariablesFinder(d); 
 		finder->findStateVariables(); 
 	
+
 		try { 
 			re->transform();
 		} catch (char const * c) {  cerr << c << endl; exit(-1);}
-	
+		  catch (string  c) {  cerr << c << endl; exit(-1);}	
 		if (fs.is_open()) {
 			fs << d << endl;
       fs.close();
