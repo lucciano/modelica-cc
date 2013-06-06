@@ -42,6 +42,17 @@ GET_AS_IMP(Expression,Range);
 GET_AS_IMP(Expression,Real);
 GET_AS_IMP(Expression,UMinus);
 
+ExpressionType AST_Expression_BooleanNot_::expressionType()   { return EXPBOOLEANNOT; }
+ExpressionType AST_Expression_If_::expressionType()           { return EXPIF; }
+ExpressionType AST_Expression_Call_::expressionType()         { return EXPCALL; }
+ExpressionType AST_Expression_::expressionType()              { return EXPNONE; }
+ExpressionType AST_Expression_UMinus_::expressionType()       { return EXPUMINUS; }
+ExpressionType AST_Expression_Boolean_::expressionType()      { return EXPBOOLEAN; }
+ExpressionType AST_Expression_Integer_::expressionType()      { return EXPINTEGER; }
+ExpressionType AST_Expression_Real_::expressionType()         { return EXPREAL; }
+ExpressionType AST_Expression_String_::expressionType()       { return EXPSTRING; }
+
+
 ostream & operator<<(ostream &os , const AST_Expression_ &e ){
     os << e.print();  
     return os;
@@ -213,35 +224,6 @@ void AST_Expression_ComponentReference_::prepend(AST_String s, AST_ExpressionLis
   AST_ListAppend(indexes(),subs);
 }
 
-ExpressionType AST_Expression_BooleanNot_::expressionType() { 
-  return EXPBOOLEANNOT; 
-}
-
-
-ExpressionType AST_Expression_::expressionType() { 
-  return EXPNONE; 
-}
-
-ExpressionType AST_Expression_UMinus_::expressionType() { 
-  return EXPUMINUS;
-}
-
-ExpressionType AST_Expression_Boolean_::expressionType() { 
-  return EXPBOOLEAN;
-}
-
-ExpressionType AST_Expression_Integer_::expressionType() { 
-  return EXPINTEGER;
-}
-
-ExpressionType AST_Expression_Real_::expressionType() { 
-  return EXPREAL;
-}
-
-ExpressionType AST_Expression_String_::expressionType() { 
-  return EXPSTRING;
-}
-
 AST_Integer AST_Expression_Integer_::val() {
   return _i;
 }
@@ -277,13 +259,6 @@ string AST_Expression_If_::print () const {
   return ret.str();
 }
 
-ExpressionType AST_Expression_If_::expressionType() {
-  return EXPIF;
-}
-
-ExpressionType AST_Expression_Call_::expressionType() {
-  return EXPCALL;
-}
 
 string AST_Expression_End_::print() const { 
   return "end";
