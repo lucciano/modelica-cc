@@ -33,19 +33,19 @@ public:
    
   /* Dynamic casts */
   GET_AS(Expression,BinOp);
-  GET_AS(Expression,If);
-  GET_AS(Expression,ComponentReference);
-  GET_AS(Expression,Derivative); 
-  GET_AS(Expression,UMinus);
-  GET_AS(Expression,Output);
-  GET_AS(Expression,BooleanNot);
-  GET_AS(Expression,Range);
   GET_AS(Expression,Boolean);
+  GET_AS(Expression,BooleanNot);
+  GET_AS(Expression,Brace);
   GET_AS(Expression,Call);
   GET_AS(Expression,CallArgs);
-  GET_AS(Expression,Real);
+  GET_AS(Expression,ComponentReference);
+  GET_AS(Expression,Derivative);
+  GET_AS(Expression,If);
   GET_AS(Expression,Integer);
-  GET_AS(Expression,Brace);
+  GET_AS(Expression,Output);
+  GET_AS(Expression,Range);
+  GET_AS(Expression,Real);
+  GET_AS(Expression,UMinus);
   AST_Expression_If_ElseIf getAsElseIf();
 };
 

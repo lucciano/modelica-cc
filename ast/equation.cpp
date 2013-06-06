@@ -21,30 +21,11 @@
 #include <ast/equation.h>
 #include <ast/ast_builder.h>
 
-
-AST_Equation_Equality AST_Equation_::getAsEquality() {
-  return dynamic_cast<AST_Equation_Equality_*>(this);
-}
-
-AST_Equation_Connect AST_Equation_::getAsConnect() {
-  return dynamic_cast<AST_Equation_Connect_*>(this);
-}
-
-AST_Equation_When AST_Equation_::getAsWhen() {
-	return dynamic_cast<AST_Equation_When_*>(this);
-}
-
-AST_Equation_If AST_Equation_::getAsIf() {
-	return dynamic_cast<AST_Equation_If_*>(this);
-}
-
-AST_Equation_For AST_Equation_::getAsFor() {
-	return dynamic_cast<AST_Equation_For_*>(this);
-}
-
-AST_Equation_Call AST_Equation_::getAsCall() {
-	return dynamic_cast<AST_Equation_Call_*>(this);
-}
+GET_AS_IMP(Equation,Call);
+GET_AS_IMP(Equation,Equality);
+GET_AS_IMP(Equation,For);
+GET_AS_IMP(Equation,If);
+GET_AS_IMP(Equation,When);
 
 AST_Expression AST_Equation_Equality_::left() const {
   return _left;

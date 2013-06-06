@@ -27,8 +27,21 @@
 
 const char *BinOpTypeName[] =  {" or ", " and ", "<", "<=", ">", ">=", "<>", "==", 
                                 "+", ".+", "-", ".-", "/", "./","*", ".*", "^", ".^" };
+GET_AS_IMP(Expression,BinOp);
+GET_AS_IMP(Expression,Boolean);
+GET_AS_IMP(Expression,BooleanNot);
+GET_AS_IMP(Expression,Brace);
+GET_AS_IMP(Expression,Call);
+GET_AS_IMP(Expression,CallArgs);
+GET_AS_IMP(Expression,ComponentReference);
+GET_AS_IMP(Expression,Derivative);
+GET_AS_IMP(Expression,If);
+GET_AS_IMP(Expression,Integer);
+GET_AS_IMP(Expression,Output);
+GET_AS_IMP(Expression,Range);
+GET_AS_IMP(Expression,Real);
+GET_AS_IMP(Expression,UMinus);
 
-using namespace std;
 ostream & operator<<(ostream &os , const AST_Expression_ &e ){
     os << e.print();  
     return os;
@@ -200,52 +213,6 @@ void AST_Expression_ComponentReference_::prepend(AST_String s, AST_ExpressionLis
   AST_ListAppend(indexes(),subs);
 }
 
-AST_Expression_ComponentReference AST_Expression_::getAsComponentReference() {
-  return dynamic_cast<AST_Expression_ComponentReference>(this);
-}
-
-
-AST_Expression_CallArgs AST_Expression_::getAsCallArgs() {
-  return dynamic_cast<AST_Expression_CallArgs>(this);
-}
-
-
-AST_Expression_Range AST_Expression_::getAsRange() {
-  return dynamic_cast<AST_Expression_Range>(this);
-}
-
-AST_Expression_Real AST_Expression_::getAsReal() {
-  return dynamic_cast<AST_Expression_Real>(this);
-}
-
-AST_Expression_Integer AST_Expression_::getAsInteger() {
-  return dynamic_cast<AST_Expression_Integer>(this);
-}
-
-AST_Expression_If AST_Expression_::getAsIf() {
-  return dynamic_cast<AST_Expression_If>(this);
-}
-
-AST_Expression_UMinus AST_Expression_::getAsUMinus() {
-  return dynamic_cast<AST_Expression_UMinus>(this);
-}
-
-AST_Expression_Output AST_Expression_::getAsOutput() {
-  return dynamic_cast<AST_Expression_Output>(this);
-}
-
-AST_Expression_BooleanNot AST_Expression_::getAsBooleanNot() {
-  return dynamic_cast<AST_Expression_BooleanNot>(this);
-}
-
-AST_Expression_Boolean AST_Expression_::getAsBoolean() {
-  return dynamic_cast<AST_Expression_Boolean>(this);
-}
-
-AST_Expression_Call AST_Expression_::getAsCall() {
-  return dynamic_cast<AST_Expression_Call>(this);
-}
-
 ExpressionType AST_Expression_BooleanNot_::expressionType() { 
   return EXPBOOLEANNOT; 
 }
@@ -279,9 +246,6 @@ AST_Integer AST_Expression_Integer_::val() {
   return _i;
 }
 
-AST_Expression_Derivative AST_Expression_::getAsDerivative() {
-  return dynamic_cast<AST_Expression_Derivative>(this);
-};
 
 AST_Expression_If_ElseIf AST_Expression_::getAsElseIf() {
   return dynamic_cast<AST_Expression_If_ElseIf>(this);
@@ -323,11 +287,6 @@ ExpressionType AST_Expression_Call_::expressionType() {
 
 string AST_Expression_End_::print() const { 
   return "end";
-}
-
-
-AST_Expression_BinOp AST_Expression_::getAsBinOp() {
-  return dynamic_cast<AST_Expression_BinOp>(this);
 }
 
 AST_Expression_Output_::AST_Expression_Output_(AST_ExpressionList l): _list(l) {
@@ -381,4 +340,3 @@ ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr) 
 }
 
 
-GET_AS_IMP(Expression,Brace);

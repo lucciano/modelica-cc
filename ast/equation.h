@@ -32,12 +32,14 @@ public:
   friend ostream & operator<<(ostream &os , const AST_Equation_ &e );
   virtual string print() const =0;
   virtual EquationType equationType() = 0;
-  AST_Equation_Equality getAsEquality();
-  AST_Equation_Connect getAsConnect();
-  AST_Equation_When getAsWhen();
-  AST_Equation_If getAsIf();
-  AST_Equation_For getAsFor();
-  AST_Equation_Call getAsCall();
+
+  /* Dynamic casts */
+  GET_AS(Equation,Call);
+  GET_AS(Equation,Connect);
+  GET_AS(Equation,Equality);
+  GET_AS(Equation,For);
+  GET_AS(Equation,If);
+  GET_AS(Equation,When);
 };
 
 class AST_Equation_Equality_: public AST_Equation_
