@@ -66,7 +66,7 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
         return newAST_Expression_Call(c->name(),newAST_StringNull(),args);
       }
     default:
-      cerr << "No action for exptype " << e2->expressionType() << endl;
+      /* TODO */
 		break;
   }  
   return e2;
