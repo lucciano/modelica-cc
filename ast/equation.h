@@ -85,6 +85,7 @@ public:
       _cond(cond), _eql(eql),_else(else_eq),_else_if(elseif) {};
   string print() const;
   AST_Expression condition() const { return _cond; };
+  void setCondition(AST_Expression c) { _cond=c; };
   AST_EquationList equationList() const { return _eql; };
   AST_EquationList equationElseList() const { return _else; };
   AST_Equation_ElseList equationElseIf() const { return _else_if;}

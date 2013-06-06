@@ -87,6 +87,29 @@ void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_E
       }
       break;
     }
+    case EQIF: {
+	    AST_Equation_If eqif =  eq->getAsIf();
+      eqif->setCondition(rep.replaceExp(alias,var,eqif->condition()));
+      MMO_EquationListIterator eqit;
+      MMO_EquationList eqs = eqif->equationList();
+      AST_Equation_ElseList else_ls=eqif->equationElseIf();
+      AST_Equation_ElseListIterator else_it;
+      foreach(eqit, eqs) 
+        replaceExpInEq(alias,var,current(eqit));
+      eqs = eqif->equationElseList();
+      foreach(eqit, eqs) 
+        replaceExpInEq(alias,var,current(eqit));
+      foreach(else_it, else_ls) {
+        current(else_it)->setCondition(rep.replaceExp(alias,var,current(else_it)->condition()));
+        eqs = current(else_it)->equations();
+        foreach(eqit, eqs) 
+          replaceExpInEq(alias,var,current(eqit));
+      }
+      break;
+    }
+    default:
+    /* TODO */
+      break;
   }
 }
 void RemoveAlias::removeAliasEquations(MMO_Class c) {

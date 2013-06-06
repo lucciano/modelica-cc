@@ -38,28 +38,35 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
         AST_Expression_BooleanNot n = e2->getAsBooleanNot();
         return newAST_Expression_BooleanNot(mapTraverse(n->exp()));
       }
-
     case EXPUMINUS: 
       {
         AST_Expression_UMinus m = e2->getAsUMinus();
         return newAST_Expression_UnaryMinus(mapTraverse(m->exp()));
       }
-    
-    
     case EXPOUTPUT :
-	{
-		AST_Expression_Output b = e2->getAsOutput();
+	    {
+		    AST_Expression_Output b = e2->getAsOutput();
         AST_ExpressionList ls = new list < AST_Expression > ();
         AST_ListAppend(ls,mapTraverse( b->expressionList()->front() ))	;
         return newAST_Expression_OutputExpressions(ls);
-	}  
-      
+	    }  
     case EXPIF:
       {   
         AST_Expression_If i = e2->getAsIf();
         return newAST_Expression_If(mapTraverse(i->condition()), mapTraverse(i->then()), i->elseif_list(), mapTraverse(i->else_exp()));
       }
-     default:
+    case EXPCALL:
+      {   
+        AST_Expression_Call c = e2->getAsCall();
+        AST_ExpressionList args = newAST_ExpressionList();
+        AST_ExpressionListIterator args_it;
+        foreach(args_it,c->arguments()) { 
+          AST_ListAppend(args,mapTraverse(current(args_it)));
+        }
+        return newAST_Expression_Call(c->name(),newAST_StringNull(),args);
+      }
+    default:
+      cerr << "No action for exptype " << e2->expressionType() << endl;
 		break;
   }  
   return e2;
@@ -155,8 +162,8 @@ AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression e) {
     case EXPBOOLEAN: 
     {
 		AST_Expression_Boolean b = e->getAsBoolean();
-		if (b->value()) return newAST_Expression_Integer(1);
-		else return newAST_Expression_Integer(0);
+		if (b->value()) return newAST_Expression_Real(1.0);
+		else return newAST_Expression_Real(0.0);
 	}
 	
 	default:

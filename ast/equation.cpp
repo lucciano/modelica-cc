@@ -85,7 +85,7 @@ string AST_Equation_If_::print() const {
   AST_EquationListIterator it;
   AST_Equation_ElseListIterator else_it;
   MAKE_SPACE;
-  ret << "if (" << condition() << ") " << endl;
+  ret << "if (" << condition() << ") then " << endl;
   BEGIN_BLOCK;
   foreach(it,equationList())
     ret << current(it);
@@ -108,7 +108,7 @@ string AST_Equation_If_::print() const {
     END_BLOCK;
   }
   MAKE_SPACE;
-  ret << "end if" << endl;
+  ret << "end if;" << endl;
   return ret.str();
 }
 
