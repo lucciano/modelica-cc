@@ -52,16 +52,8 @@ ExpressionType AST_Expression_Integer_::expressionType()      { return EXPINTEGE
 ExpressionType AST_Expression_Real_::expressionType()         { return EXPREAL; }
 ExpressionType AST_Expression_String_::expressionType()       { return EXPSTRING; }
 
+CLASS_PRINTER_IMP(AST_Expression);
 
-ostream & operator<<(ostream &os , const AST_Expression_ &e ){
-    os << e.print();  
-    return os;
-}
-
-ostream & operator<<(ostream &os , const AST_Expression &e ){
-    os << *e;
-    return os;
-}
 AST_Expression_BinOp_::AST_Expression_BinOp_(AST_Expression e1,AST_Expression e2, BinOpType t): _e1(e1), _e2(e2), _t(t) {
 }
 

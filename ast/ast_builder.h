@@ -25,6 +25,7 @@
 #include <list>
 #include <string>
 #include <ast/ast_types.h>
+#include <ast/ast_printer.h>
 
 /* Constructors */
 
@@ -183,20 +184,5 @@ AST_StoredDefinition newAST_StoredDefinition(AST_ClassList,AST_String);
 AST_TypePrefix newAST_TypePrefix();
 AST_TypePrefix newAST_TypePrefix(AST_TypePrefix);
 AST_TypePrefix AST_TypePrefixAdd(AST_TypePrefix,AST_TypePrefix);
-
-/* Printers */
-#define DEFINE_PRINTER(X) ostream & operator<<(ostream &os , const X &x ) ;
-DEFINE_PRINTER(AST_Argument);
-DEFINE_PRINTER(AST_Comment);
-DEFINE_PRINTER(AST_CompositionElement);
-DEFINE_PRINTER(AST_Composition);
-DEFINE_PRINTER(AST_Class);
-DEFINE_PRINTER(AST_Expression);
-DEFINE_PRINTER(AST_Expression_ComponentReference);
-DEFINE_PRINTER(AST_Equation);
-DEFINE_PRINTER(AST_Modification);
-DEFINE_PRINTER(AST_Statement);
-DEFINE_PRINTER(AST_StoredDefinition);
-DEFINE_PRINTER(AST_String);
 
 #endif
