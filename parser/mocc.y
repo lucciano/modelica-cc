@@ -68,7 +68,7 @@ private:
   AST_ClassPrefix                       class_prefix;
   AST_Class                             model;
   AST_Comment                           comment;
-  AST_Component                         component;
+  AST_Element_Component                         component;
   AST_Composition                       composition;
   AST_CompositionEqsAlgs                composition_eqs_algs;
   AST_CompositionElement                composition_element;
@@ -77,9 +77,9 @@ private:
   AST_Expression                        expression;
   AST_Expression_ComponentReference     component_ref;
   AST_Element                           element;
-  AST_ExtendsClause                     extends_clause;
+  AST_Element_ExtendsClause             extends_clause;
   AST_ForIndex                          for_index;
-  AST_ImportClause                      import_clause;
+  AST_Element_ImportClause              import_clause;
   AST_Modification                      modification;
   AST_ShortClassExp                     short_class_exp;
   AST_Statement                         statement;
@@ -89,7 +89,7 @@ private:
   AST_ArgumentList                      argument_list;
   AST_ClassList                         class_list;
   AST_CompositionElementList            composition_element_list;
-  AST_ComponentList                     component_list;
+  AST_Element_ComponentList                     component_list;
   AST_DeclarationList                   declaration_list;
   AST_ElementList                       element_list;
   AST_EquationList                      equation_list;
@@ -359,7 +359,7 @@ element_list:
 ;
 
 extends_clause:
-  TOKEXTENDS name opt_class_modification opt_annotation { $$ = newAST_ExtendsClause($2); }
+  TOKEXTENDS name opt_class_modification opt_annotation { $$ = newAST_Element_ExtendsClause($2); }
 ;
 
 opt_redeclare:
@@ -393,11 +393,11 @@ element_option:
 
 element_option_1:
     class_definition { $$ = newAST_Element_ClassWrapper($1); }
-  | component_clause { $$ = AST_ComponentToElement($1);}
+  | component_clause { $$ = AST_Element_ComponentToElement($1);}
 ;
 
 component_clause:
-  type_prefix type_specifier opt_array_subscripts component_list { $$ = newAST_Component($4,$2,$1,$3); }
+  type_prefix type_specifier opt_array_subscripts component_list { $$ = newAST_Element_Component($4,$2,$1,$3); }
 ;
 
 type_prefix:

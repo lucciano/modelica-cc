@@ -36,19 +36,14 @@ string AST_Element_ClassWrapper_::print() const {
 return ret.str();
 }
  
-AST_Component_ *AST_Element_::getAsComponent() {
- return dynamic_cast<AST_Component_*>(this); 
-}
+GET_AS_IMP(Element,Component);
+GET_AS_IMP(Element,ExtendsClause);
+GET_AS_IMP(Element,ImportClause);
+GET_AS_IMP(Element,ClassWrapper);
 
-AST_ExtendsClause AST_Element_::getAsExtendsClause() {
- return dynamic_cast<AST_ExtendsClause_*>(this); 
-}
 
-AST_Element_ClassWrapper AST_Element_::getAsClass() { 
-  return dynamic_cast<AST_Element_ClassWrapper_*>(this) ;
-};
 
-ostream & operator<<(ostream &os , const AST_Component &c ){
+ostream & operator<<(ostream &os , const AST_Element_Component &c ){
     os << *c;
     return os;
 }
@@ -77,21 +72,21 @@ ostream & operator<<(ostream &os , const AST_Element_ &e ){
     return os;
 };
 
-string AST_ExtendsClause_::print() const { 
+string AST_Element_ExtendsClause_::print() const { 
     stringstream ret(stringstream::out);
     ret << "EXTENDS " << _name  ;
     return ret.str();
 }
 
-string AST_ImportClause_::print() const { 
+string AST_Element_ImportClause_::print() const { 
     stringstream ret(stringstream::out);
     ret << "IMPORT[" << _name << "]";
     return ret.str();
 }
-AST_ImportClause_::AST_ImportClause_(string name):_name(name) {
+AST_Element_ImportClause_::AST_Element_ImportClause_(string name):_name(name) {
 }
 
-AST_ExtendsClause_ ::AST_ExtendsClause_ (string name):_name(name) {
+AST_Element_ExtendsClause_ ::AST_Element_ExtendsClause_ (string name):_name(name) {
 }
 
 AST_Declaration_::AST_Declaration_(string name, AST_ExpressionList indexes, AST_Modification m):_name(name), _indexes(indexes), _mod(m) {
@@ -123,14 +118,14 @@ string AST_Declaration_::print() const {
     return ret.str();
 }
 
-AST_Component_::AST_Component_ (AST_DeclarationList decl_list, string type, AST_TypePrefix tp,AST_ExpressionList indexes):_decl_list(decl_list), 
+AST_Element_Component_::AST_Element_Component_ (AST_DeclarationList decl_list, string type, AST_TypePrefix tp,AST_ExpressionList indexes):_decl_list(decl_list), 
                                                                                           _type(type), 
                                                                                           _indexes(indexes), 
                                                                                           _origin(NULL),
                                                                                           _tp(tp) {
 }
  
-string AST_Component_::print() const {
+string AST_Element_Component_::print() const {
   stringstream ret(stringstream::out);
     AST_DeclarationListIterator it,itt;
     MAKE_SPACE;

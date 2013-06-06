@@ -31,21 +31,24 @@ using namespace std;
 
 ostream & operator<<(ostream &os , const AST_Element &e );
 class AST_Class_;
-class AST_Component_;
+class AST_Element_Component_;
 
 class AST_Element_: public AST_Node_ {
 public:
   friend ostream & operator<<(ostream &os , const AST_Element_ &e );
   virtual string print() const =0;
   virtual ElementType elementType() { return ELNONE; }
-  AST_Component getAsComponent();
-  AST_ExtendsClause getAsExtendsClause();
-  AST_Element_ClassWrapper getAsClass();
+  
+  /* Dynamic casts */
+  GET_AS(Element,Component);
+  GET_AS(Element,ExtendsClause);
+  GET_AS(Element,ImportClause);
+  GET_AS(Element,ClassWrapper);
 };
 
-class AST_ExtendsClause_: public AST_Element_ {
+class AST_Element_ExtendsClause_: public AST_Element_ {
 public:
-  AST_ExtendsClause_ (string name);
+  AST_Element_ExtendsClause_ (string name);
   string print() const;
   virtual ElementType elementType() { return EXTENDS; }
   AST_String name() { return &_name; }
@@ -54,9 +57,9 @@ private:
   string _name;
 };
 
-class AST_ImportClause_: public AST_Element_ {
+class AST_Element_ImportClause_: public AST_Element_ {
 public:
-  AST_ImportClause_ (string name);
+  AST_Element_ImportClause_ (string name);
   string print() const;
 
 private:
@@ -79,9 +82,9 @@ private:
   AST_Comment _comm;
 };
 
-class AST_Component_: public AST_Element_ {
+class AST_Element_Component_: public AST_Element_ {
 public:
-  AST_Component_(AST_DeclarationList decl_list, string type, AST_TypePrefix tp, AST_ExpressionList index);
+  AST_Element_Component_(AST_DeclarationList decl_list, string type, AST_TypePrefix tp, AST_ExpressionList index);
   string print() const;
   bool isParameter() const { return _tp & TP_PARAMETER; }
   bool isInput() const { return _tp & TP_INPUT; }

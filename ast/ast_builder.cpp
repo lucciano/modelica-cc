@@ -110,16 +110,16 @@ AST_ElementList newAST_ElementList() {
   return new list<AST_Element>();
 }
 
-AST_Element AST_ImportToElement(AST_ImportClause i) { 
+AST_Element AST_ImportToElement(AST_Element_ImportClause i) { 
   return (AST_Element)i; 
 }
 
-AST_Element AST_ExtendsToElement(AST_ExtendsClause e) {
+AST_Element AST_ExtendsToElement(AST_Element_ExtendsClause e) {
   return (AST_Element)e; 
 }
 
-AST_ExtendsClause newAST_ExtendsClause(AST_String name) {
-  AST_ExtendsClause ret = new AST_ExtendsClause_(*name);
+AST_Element_ExtendsClause newAST_Element_ExtendsClause(AST_String name) {
+  AST_Element_ExtendsClause ret = new AST_Element_ExtendsClause_(*name);
   delete name;
   return ret;
 }
@@ -128,7 +128,7 @@ AST_Element newAST_Element_ClassWrapper(AST_Class c) {
   return new AST_Element_ClassWrapper_(c);
 }
 
-AST_Element AST_ComponentToElement(AST_Component c) {
+AST_Element AST_Element_ComponentToElement(AST_Element_Component c) {
   return (AST_Element)c;
 }
 
@@ -136,8 +136,8 @@ AST_CompositionElementList newAST_CompositionElementList() {
   return new list<AST_CompositionElement>();
 }
 
-AST_ImportClause newAST_ImportClause(AST_String) {
-  return new AST_ImportClause_("dummy");
+AST_Element_ImportClause newAST_ImportClause(AST_String) {
+  return new AST_Element_ImportClause_("dummy");
 }
 
 AST_Expression newAST_Expression_Integer(int i) {
@@ -197,8 +197,8 @@ AST_Class newAST_Class(AST_String s, AST_Composition comp) {
   return new AST_Class_(s,comp);
 }
 
-AST_Component newAST_Component(AST_DeclarationList cl, AST_String type, AST_TypePrefix tp, AST_ExpressionList ind) {
-  AST_Component c= new AST_Component_(cl,*type,tp,ind);
+AST_Element_Component newAST_Element_Component(AST_DeclarationList cl, AST_String type, AST_TypePrefix tp, AST_ExpressionList ind) {
+  AST_Element_Component c= new AST_Element_Component_(cl,*type,tp,ind);
   delete type;
   return c;
 }
@@ -269,8 +269,8 @@ ostream & operator<<(ostream &os , const AST_String &s) {
 }
 
 
-AST_ComponentList newAST_ComponentList() {
-  return new list<AST_Component>(); 
+AST_Element_ComponentList newAST_Element_ComponentList() {
+  return new list<AST_Element_Component>(); 
 }
 
 AST_TypePrefix newAST_TypePrefix() {

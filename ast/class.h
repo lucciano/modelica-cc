@@ -34,8 +34,8 @@ public:
 
   AST_String name() const;
 
-  AST_ComponentList getComponents();
-  void addComponent(AST_Component c);
+  AST_Element_ComponentList getComponents();
+  void addComponent(AST_Element_Component c);
 
   /*
   void addEquation(AST_Equation e);
@@ -62,7 +62,7 @@ public:
   AST_ClassPrefix prefix() const { return _prefix; }
 
 private:
-  AST_ComponentList _components;
+  AST_Element_ComponentList _components;
   AST_StringList    _extends_list;
   AST_String        _name;
   AST_Composition   _composition;

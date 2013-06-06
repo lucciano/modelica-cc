@@ -29,7 +29,7 @@ DEFINE_TYPE(MMO_Class);
 
 typedef AST_Equation  MMO_Equation;   // For now the same
 typedef AST_Statement MMO_Statement;  // For now the same
-typedef AST_Component MMO_Component;  // For now the same
+typedef AST_Element_Component MMO_Component;  // For now the same
 
 typedef list<MMO_Equation>  *MMO_EquationList;
 typedef list<MMO_Statement> *MMO_StatementList;

@@ -28,11 +28,11 @@ AST_Composition AST_Class_::composition() const {
   return _composition; 
 }
 
-AST_ComponentList AST_Class_::getComponents() { 
+AST_Element_ComponentList AST_Class_::getComponents() { 
   return _components; 
 }
 
-void AST_Class_::addComponent(AST_Component c) { 
+void AST_Class_::addComponent(AST_Element_Component c) { 
   AST_ListAppend(_components,c);
 }
 
