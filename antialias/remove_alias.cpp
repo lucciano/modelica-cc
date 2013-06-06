@@ -95,15 +95,15 @@ void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_E
       AST_Equation_ElseList else_ls=eqif->equationElseIf();
       AST_Equation_ElseListIterator else_it;
       foreach(eqit, eqs) 
-        replaceExpInEq(alias,var,current(eqit));
+        replaceExpInEq(alias,var,current_element(eqit));
       eqs = eqif->equationElseList();
       foreach(eqit, eqs) 
-        replaceExpInEq(alias,var,current(eqit));
+        replaceExpInEq(alias,var,current_element(eqit));
       foreach(else_it, else_ls) {
-        current(else_it)->setCondition(rep.replaceExp(alias,var,current(else_it)->condition()));
-        eqs = current(else_it)->equations();
+        current_element(else_it)->setCondition(rep.replaceExp(alias,var,current_element(else_it)->condition()));
+        eqs = current_element(else_it)->equations();
         foreach(eqit, eqs) 
-          replaceExpInEq(alias,var,current(eqit));
+          replaceExpInEq(alias,var,current_element(eqit));
       }
       break;
     }
