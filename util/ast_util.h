@@ -28,7 +28,7 @@
 #define IS_UMINUS(X) ((X)->expressionType()==EXPUMINUS)
 #define IS_UMINUS_VAR(X) (IS_UMINUS(X) && IS_CREF((X)->getAsUMinus()->exp()))
 #define UMINUS_EXP(X) ((X)->getAsUMinus()->exp())
-#define CREF_NAME(X) ( IS_UMINUS(X) ?  UMINUS_EXP(X)->getAsComponentRef()->name() : (X)->getAsComponentRef()->name() )
+#define CREF_NAME(X) ( IS_UMINUS(X) ?  UMINUS_EXP(X)->getAsComponentReference()->name() : (X)->getAsComponentReference()->name() )
 #define IS_VAR(X) ((IS_CREF(X) || IS_UMINUS_VAR(X)) && (!IS_PARAMETER(X)))
 #define IS_ZERO_REAL(X) ((X)->expressionType()==EXPREAL && (X)->getAsReal()->val()==0.0)
 #define IS_ZERO_INT(X) ((X)->expressionType()==EXPINTEGER && (X)->getAsInteger()->val()==0)

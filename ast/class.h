@@ -25,7 +25,7 @@
 #ifndef AST_CLASS
 #define AST_CLASS
 
-class AST_Class_: public AST_Node {
+class AST_Class_: public AST_Node_ {
 public: 
   AST_Class_(AST_String n,AST_Composition comp);
 

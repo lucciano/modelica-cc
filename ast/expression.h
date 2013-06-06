@@ -25,28 +25,28 @@
 #include <ast/ast_node.h>
 #include <ast/ast_builder.h>
 
-class AST_Expression_: public AST_Node {
+class AST_Expression_: public AST_Node_ {
 public:
   friend ostream & operator<<(ostream &os , const AST_Expression_ &e );
   virtual string print() const =0;
   virtual ExpressionType expressionType();
    
   /* Dynamic casts */
-  AST_Expression_BinOp getAsBinOp();
-  AST_Expression_If getAsIf();
-  AST_Expression_ComponentReference getAsComponentRef();
-  AST_Expression_Derivative getAsDerivative(); 
-  AST_Expression_UMinus getAsUMinus();
-  AST_Expression_Output getAsOutput();
-  AST_Expression_BooleanNot getAsBooleanNot();
-  AST_Expression_Range getAsRange();
+  GET_AS(Expression,BinOp);
+  GET_AS(Expression,If);
+  GET_AS(Expression,ComponentReference);
+  GET_AS(Expression,Derivative); 
+  GET_AS(Expression,UMinus);
+  GET_AS(Expression,Output);
+  GET_AS(Expression,BooleanNot);
+  GET_AS(Expression,Range);
+  GET_AS(Expression,Boolean);
+  GET_AS(Expression,Call);
+  GET_AS(Expression,CallArgs);
+  GET_AS(Expression,Real);
+  GET_AS(Expression,Integer);
+  GET_AS(Expression,Brace);
   AST_Expression_If_ElseIf getAsElseIf();
-  AST_Expression_Boolean getAsBoolean();
-  AST_Expression_Call getAsCall();
-  AST_Expression_CallArgs getAsCallArgs();
-  AST_Expression_Real getAsReal();
-  AST_Expression_Integer getAsInteger();
-  GET_AS(Expression_Brace);
 };
 
 class AST_Expression_Integer_: public AST_Expression_ {

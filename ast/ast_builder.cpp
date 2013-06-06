@@ -515,9 +515,9 @@ AST_ArgumentList newAST_ArgumentList() {
   return new list<AST_Argument>();
 }
 
-AST_Argument newAST_ArgumentModification(AST_String s ,AST_Modification m)
+AST_Argument newAST_Argument_Modification(AST_String s ,AST_Modification m)
 {
-	return new AST_ArgumentModification_(s,m);
+	return new AST_Argument_Modification_(s,m);
 }
 
 AST_ExpressionListList newAST_ExpressionListList() {
@@ -528,11 +528,11 @@ AST_Argument AST_ArgumentSetReplaceable(AST_Argument arg) {
   return arg;
 }
 
-AST_Modification newAST_ModificationEqual(AST_Expression e) {
-  return new AST_ModificationEqual_(e);
+AST_Modification newAST_Modification_Equal(AST_Expression e) {
+  return new AST_Modification_Equal_(e);
 }
-AST_Modification newAST_ModificationAssign(AST_Expression e) {
-  return new AST_ModificationAssign_(e);
+AST_Modification newAST_Modification_Assign(AST_Expression e) {
+  return new AST_Modification_Assign_(e);
 }
 
 AST_Expression newAST_Expression_Range(AST_Expression e1, AST_Expression e2) {
@@ -635,11 +635,11 @@ AST_Argument newAST_ShortClass(AST_ClassPrefix,AST_String, AST_ShortClassExp) {
 }
 
 AST_Argument newAST_ElementModification(AST_String n, AST_Modification m) {
-  return new AST_ArgumentModification_(n,m);
+  return new AST_Argument_Modification_(n,m);
 }
 
-AST_Modification newAST_ModificationClass(AST_ArgumentList al,AST_Expression e) {
-  return new AST_ModificationClass_(al,e);
+AST_Modification newAST_Modification_Class(AST_ArgumentList al,AST_Expression e) {
+  return new AST_Modification_Class_(al,e);
 }
 
 AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs comp_eq_algs) {

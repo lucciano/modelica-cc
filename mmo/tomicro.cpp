@@ -156,14 +156,14 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq 
 	AST_Expression l = eq->left();
 	
 	if (IS_CREF(l) && IS_COMPARE(r)) {
-		disVarSet.insert(toStr(l->getAsComponentRef()->names()->front()));
-		AST_ListAppend(stList , make_when( r->getAsBinOp(), l->getAsComponentRef() ));
+		disVarSet.insert(toStr(l->getAsComponentReference()->names()->front()));
+		AST_ListAppend(stList , make_when( r->getAsBinOp(), l->getAsComponentReference() ));
 		return NULL;
 	} 
 	
 	if (IS_CREF(r) && IS_COMPARE(l)) {
-		disVarSet.insert(toStr(r->getAsComponentRef()->names()->front()));
-		AST_ListAppend(stList , make_when( l->getAsBinOp(), r->getAsComponentRef() ));
+		disVarSet.insert(toStr(r->getAsComponentReference()->names()->front()));
+		AST_ListAppend(stList , make_when( l->getAsBinOp(), r->getAsComponentReference() ));
 		return NULL;
 	} 
 	
@@ -208,13 +208,13 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 					AST_Expression cr;
 					if (sList->size() == 0 ) {
 						_c->addVariable( name , _S("Real"),  newAST_TypePrefix(TP_DISCRETE));	
-						cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();	
+						cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentReference();	
 					}else{ 
 						_c->addVariable( name , _S("Real"),newAST_TypePrefix(TP_DISCRETE), indexList);	
-						cr = AST_Expression_ComponentReference_Add(newAST_Expression_ComponentReference(),name,sList)->getAsComponentRef();
+						cr = AST_Expression_ComponentReference_Add(newAST_Expression_ComponentReference(),name,sList)->getAsComponentReference();
 					}
 					AST_Expression _b = newAST_Expression_BinOp( e1 , e2 ,b->binopType()  );
-					AST_ListAppend(stList, make_when( _b, cr->getAsComponentRef() ));
+					AST_ListAppend(stList, make_when( _b, cr->getAsComponentReference() ));
 					return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(cr));
 					
 				}
@@ -257,7 +257,7 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 		
 		case EXPCOMPREF:
 		{
-			/*AST_Expression_ComponentReference cr = e->getAsComponentRef();
+			/*AST_Expression_ComponentReference cr = e->getAsComponentReference();
 			if (_c->getVariableType(cr->names()->front())->getType() == TYBOOLEAN)
 				return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(e));*/
 			return e;
@@ -413,7 +413,7 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 		
 		case EXPCOMPREF:
 		{
-			AST_Expression_ComponentReference cf = e->getAsComponentRef();
+			AST_Expression_ComponentReference cf = e->getAsComponentReference();
 			Type t = _c->getVariableType(cf->names()->front());
 			if (t != NULL && t->getType() == TYBOOLEAN) {
 				return GREATER( cf , R(0.5)  );
@@ -427,7 +427,7 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 			if (  toStr(call->name()) == "sample") {
 				AST_String name = new_label();   // TNEXT
 				_c->addVariable( name , _S("Real") , newAST_TypePrefix(TP_DISCRETE) , current_element(call->arguments()->begin()) );
-				AST_Expression_ComponentReference cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentRef();
+				AST_Expression_ComponentReference cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentReference();
 				
 				AST_Expression per =   current_element (  ++call->arguments()->begin()   );
 				
@@ -456,14 +456,14 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_Statem
 			AST_Equation_Equality _e =  eq->getAsEquality();
 			if (_e->left()->expressionType() == EXPCOMPREF)
 			{
-				AST_Expression_ComponentReference cf = _e->left()->getAsComponentRef(); 
+				AST_Expression_ComponentReference cf = _e->left()->getAsComponentReference(); 
 				VarInfo varInfo = _c->getVarSymbolTable()->lookup( toStr(cf->names()->front()) );
 				if (varInfo == NULL) throw "Variable no encontrada" ;
 				if (varInfo->isState()) {
 					AST_ExpressionList ls = newAST_ExpressionList(); 
 					AST_ListAppend(ls, (AST_Expression)cf );
 					AST_ListAppend(ls, _e->right() );
-					AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp(_S("reinit"))->getAsComponentRef();
+					AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp(_S("reinit"))->getAsComponentReference();
 					return newAST_Statement_Assign( aux , newAST_Expression_FunctionCallArgs(ls) );
 				} else 
 					return newAST_Statement_Assign( cf  , _e->right() );
@@ -492,7 +492,7 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_Statem
 			foreach(eqit, when->equationList()) AST_ListAppend(stmList,toMicro_eq_when(current_element(eqit),stms) );
 			
 			if (when->condition()->expressionType() == EXPBRACE) {
-				AST_ExpressionList cs = when->condition()->getAsExpression_Brace()->arguments();
+				AST_ExpressionList cs = when->condition()->getAsBrace()->arguments();
 				AST_ExpressionListIterator csit;
 				foreach(csit,cs)  {
 					AST_StatementList ctmList =  AST_ListCopy(stmList);
@@ -547,7 +547,7 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_Statem
 		case EQCALL:
 		{			
 			AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
-			AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp( copyAST_String(c->name()) )->getAsComponentRef();
+			AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp( copyAST_String(c->name()) )->getAsComponentReference();
 			return newAST_Statement_Assign( aux , newAST_Expression_FunctionCallArgs(c->arguments()) );
 		}	
 		
@@ -570,7 +570,7 @@ IndexMap MMO_ToMicroModelica_::viewIndex(IndexMap imap, AST_ForIndexList list)
 		AST_Expression aux;
 		// For Now, get the back
 		if (current_element(forit)->in_exp()->expressionType() == EXPBRACE )
-			aux = current_element(forit)->in_exp()->getAsExpression_Brace()-> arguments()->back();
+			aux = current_element(forit)->in_exp()->getAsBrace()-> arguments()->back();
 		if (current_element(forit)->in_exp()->expressionType() == EXPRANGE )
 			aux = current_element(forit)->in_exp()->getAsRange()-> expressionList()->back();
 		
@@ -633,7 +633,7 @@ bool MMO_ToMicroModelica_::IndexAccess(AST_Expression e, string i )
 		}
 		case EXPCOMPREF:
 		{
-			AST_Expression_ComponentReference cr = e->getAsComponentRef();
+			AST_Expression_ComponentReference cr = e->getAsComponentReference();
 			if ( cr->names()->front()->compare(i) == 0 ) return true;
 			AST_ExpressionListIterator exit;
 			bool b = false;
@@ -679,14 +679,14 @@ void MMO_ToMicroModelica_::checkStatement(MMO_StatementList ls)
 			
 			case STFOR:
 			{
-				AST_Statement_For f = st->getAsStatement_For();
+				AST_Statement_For f = st->getAsFor();
 				checkStatement( f->statements() );
 				break;
 			}
 			
 			case STWHEN:
 			{
-				AST_Statement_When  w = st->getAsStatement_When();
+				AST_Statement_When  w = st->getAsWhen();
 				AST_Statement_ElseList elList = newAST_Statement_ElseList();
 				if (w->else_when()->size() > 0 ) {
 					AST_Statement_ElseListIterator elseIt;
@@ -714,30 +714,30 @@ AST_Modification MMO_ToMicroModelica_::ChangeModifications(AST_Modification m)
 	{
 		case MODEQUAL:
 		{
-			AST_ModificationEqual eq = m->getAsModificationEqual();
-			return newAST_ModificationEqual( rb.foldTraverse(eq->exp())  );
+			AST_Modification_Equal eq = m->getAsEqual();
+			return newAST_Modification_Equal( rb.foldTraverse(eq->exp())  );
 		}
 		
 		case MODASSIGN:
 		{
-			AST_ModificationAssign asig = m->getAsModificationAssign();
-			return newAST_ModificationAssign( rb.foldTraverse(asig->exp()));
+			AST_Modification_Assign asig = m->getAsAssign();
+			return newAST_Modification_Assign( rb.foldTraverse(asig->exp()));
 		}
 		
 		case MODCLASS:
 		{
-			AST_ModificationClass cc = m->getAsModificationClass();
+			AST_Modification_Class cc = m->getAsClass();
 			AST_Expression _e = (cc->exp()) ? rb.foldTraverse(cc->exp()) : NULL  ;
 			AST_ArgumentList args = newAST_ArgumentList();
 			if (cc->arguments()->size() > 0) {
 				AST_ArgumentListIterator it;
 				foreach(it, cc->arguments()) {
-					AST_ArgumentModification mm = current_element(it)->getAsArgumentModification();
-					if ( toStr(mm->name()) == "start")	AST_ListAppend(args , newAST_ArgumentModification(mm->name() , ChangeModifications(mm->modification()) )   );
+					AST_Argument_Modification mm = current_element(it)->getAsModification();
+					if ( toStr(mm->name()) == "start")	AST_ListAppend(args , newAST_Argument_Modification(mm->name() , ChangeModifications(mm->modification()) )   );
 					else AST_ListAppend(args, (AST_Argument) mm);
 				}
 			}
-			return newAST_ModificationClass(args,_e);
+			return newAST_Modification_Class(args,_e);
 		}
 		case MODNONE:
 			throw "Error! (MMO_ToMicroModelica_::ChangeModifications)";

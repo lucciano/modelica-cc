@@ -23,7 +23,7 @@
 #include <ast/ast_node.h>
 #include <ast/class.h>
 
-class AST_StoredDefinition_: public AST_Node
+class AST_StoredDefinition_: public AST_Node_
 {
 public:
   AST_StoredDefinition_(AST_ClassList ml, AST_String within);

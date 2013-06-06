@@ -115,7 +115,7 @@ Type TypeCheck_::check_expression(AST_Expression e)
 		
 		case EXPCOMPREF: 
 		{
-			AST_Expression_ComponentReference b = e->getAsComponentRef();
+			AST_Expression_ComponentReference b = e->getAsComponentReference();
 			
 			VarInfo  tt = varEnv->lookup(  toStr(b->names()->front()) );
 						

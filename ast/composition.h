@@ -27,7 +27,7 @@
 
 class AST_CompositionElement_;
 
-class AST_Composition_: public AST_Node {
+class AST_Composition_: public AST_Node_ {
 public:
   AST_Composition_ (AST_ElementList el,AST_CompositionElementList cl);
   friend ostream & operator<<(ostream &os , const AST_Composition_ &cm ) ;
@@ -39,7 +39,7 @@ private:
   AST_ElementList _element_list;
 };
 
-class AST_CompositionElement_: public AST_Node
+class AST_CompositionElement_: public AST_Node_
 {
 public:
   AST_CompositionElement_(AST_CompositionEqsAlgs eqs_algs);
@@ -54,7 +54,7 @@ private:
 };
 
 
-class AST_CompositionEqsAlgs_: public AST_Node {
+class AST_CompositionEqsAlgs_: public AST_Node_ {
 public:
   AST_CompositionEqsAlgs_(AST_EquationList eq);
   AST_CompositionEqsAlgs_(AST_StatementList st);

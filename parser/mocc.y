@@ -470,9 +470,9 @@ opt_modification:
 ;
 
 modification:
-    class_modification opt_equal_exp  { $$ = newAST_ModificationClass($1,$2); }
-  | TOKEQUAL expression               { $$ = newAST_ModificationEqual($2); }
-  | TOKASSING expression              { $$ = newAST_ModificationAssign($2); }
+    class_modification opt_equal_exp  { $$ = newAST_Modification_Class($1,$2); }
+  | TOKEQUAL expression               { $$ = newAST_Modification_Equal($2); }
+  | TOKASSING expression              { $$ = newAST_Modification_Assign($2); }
 ;
 
 class_modification:

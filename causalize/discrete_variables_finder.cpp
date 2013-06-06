@@ -55,7 +55,7 @@ void DiscreteVariablesFinder::findDiscreteVariablesInEquations(MMO_EquationList 
         switch (exp->expressionType()){
           case EXPCOMPREF:
           {
-            AST_Expression_ComponentReference compRef = exp->getAsComponentRef();
+            AST_Expression_ComponentReference compRef = exp->getAsComponentReference();
             VarInfo varInfo = _varSymbolTable->lookup(compRef->name());
             if (varInfo != NULL) {
               varInfo->setDiscrete();

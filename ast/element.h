@@ -33,7 +33,7 @@ ostream & operator<<(ostream &os , const AST_Element &e );
 class AST_Class_;
 class AST_Component_;
 
-class AST_Element_: public AST_Node {
+class AST_Element_: public AST_Node_ {
 public:
   friend ostream & operator<<(ostream &os , const AST_Element_ &e );
   virtual string print() const =0;
@@ -119,7 +119,7 @@ private:
   AST_Class _c; 
 };
 
-class AST_Comment_: public AST_Node {
+class AST_Comment_: public AST_Node_ {
 public:
   AST_Comment_(AST_String st, AST_ArgumentList al): _st(st), _al(al) {}
   AST_ArgumentList arguments() const { return _al; }

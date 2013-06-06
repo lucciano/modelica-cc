@@ -25,19 +25,19 @@
 #include <ast/ast_builder.h>
 #include <sstream>
 
-class AST_Argument_: public AST_Node {
+class AST_Argument_: public AST_Node_ {
 public:
   friend ostream & operator<<(ostream &os , const AST_Argument_ &a );
 
   virtual string print() const =0;
 
 /* Conversion with dynamics casts */
-  GET_AS(ArgumentModification);
+  GET_AS(Argument,Modification);
 };
 
-class AST_ArgumentModification_: public AST_Argument_ {
+class AST_Argument_Modification_: public AST_Argument_ {
 public:
-  AST_ArgumentModification_(AST_String name, AST_Modification m);
+  AST_Argument_Modification_(AST_String name, AST_Modification m);
   AST_String name() const { return _name; }
   AST_Modification modification() const { return _mod; } 
 
@@ -50,21 +50,21 @@ private:
 class AST_ArgumentRedeclaration_: public AST_Argument_ {
 };
 
-class AST_Modification_: public AST_Node {
+class AST_Modification_: public AST_Node_ {
 public:
   virtual ModificationType modificationType() { return MODNONE; }
   friend ostream & operator<<(ostream &os , const AST_Modification_ &e );
   virtual string print() const =0;
 
 /* Conversion with dynamics casts */
-  GET_AS(ModificationEqual);
-  GET_AS(ModificationClass);
-  GET_AS(ModificationAssign);
+  GET_AS(Modification,Equal);
+  GET_AS(Modification,Class);
+  GET_AS(Modification,Assign);
 };
 
-class AST_ModificationEqual_: public AST_Modification_ {
+class AST_Modification_Equal_: public AST_Modification_ {
 public:
-  AST_ModificationEqual_(AST_Expression e);
+  AST_Modification_Equal_(AST_Expression e);
   AST_Expression exp() { return _e; }
   string print() const;
   virtual ModificationType modificationType() { return MODEQUAL; }
@@ -73,9 +73,9 @@ private:
 
 };
 
-class AST_ModificationAssign_: public AST_Modification_ {
+class AST_Modification_Assign_: public AST_Modification_ {
 public:
-  AST_ModificationAssign_(AST_Expression e);
+  AST_Modification_Assign_(AST_Expression e);
   AST_Expression exp() { return _e; }
   string print() const;
   virtual ModificationType modificationType() { return MODASSIGN; }
@@ -84,9 +84,9 @@ private:
 
 };
 
-class AST_ModificationClass_: public AST_Modification_ {
+class AST_Modification_Class_: public AST_Modification_ {
 public:
-  AST_ModificationClass_(AST_ArgumentList al, AST_Expression e);
+  AST_Modification_Class_(AST_ArgumentList al, AST_Expression e);
   AST_Expression exp() const { return _e; }
   AST_ArgumentList arguments() const { return _al; }
   string print() const;

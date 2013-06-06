@@ -25,10 +25,10 @@
 
 using namespace std;
 
-class AST_Node {
+class AST_Node_ {
 public:
-  AST_Node();
-  friend ostream & operator<<(ostream &os , const AST_Node &n );
+  AST_Node_();
+  friend ostream & operator<<(ostream &os , const AST_Node_ &n );
   void setLineNum(int linenum);
   int lineNum() const;
 

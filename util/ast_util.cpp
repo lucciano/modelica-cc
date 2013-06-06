@@ -98,8 +98,8 @@ bool EqualExp::equalTraverseElement(AST_Expression a, AST_Expression b) {
     }  
     case EXPDERIVATIVE:
     {
-      AST_Expression_ComponentReference compRef1 = a->getAsDerivative()->arguments()->front()->getAsComponentRef();
-      AST_Expression_ComponentReference compRef2 = b->getAsDerivative()->arguments()->front()->getAsComponentRef();
+      AST_Expression_ComponentReference compRef1 = a->getAsDerivative()->arguments()->front()->getAsComponentReference();
+      AST_Expression_ComponentReference compRef2 = b->getAsDerivative()->arguments()->front()->getAsComponentReference();
       return CREF_NAME(compRef1)==CREF_NAME(compRef2);
       break;
     }  
@@ -123,7 +123,7 @@ bool IsConstant::foldTraverseElement(AST_Expression e) {
       return true;
     case EXPCOMPREF:
     {
-      AST_Expression_ComponentReference cr = e->getAsComponentRef();
+      AST_Expression_ComponentReference cr = e->getAsComponentReference();
       VarInfo v = _st->lookup(cr->name());
       if (v->isParameter()) return true;
       // Check symbol table!!!

@@ -200,7 +200,7 @@ void AST_Expression_ComponentReference_::prepend(AST_String s, AST_ExpressionLis
   AST_ListAppend(indexes(),subs);
 }
 
-AST_Expression_ComponentReference AST_Expression_::getAsComponentRef() {
+AST_Expression_ComponentReference AST_Expression_::getAsComponentReference() {
   return dynamic_cast<AST_Expression_ComponentReference>(this);
 }
 
@@ -381,4 +381,4 @@ ostream & operator<<(ostream &os , const AST_Expression_ComponentReference &cr) 
 }
 
 
-GET_AS_IMP(Expression,_Brace);
+GET_AS_IMP(Expression,Brace);

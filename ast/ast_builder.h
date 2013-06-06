@@ -32,8 +32,8 @@
 #define MAKE_SPACE for (int __i=0;__i<depth;__i++) ret << " ";
 #define BEGIN_BLOCK depth+=2;
 #define END_BLOCK depth-=2;
-#define GET_AS(X) AST_##X getAs##X ();
-#define GET_AS_IMP(X,Y) AST_##X##Y AST_##X##_::getAs##X##Y () { return dynamic_cast<AST_##X##Y > (this); }
+#define GET_AS(X,Y) AST_##X##_##Y getAs##Y ();
+#define GET_AS_IMP(X,Y) AST_##X##_##Y AST_##X##_::getAs##Y () { return dynamic_cast<AST_##X##_##Y > (this); }
 extern int depth;
 
 class MCC_Parser;
@@ -50,7 +50,7 @@ typedef int                                  AST_TypePrefix;
 typedef int                                  AST_ClassPrefix;
 
 DEFINE_TYPE(AST_Argument);
-DEFINE_TYPE(AST_ArgumentModification);
+DEFINE_TYPE(AST_Argument_Modification);
 DEFINE_TYPE(AST_Class);
 DEFINE_TYPE(AST_Comment) ;
 DEFINE_TYPE(AST_Component) ;
@@ -93,9 +93,9 @@ DEFINE_TYPE(AST_ExtendsClause);
 DEFINE_TYPE(AST_ForIndex);
 DEFINE_TYPE(AST_ImportClause);
 DEFINE_TYPE(AST_Modification);
-DEFINE_TYPE(AST_ModificationAssign);
-DEFINE_TYPE(AST_ModificationClass);
-DEFINE_TYPE(AST_ModificationEqual);
+DEFINE_TYPE(AST_Modification_Assign);
+DEFINE_TYPE(AST_Modification_Class);
+DEFINE_TYPE(AST_Modification_Equal);
 DEFINE_TYPE(AST_ShortClassExp);
 DEFINE_TYPE(AST_Statement);
 DEFINE_TYPE(AST_Statement_Break);
@@ -140,7 +140,7 @@ enum StatementType {STNONE ,  STRETURN, STBREAK, STWHEN ,STASSING, STFOR , STIF 
 
 /* Argument modification */
 AST_ArgumentList newAST_ArgumentList();
-AST_Argument newAST_ArgumentModification(AST_String,AST_Modification);
+AST_Argument newAST_Argument_Modification(AST_String,AST_Modification);
 AST_Argument newAST_Redeclaration(AST_Boolean, AST_Boolean, AST_Argument); 
 AST_Argument newAST_ShortClass(AST_ClassPrefix,AST_String, AST_ShortClassExp);
 AST_ShortClassExp newAST_ShortClassExp(AST_TypePrefix, AST_String, AST_ExpressionList, AST_ArgumentList);
@@ -269,9 +269,9 @@ AST_Equation_ElseList newAST_Equation_ElseList();
 AST_Equation_Else newAST_Equation_Else(AST_Expression, AST_EquationList);
 
 /* Modification */
-AST_Modification newAST_ModificationClass(AST_ArgumentList,AST_Expression); 
-AST_Modification newAST_ModificationEqual(AST_Expression);
-AST_Modification newAST_ModificationAssign(AST_Expression); 
+AST_Modification newAST_Modification_Class(AST_ArgumentList,AST_Expression); 
+AST_Modification newAST_Modification_Equal(AST_Expression);
+AST_Modification newAST_Modification_Assign(AST_Expression); 
 AST_Modification newAST_ModificationNull();
 
 /* Statements */

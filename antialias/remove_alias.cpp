@@ -31,18 +31,18 @@ void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
     AST_ArgumentListIterator it;
     bool found=false;
     foreach(it,al) { 
-      if (*current_element(it)->getAsArgumentModification()->name()=="alias") {
+      if (*current_element(it)->getAsModification()->name()=="alias") {
             found=true;
-            AST_ExpressionList l=current_element(it)->getAsArgumentModification()->modification()->getAsModificationEqual()->exp()->getAsExpression_Brace()->arguments();
+            AST_ExpressionList l=current_element(it)->getAsModification()->modification()->getAsEqual()->exp()->getAsBrace()->arguments();
             AST_ListAppend(l,newAST_Expression_String(alias_name));
             break;
       } 
     }
     if (!found) 
-      AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
+      AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_Modification_Equal(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
   } else {
     AST_ArgumentList al= newAST_ArgumentList();
-    AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_ModificationEqual(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
+    AST_ListAppend(al,newAST_ElementModification(newAST_String("alias"),newAST_Modification_Equal(newAST_Expression_Brace(newAST_ExpressionList(newAST_Expression_String(alias_name))))));
     c = newAST_Comment(NULL,al);
     v->setComment(c); 
   }

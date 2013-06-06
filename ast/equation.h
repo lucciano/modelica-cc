@@ -26,7 +26,7 @@
 
 #ifndef AST_EQUATION
 #define AST_EQUATION
-class AST_Equation_: public AST_Node
+class AST_Equation_: public AST_Node_
 {
 public:
   friend ostream & operator<<(ostream &os , const AST_Equation_ &e );
@@ -111,7 +111,7 @@ private:
   AST_ForIndexList _ind;
 };
 
-class AST_ForIndex_: public AST_Node {
+class AST_ForIndex_: public AST_Node_ {
 public:
   AST_ForIndex_(AST_String var, AST_Expression exp):_var(var),_in(exp) {}
   string print() const;
@@ -124,7 +124,7 @@ private:
   AST_Expression _in;
 };
 
-class AST_Equation_Else_: public AST_Node {
+class AST_Equation_Else_: public AST_Node_ {
 public:
   AST_Equation_Else_ (AST_Expression cond, AST_EquationList eqs): _cond(cond), _eqs(eqs) {}
   AST_Expression condition() const { return _cond; }

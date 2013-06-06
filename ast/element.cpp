@@ -113,9 +113,9 @@ string AST_Declaration_::print() const {
     }
     if (modification()!=NULL) {
       if (modification()->modificationType()==MODEQUAL) {
-        ret << " = " << modification()->getAsModificationEqual()->exp();
+        ret << " = " << modification()->getAsEqual()->exp();
       } else if (modification()->modificationType()==MODCLASS) {
-        AST_Expression e  = modification()->getAsModificationClass()->exp();
+        AST_Expression e  = modification()->getAsClass()->exp();
         if (e!=NULL && e->expressionType()!=EXPNULL)
           ret << " = " << e;
       }

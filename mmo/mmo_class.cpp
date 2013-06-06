@@ -185,8 +185,8 @@ void MMO_Class_::addVariable(AST_String name , AST_String tys, AST_TypePrefix tp
 	if (t == NULL) throw "addVariable: Nombre de tipo no encontrado" ;
 	
 	AST_ArgumentList m = newAST_ArgumentList(); 
-	AST_ListAppend(m,newAST_ArgumentModification(_S("start"),newAST_ModificationEqual(e)));
-	VarInfo  v = newVarInfo(t , tp , newAST_ModificationClass(m , newAST_Expression_Null()) , NULL );
+	AST_ListAppend(m,newAST_Argument_Modification(_S("start"),newAST_Modification_Equal(e)));
+	VarInfo  v = newVarInfo(t , tp , newAST_Modification_Class(m , newAST_Expression_Null()) , NULL );
 	varEnv->insert(toStr(name), v);
 }
 

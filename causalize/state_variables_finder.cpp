@@ -85,7 +85,7 @@ AST_Expression StateVariablesFinder::mapTraverseElement(AST_Expression e) {
 			switch(argument->expressionType()) {
 				case EXPCOMPREF:
 				{
-					AST_Expression_ComponentReference compref = argument->getAsComponentRef();
+					AST_Expression_ComponentReference compref = argument->getAsComponentReference();
 					VarInfo varInfo = _varSymbolTable->lookup(compref->name());
 					if (varInfo != NULL) {
 						varInfo->setState();

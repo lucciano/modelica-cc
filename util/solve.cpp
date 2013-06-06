@@ -106,7 +106,7 @@ GiNaC::ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
      return GiNaC::ex(e->getAsInteger()->val());
      break;
     case EXPCOMPREF: {
-     return getSymbol(e->getAsComponentRef());
+     return getSymbol(e->getAsComponentReference());
     }
      break;
   }

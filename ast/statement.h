@@ -23,17 +23,17 @@
 #include <ast/ast_node.h>
 #include <ast/ast_builder.h>
 
-class AST_Statement_: public AST_Node
+class AST_Statement_: public AST_Node_
 {
 public:
   friend ostream & operator<<(ostream &os , const AST_Statement_ &s );
   virtual string print() const =0;
   virtual StatementType statementType() = 0;
-  GET_AS(Statement_While);
-  GET_AS(Statement_If);
-  GET_AS(Statement_For);
-  GET_AS(Statement_When);
-  GET_AS(Statement_Assign);
+  GET_AS(Statement,While);
+  GET_AS(Statement,If);
+  GET_AS(Statement,For);
+  GET_AS(Statement,When);
+  GET_AS(Statement,Assign);
 };
 
 
@@ -126,7 +126,7 @@ private:
   AST_ExpressionList _args;
 };
 
-class AST_Statement_Else_: public AST_Node {
+class AST_Statement_Else_: public AST_Node_ {
 public:
   AST_Statement_Else_ (AST_Expression cond, AST_StatementList sts): _cond(cond), _sts(sts) {}
   AST_Expression condition() const { return _cond; }

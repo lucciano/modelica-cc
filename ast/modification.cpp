@@ -22,13 +22,13 @@
 #include <ast/expression.h>
 #include <sstream>
 
-AST_ModificationEqual_:: AST_ModificationEqual_(AST_Expression e): _e(e) {
+AST_Modification_Equal_:: AST_Modification_Equal_(AST_Expression e): _e(e) {
 }
 
-AST_ModificationAssign_:: AST_ModificationAssign_(AST_Expression e): _e(e) {
+AST_Modification_Assign_:: AST_Modification_Assign_(AST_Expression e): _e(e) {
 }
 
-AST_ModificationClass_:: AST_ModificationClass_(AST_ArgumentList al,AST_Expression e): _e(e), _al(al) {
+AST_Modification_Class_:: AST_Modification_Class_(AST_ArgumentList al,AST_Expression e): _e(e), _al(al) {
 }
 
 ostream & operator<<(ostream &os , const AST_Modification_ &e ){
@@ -48,19 +48,19 @@ GET_AS_IMP(Modification,Assign);
 GET_AS_IMP(Argument,Modification);
 
 
-string AST_ModificationEqual_::print() const { 
+string AST_Modification_Equal_::print() const { 
   stringstream ret(stringstream::out);
   ret << " = " << _e ;
   return ret.str();
 }
 
-string AST_ModificationAssign_::print() const { 
+string AST_Modification_Assign_::print() const { 
   stringstream ret(stringstream::out);
   ret << " := " << _e;
   return ret.str();
 }
 
-string AST_ModificationClass_::print() const { 
+string AST_Modification_Class_::print() const { 
   stringstream ret(stringstream::out);
   
   
@@ -92,10 +92,10 @@ ostream & operator<<(ostream &os , const AST_Argument &a ){
 
 
 
-AST_ArgumentModification_::AST_ArgumentModification_(AST_String name, AST_Modification m): _name(name), _mod(m) {
+AST_Argument_Modification_::AST_Argument_Modification_(AST_String name, AST_Modification m): _name(name), _mod(m) {
 
 }
-string AST_ArgumentModification_::print() const { 
+string AST_Argument_Modification_::print() const { 
   stringstream ret(stringstream::out);
   if (modification()!=NULL)
     ret << name() << modification();
