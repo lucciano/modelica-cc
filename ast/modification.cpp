@@ -22,36 +22,29 @@
 #include <ast/expression.h>
 #include <sstream>
 
-AST_Modification_Equal_:: AST_Modification_Equal_(AST_Expression e): _e(e) {
-}
-
-AST_Modification_Assign_:: AST_Modification_Assign_(AST_Expression e): _e(e) {
-}
-
-AST_Modification_Class_:: AST_Modification_Class_(AST_ArgumentList al,AST_Expression e): _e(e), _al(al) {
-}
-
-ostream & operator<<(ostream &os , const AST_Modification_ &e ){
-    os << e.print();  
-    return os;
-}
-
-ostream & operator<<(ostream &os , const AST_Modification &e ){
-    os << *e;
-    return os;
-}
-
-
+CLASS_PRINTER_IMP(AST_Modification);
+CLASS_PRINTER_IMP(AST_Argument);
 GET_AS_IMP(Modification,Equal);
 GET_AS_IMP(Modification,Class);
 GET_AS_IMP(Modification,Assign);
 GET_AS_IMP(Argument,Modification);
 
+/* Modification Equal */
+AST_Modification_Equal_:: AST_Modification_Equal_(AST_Expression e): _e(e) {
+}
 
 string AST_Modification_Equal_::print() const { 
   stringstream ret(stringstream::out);
   ret << " = " << _e ;
   return ret.str();
+}
+
+AST_Expression AST_Modification_Equal_::exp() { return _e; }
+
+ModificationType AST_Modification_Equal_::modificationType() { return MODEQUAL; }
+
+/* Modification assign */
+AST_Modification_Assign_:: AST_Modification_Assign_(AST_Expression e): _e(e) {
 }
 
 string AST_Modification_Assign_::print() const { 
@@ -60,41 +53,27 @@ string AST_Modification_Assign_::print() const {
   return ret.str();
 }
 
+/* Modification Class */
+AST_Modification_Class_:: AST_Modification_Class_(AST_ArgumentList al,AST_Expression e): _e(e), _al(al) { }
+
+ModificationType AST_Modification_Class_::modificationType() { return MODCLASS; }
+
+AST_Expression AST_Modification_Class_::exp() const { return _e; }
+
+AST_ArgumentList AST_Modification_Class_::arguments() const { return _al; }
+
 string AST_Modification_Class_::print() const { 
   stringstream ret(stringstream::out);
-  
-  
   AST_ListPrint(arguments(),ret,"",",","(",")");
-  /*AST_ArgumentListIterator it;
-  if (arguments()->size()) {
-    ret << "(";
-    foreach(it,arguments()) 
-      ret << current(it);
-    ret << ")";
-  } */
   if (exp()->expressionType()!=EXPNULL) {
     ret << " = " << exp();
   }
-  
   return ret.str();
 }
 
+/* Argument modificaiton */
+AST_Argument_Modification_::AST_Argument_Modification_(AST_String name, AST_Modification m): _name(name), _mod(m) { }
 
-ostream & operator<<(ostream &os , const AST_Argument_ &a ){
-    os << a.print();  
-    return os;
-}
-
-ostream & operator<<(ostream &os , const AST_Argument &a ){
-    os << *a;
-    return os;
-}
-
-
-
-AST_Argument_Modification_::AST_Argument_Modification_(AST_String name, AST_Modification m): _name(name), _mod(m) {
-
-}
 string AST_Argument_Modification_::print() const { 
   stringstream ret(stringstream::out);
   if (modification()!=NULL)
@@ -103,5 +82,17 @@ string AST_Argument_Modification_::print() const {
     ret << name();
   return ret.str();
 }
+
+AST_String AST_Argument_Modification_::name() const { return _name; }
+
+AST_Modification AST_Argument_Modification_::modification() const { return _mod; } 
+
+ModificationType AST_Modification_::modificationType() { return MODNONE; }
+
+
+AST_Expression AST_Modification_Assign_::exp() { return _e; }
+
+ModificationType AST_Modification_Assign_::modificationType() { return MODASSIGN; }
+
 
 

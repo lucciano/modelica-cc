@@ -27,33 +27,33 @@
 
 class AST_Argument_: public AST_Node_ {
 public:
-  friend ostream & operator<<(ostream &os , const AST_Argument_ &a );
-
+  DEFINE_CLASS_PRINTER(AST_Argument);
   virtual string print() const =0;
 
-/* Conversion with dynamics casts */
+  /* Conversion with dynamics casts */
   GET_AS(Argument,Modification);
+  GET_AS(Argument,Redeclaration);
 };
 
 class AST_Argument_Modification_: public AST_Argument_ {
 public:
   AST_Argument_Modification_(AST_String name, AST_Modification m);
-  AST_String name() const { return _name; }
-  AST_Modification modification() const { return _mod; } 
-
+  AST_String name() const;
+  AST_Modification modification() const;
   string print() const;
+
 private:
   AST_String _name;
   AST_Modification _mod;
 };
 
-class AST_ArgumentRedeclaration_: public AST_Argument_ {
+class AST_Argument_Redeclaration_: public AST_Argument_ {
 };
 
 class AST_Modification_: public AST_Node_ {
 public:
-  virtual ModificationType modificationType() { return MODNONE; }
-  friend ostream & operator<<(ostream &os , const AST_Modification_ &e );
+  DEFINE_CLASS_PRINTER(AST_Modification);
+  virtual ModificationType modificationType();
   virtual string print() const =0;
 
 /* Conversion with dynamics casts */
@@ -65,37 +65,36 @@ public:
 class AST_Modification_Equal_: public AST_Modification_ {
 public:
   AST_Modification_Equal_(AST_Expression e);
-  AST_Expression exp() { return _e; }
+  AST_Expression exp();
   string print() const;
-  virtual ModificationType modificationType() { return MODEQUAL; }
+  virtual ModificationType modificationType();
+
 private:
   AST_Expression _e;
-
 };
 
 class AST_Modification_Assign_: public AST_Modification_ {
 public:
   AST_Modification_Assign_(AST_Expression e);
-  AST_Expression exp() { return _e; }
+  AST_Expression exp();
   string print() const;
-  virtual ModificationType modificationType() { return MODASSIGN; }
+  virtual ModificationType modificationType();
+
 private:
   AST_Expression _e;
-
 };
 
 class AST_Modification_Class_: public AST_Modification_ {
 public:
   AST_Modification_Class_(AST_ArgumentList al, AST_Expression e);
-  AST_Expression exp() const { return _e; }
-  AST_ArgumentList arguments() const { return _al; }
+  AST_Expression exp() const;
+  AST_ArgumentList arguments() const;
   string print() const;
-  AST_ArgumentListIterator it;
-  virtual ModificationType modificationType() { return MODCLASS; }
+  virtual ModificationType modificationType();
+
 private:
   AST_Expression _e;
   AST_ArgumentList _al;
-
 };
 
 

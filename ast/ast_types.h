@@ -51,6 +51,7 @@ typedef int                                  AST_ClassPrefix;
 
 DEFINE_TYPE(AST_Argument);
 DEFINE_TYPE(AST_Argument_Modification);
+DEFINE_TYPE(AST_Argument_Redeclaration);
 DEFINE_TYPE(AST_Class);
 DEFINE_TYPE(AST_Comment) ;
 DEFINE_TYPE(AST_Element_Component) ;
