@@ -29,11 +29,13 @@ using namespace std;
 
 /* Printers */
 #define DEFINE_PRINTER(X) ostream & operator<<(ostream &os , const X &x );
+#define DEFINE_CLASS_PRINTER(X) friend ostream & operator<<(ostream &os , const X &x );
 
+#define CLASSP_PRINTER_IMP(X) ostream & operator<<(ostream &os , const X &e ){ \
+                                os << *e; return os;  }
 #define CLASS_PRINTER_IMP(X) ostream & operator<<(ostream &os, \
                                     const X##_ &e ){ os << e.print(); return os; } \
-                             ostream & operator<<(ostream &os , const X &e ){ \
-                                os << *e; return os;  }
+                             CLASSP_PRINTER_IMP(X) 
 
 DEFINE_PRINTER(AST_Argument);
 DEFINE_PRINTER(AST_Comment);
