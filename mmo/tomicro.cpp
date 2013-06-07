@@ -79,7 +79,7 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 			{
 				AST_EquationList ls = toMicro_eq_if(eq->getAsIf(),stList ,iMap);
 				AST_EquationListIterator eqxit;
-				foreach(eqxit,ls)  _c->addEquation(current_element(eqxit));
+				foreach(eqxit,ls)  AST_ListAppend(eqList,current_element(eqxit));
 				AST_ListAppend(del,eqit);
 				break;
 			}	
@@ -330,7 +330,7 @@ AST_Expression MMO_ToMicroModelica_::makeCondition(AST_ExpressionList ls , unsig
 	
 }
 
-AST_Equation  MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_ExpressionList cond,MMO_StatementList stList,IndexMap iMap)
+/*AST_Equation  MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_ExpressionList cond,MMO_StatementList stList,IndexMap iMap)
 {
 	unsigned int i = 0;
 	AST_Expression e1,e2;
@@ -341,6 +341,22 @@ AST_Equation  MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_Expre
 	for (i = 1; i < ls->size(); i ++ ){
 		e1 = ADD(e1,MULT( toMicro_exp(current_element(eqit)->getAsEquality()->left(),stList,iMap)   , makeCondition(cond,i) ));
 		e2 = ADD(e2,MULT( toMicro_exp(current_element(eqit)->getAsEquality()->right(),stList,iMap)  , makeCondition(cond,i) ));
+		eqit++;
+	}
+	return newAST_Equation_Equality(e1,e2);
+}*/
+
+AST_Equation  MMO_ToMicroModelica_::makeEquation(AST_EquationList ls , AST_ExpressionList cond,MMO_StatementList stList,IndexMap iMap)
+{
+	unsigned int i = 0;
+	AST_Expression e1,e2;
+	AST_EquationListIterator eqit = ls->begin();
+	e1 = MULT( current_element(eqit)->getAsEquality()->left() , makeCondition(cond,0) );
+	e2 = MULT( current_element(eqit)->getAsEquality()->right() , makeCondition(cond,0) );
+	eqit++;
+	for (i = 1; i < ls->size(); i ++ ){
+		e1 = ADD(e1,MULT( current_element(eqit)->getAsEquality()->left()   , makeCondition(cond,i) ));
+		e2 = ADD(e2,MULT( current_element(eqit)->getAsEquality()->right()  , makeCondition(cond,i) ));
 		eqit++;
 	}
 	return newAST_Equation_Equality(e1,e2);
@@ -364,17 +380,22 @@ AST_EquationList MMO_ToMicroModelica_::toMicro_eq_if(AST_Equation_If iff , MMO_S
 	
 	AST_EquationListIterator eqit;
 	int k = 0;
-	foreach (eqit, iff->equationList()) AST_ListAppend( ls[k++] , current_element(eqit) );
+
+	transformEqList(iff->equationList() , stList , iMap);
 	
+	foreach (eqit, iff->equationList()) AST_ListAppend( ls[k++] , current_element(eqit) );
+		
 	if ( ! iff->equationElseIf()->empty() ) {
 		AST_Equation_ElseListIterator elseit;
 		foreach(elseit, iff->equationElseIf()) {
 			AST_Equation_Else elseIf =  current_element(elseit);
 			k = 0;
+			transformEqList(elseIf->equations() , stList , iMap);
 			foreach( eqit , elseIf->equations() ) AST_ListAppend( ls[k++] , current_element(eqit) );
 		}
 	}
 	k=0;
+	transformEqList(iff->equationElseList() , stList , iMap);
 	foreach (eqit, iff->equationElseList()) AST_ListAppend( ls[k++] , current_element(eqit) );
 	
 	/* Ahora transformo y creo */
@@ -454,6 +475,8 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_Statem
 		case EQEQUALITY:
 		{ 
 			AST_Equation_Equality _e =  eq->getAsEquality();
+			ReplaceBoolean rb;
+			AST_Expression _r = rb.foldTraverse(_e->right());
 			if (_e->left()->expressionType() == EXPCOMPREF)
 			{
 				AST_Expression_ComponentReference cf = _e->left()->getAsComponentReference(); 
@@ -462,11 +485,11 @@ MMO_Statement MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_Statem
 				if (varInfo->isState()) {
 					AST_ExpressionList ls = newAST_ExpressionList(); 
 					AST_ListAppend(ls, (AST_Expression)cf );
-					AST_ListAppend(ls, _e->right() );
+					AST_ListAppend(ls,  _r );
 					AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp(_S("reinit"))->getAsComponentReference();
 					return newAST_Statement_Assign( aux , newAST_Expression_FunctionCallArgs(ls) );
 				} else 
-					return newAST_Statement_Assign( cf  , _e->right() );
+					return newAST_Statement_Assign( cf  , _r );
 			}
 		}
 	
@@ -676,6 +699,14 @@ void MMO_ToMicroModelica_::checkStatement(MMO_StatementList ls)
 		AST_Statement st = current_element(it);
 		switch ( st->statementType() )
 		{
+			case STASSING:
+			{
+				AST_Statement_Assign asg = st->getAsAssign();
+				ReplaceBoolean rb;
+				current_element(it) =  newAST_Statement_Assign( asg->lhs() , rb.foldTraverse(asg->exp())  );
+				break;
+				
+			}
 			
 			case STFOR:
 			{
@@ -687,11 +718,14 @@ void MMO_ToMicroModelica_::checkStatement(MMO_StatementList ls)
 			case STWHEN:
 			{
 				AST_Statement_When  w = st->getAsWhen();
+				checkStatement( w->statements() );
 				AST_Statement_ElseList elList = newAST_Statement_ElseList();
 				if (w->else_when()->size() > 0 ) {
 					AST_Statement_ElseListIterator elseIt;
-					foreach ( elseIt , w->else_when() )
+					foreach ( elseIt , w->else_when() ){
+						checkStatement( current_element(elseIt)->statements() );
 						AST_ListAppend(elList , newAST_Statement_Else( whenCondition(current_element(elseIt)->condition(), current_element(elseIt)->statements()) , current_element(elseIt)->statements() )   );
+					}
 				}
 				current_element(it) = newAST_Statement_When( whenCondition(w->condition(),w->statements()) , w->statements()  , elList  );
 				break;
