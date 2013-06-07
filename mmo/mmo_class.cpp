@@ -24,11 +24,11 @@
 using namespace std;
 
 MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
-	_eqs = new list<MMO_Equation>();
-	_comps = new list<MMO_Component>();
-	_stms = new list<MMO_Statement>();
-	_Inieqs = new list<MMO_Equation>();
-	_Inistms = new list<MMO_Statement>();
+	_eqs = 		new list<MMO_Equation>();
+	_elems = 	new list<MMO_Element>();
+	_stms = 	new list<MMO_Statement>();
+	_Inieqs = 	new list<MMO_Equation>();
+	_Inistms = 	new list<MMO_Statement>();
 	
 	varEnv = newVarSymbolTable();
 	tyEnv = ty;
@@ -42,11 +42,10 @@ MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
 	foreach(elit,el) {
 		switch (current_element(elit)->elementType()) {
 			case COMPONENT:
-			
-				//AST_ListAppend(_comps , current_element(elit)->getAsComponent() ) ;
 				addVariable(current_element(elit)->getAsComponent());
 				break;
 			default:
+				addElement(current_element(elit));
 				break;
 		}
 	}
@@ -120,15 +119,15 @@ MMO_StatementList MMO_Class_::getIniStatements() const {
   return _Inistms;
 }
 
-/*
-void MMO_Class_::addComponent(MMO_Component c) {
-	AST_ListAppend(_comps,c);
+
+void MMO_Class_::addElement(MMO_Element c) {
+	AST_ListAppend(_elems,c);
 }
 
-MMO_ComponentList MMO_Class_::getComponents() const {
-  return _comps;
+MMO_ElementList MMO_Class_::getElements() const {
+  return _elems;
 }
-*/
+
 
 Type make_array_type(AST_ExpressionList dims , Type r)
 {
@@ -224,7 +223,7 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   MMO_StatementList stm = c.getStatements();
   MMO_EquationList  Inieqs = c.getIniEquations();
   MMO_StatementList Inistm = c.getIniStatements();
-  	
+  MMO_ElementList 	ElemList = c.getElements();	
   ret << "class " << c.name() << endl;
   
   VarSymbolTable symbolTable = c.getVarSymbolTable();
@@ -240,6 +239,8 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
 	  ret  << ";" << endl;  
   }
   END_BLOCK;
+  AST_ListPrint(ElemList,ret,"","","","",true);	
+  
   AST_ListPrint(Inieqs,ret,"initial equation\n","","","",true);	
   AST_ListPrint(eqs,ret,"equation\n","","","",true);
   AST_ListPrint(Inistm,ret,"initial algorithm\n","","","",true);

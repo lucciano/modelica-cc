@@ -74,7 +74,7 @@ private:
 	AST_Expression 		whenCondition(AST_Expression , AST_StatementList  );
 	
 	 /*  Transforma las equaciones WHEN */ 
-	MMO_Statement		toMicro_eq_when (AST_Equation,MMO_StatementList );
+	void				toMicro_eq_when (AST_Equation,MMO_StatementList );
 	
 	/* Niega las primeras i-th condiciones (Utilizado en el IF )*/
 	AST_Expression 		makeCondition(AST_ExpressionList  , unsigned int  );

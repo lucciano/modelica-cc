@@ -27,13 +27,15 @@
 
 DEFINE_TYPE(MMO_Class);
 
-typedef AST_Equation  MMO_Equation;   // For now the same
-typedef AST_Statement MMO_Statement;  // For now the same
-typedef AST_Element_Component MMO_Component;  // For now the same
+typedef AST_Equation          	MMO_Equation;   // For now the same
+typedef AST_Statement 		   	MMO_Statement;  // For now the same
+typedef AST_Element_Component 	MMO_Component;  // For now the same
+typedef AST_Element           	MMO_Element;
 
-typedef list<MMO_Equation>  *MMO_EquationList;
-typedef list<MMO_Statement> *MMO_StatementList;
-typedef list<MMO_Component>   *MMO_ComponentList;
+typedef list<MMO_Equation>  	*MMO_EquationList;
+typedef list<MMO_Statement> 	*MMO_StatementList;
+typedef list<MMO_Component>	*MMO_ComponentList;
+typedef list<MMO_Element>		*MMO_ElementList;
 
 typedef list<MMO_Equation>::iterator MMO_EquationListIterator;
 
@@ -49,8 +51,8 @@ public:
 	MMO_EquationList getEquations() const; 
 	void removeEquation(MMO_Equation);
   
-  /*void addComponent(MMO_Component);
-  MMO_ComponentList getComponents() const;*/
+	void addElement(MMO_Element);
+	MMO_ElementList getElements() const;
   
 	void addStatement(MMO_Statement);
 	MMO_StatementList getStatements() const;
@@ -86,7 +88,7 @@ private:
 	/* Agrega una variables desde una Componet (solo para inicializar la clase) */
 	void addVariable(MMO_Component); 
 	MMO_EquationList _eqs;
-	MMO_ComponentList _comps;
+	MMO_ElementList _elems;
 	MMO_StatementList _stms;
   
 	MMO_EquationList  _Inieqs;

@@ -7,6 +7,13 @@ model Prueba
 	Boolean j;
 	parameter Integer pp;
 	parameter Boolean tt;
+	
+	function sin
+		input Real a;
+		output Real b;
+		external "c_sin";
+	end sin;	
+	
 equation
 	j = if b < 50 then 1 else 5;
 	for i in {1,2,3} loop
@@ -14,6 +21,11 @@ equation
 		m[i] = i > 4;
 	end	for;
 	when {f , sample(0,1)} then 
-		a=1;
+		when f then 
+			a = 1;
+		elsewhen f then 
+			b = 2;
+			c = 2;
+		end when;
 	end when;
 end Prueba;     
