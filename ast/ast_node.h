@@ -28,7 +28,7 @@ using namespace std;
 class AST_Node_ {
 public:
   AST_Node_();
-  friend ostream & operator<<(ostream &os , const AST_Node_ &n );
+  DEFINE_CLASS_PRINTER(AST_Node);
   void setLineNum(int linenum);
   int lineNum() const;
 

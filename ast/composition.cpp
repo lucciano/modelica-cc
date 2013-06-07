@@ -23,6 +23,7 @@
 #include <ast/composition.h>
 #include <ast/element.h>
 
+CLASSP_PRINTER_IMP(AST_Composition);
 
 AST_CompositionElement_::AST_CompositionElement_(AST_CompositionEqsAlgs eqs_algs): _eqs_algs(eqs_algs), _el(newAST_ElementList()) {
 }
@@ -85,11 +86,6 @@ ostream & operator<<(ostream &ret , const AST_CompositionElement_ &ce )
   return ret;
 } 
  
-ostream & operator<<(ostream &os , const AST_Composition &c ) {
-  assert(c!=NULL);
-  os << *c;
-  return os;
-}
 
 ostream & operator<<(ostream &os , const AST_Composition_ &cm )  {
     AST_CompositionElementListIterator  it;
@@ -114,10 +110,15 @@ AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_StatementList st, bool i): 
 
 AST_CompositionEqsAlgs_::AST_CompositionEqsAlgs_(AST_StatementList st):  _initial(false) , _eq(newAST_EquationList()) , _st(st){
 }
-ostream & operator<<(ostream &os , const AST_CompositionEqsAlgs &ceqa ) 
-{
-  assert(ceqa!=NULL);
-  os << *ceqa;
-  return os;
+
+AST_EquationList AST_CompositionEqsAlgs_::getEquations() { 
+  return _eq; 
+} 
+
+AST_StatementList AST_CompositionEqsAlgs_::getAlgorithms() { 
+  return _st; 
 }
 
+bool AST_CompositionEqsAlgs_:: isInitial() { 
+  return _initial; 
+}

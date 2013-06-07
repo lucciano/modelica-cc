@@ -164,3 +164,43 @@ string AST_Element_Component_::print() const {
     ret << ";"; 
     return ret.str();
 }
+
+ElementType AST_Element_::elementType() { return ELNONE; }
+
+ElementType AST_Element_ExtendsClause_::elementType() { return EXTENDS; }
+AST_String AST_Element_ExtendsClause_::name() { return &_name; }
+
+
+AST_Comment_::AST_Comment_(AST_String st, AST_ArgumentList al): _st(st), _al(al) {}
+AST_ArgumentList AST_Comment_::arguments() const { return _al; }
+AST_String AST_Comment_::string()  const{ return _st; }
+void AST_Comment_::setAnnotation(AST_ArgumentList al) { _al=al;}
+
+ElementType AST_Element_ClassWrapper_::elementType() { return ELCLASS; }
+AST_Class AST_Element_ClassWrapper_::getClass() { return _c; }
+
+/* Declaration */
+string AST_Declaration_::name() const { return _name; }
+AST_ExpressionList AST_Declaration_::indexes() const { return _indexes;}
+AST_Modification AST_Declaration_::modification() const { return _mod; }
+void AST_Declaration_::setComment(AST_Comment c) { _comm = c; }
+AST_Comment AST_Declaration_::comment() const { return _comm; }
+
+/* Component */
+  bool AST_Element_Component_::isParameter() const { return _tp & TP_PARAMETER; }
+  bool AST_Element_Component_::isInput() const { return _tp & TP_INPUT; }
+  bool AST_Element_Component_::isOutput() const { return _tp & TP_OUTPUT; }
+  bool AST_Element_Component_::isDiscrete() const { return _tp & TP_DISCRETE; }
+  bool AST_Element_Component_::isFlow() const { return _tp & TP_FLOW; }
+  bool AST_Element_Component_::isStream() const { return _tp & TP_STREAM; }
+  bool AST_Element_Component_::isConstant() const { return _tp & TP_CONSTANT; }
+  string AST_Element_Component_::type() { return _type; };
+  ElementType AST_Element_Component_::elementType() { return COMPONENT; }
+  string AST_Element_Component_::name() { return _decl_list->front()->name(); }
+  AST_DeclarationList AST_Element_Component_::nameList() { return _decl_list; }
+  AST_Class AST_Element_Component_::origin () { return _origin; }
+  void AST_Element_Component_::setOrigin(AST_Class c) { if (_origin==NULL) _origin = c; }
+  AST_TypePrefix AST_Element_Component_::typePrefix() { return _tp; }
+  AST_ExpressionList AST_Element_Component_::indexes() const {return _indexes;}
+
+

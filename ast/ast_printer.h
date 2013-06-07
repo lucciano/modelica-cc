@@ -29,7 +29,7 @@ using namespace std;
 
 /* Printers */
 #define DEFINE_PRINTER(X) ostream & operator<<(ostream &os , const X &x );
-#define DEFINE_CLASS_PRINTER(X) friend ostream & operator<<(ostream &os , const X &x );
+#define DEFINE_CLASS_PRINTER(X) friend ostream & operator<<(ostream &os , const X##_ &x );
 
 #define CLASSP_PRINTER_IMP(X) ostream & operator<<(ostream &os , const X &e ){ \
                                 os << *e; return os;  }
@@ -42,6 +42,7 @@ DEFINE_PRINTER(AST_Comment);
 DEFINE_PRINTER(AST_CompositionElement);
 DEFINE_PRINTER(AST_Composition);
 DEFINE_PRINTER(AST_Class);
+DEFINE_PRINTER(AST_Element);
 DEFINE_PRINTER(AST_Expression);
 DEFINE_PRINTER(AST_Expression_ComponentReference);
 DEFINE_PRINTER(AST_Equation);

@@ -26,18 +26,13 @@
 
 #include <ast/ast_builder.h>
 #include <ast/ast_node.h>
-using namespace std;
 
-
-ostream & operator<<(ostream &os , const AST_Element &e );
-class AST_Class_;
-class AST_Element_Component_;
-
+/* Base class for elements */
 class AST_Element_: public AST_Node_ {
 public:
-  friend ostream & operator<<(ostream &os , const AST_Element_ &e );
+  DEFINE_CLASS_PRINTER(AST_Element);
   virtual string print() const =0;
-  virtual ElementType elementType() { return ELNONE; }
+  virtual ElementType elementType();
   
   /* Dynamic casts */
   GET_AS(Element,Component);
@@ -46,17 +41,19 @@ public:
   GET_AS(Element,ClassWrapper);
 };
 
+/* Extends clause */
 class AST_Element_ExtendsClause_: public AST_Element_ {
 public:
   AST_Element_ExtendsClause_ (string name);
   string print() const;
-  virtual ElementType elementType() { return EXTENDS; }
-  AST_String name() { return &_name; }
+  virtual ElementType elementType();
+  AST_String name();
 
 private:
   string _name;
 };
 
+/* Import clause */
 class AST_Element_ImportClause_: public AST_Element_ {
 public:
   AST_Element_ImportClause_ (string name);
@@ -66,15 +63,17 @@ private:
   string _name;
 };
 
+/* Declaration */
 class AST_Declaration_: public AST_Element_{
 public:
   AST_Declaration_(string name, AST_ExpressionList indexes, AST_Modification);
   string print() const;
-  string name() const { return _name; }
-  AST_ExpressionList indexes() const { return _indexes;}
-  AST_Modification modification() const { return _mod; }
-  void setComment(AST_Comment c) { _comm = c; }
-  AST_Comment comment() const { return _comm; }
+  string name() const;
+  AST_ExpressionList indexes() const;
+  AST_Modification modification() const;
+  void setComment(AST_Comment c);
+  AST_Comment comment() const;
+
 private:
   string _name;
   AST_ExpressionList _indexes;
@@ -82,25 +81,26 @@ private:
   AST_Comment _comm;
 };
 
+/* Component */
 class AST_Element_Component_: public AST_Element_ {
 public:
   AST_Element_Component_(AST_DeclarationList decl_list, string type, AST_TypePrefix tp, AST_ExpressionList index);
   string print() const;
-  bool isParameter() const { return _tp & TP_PARAMETER; }
-  bool isInput() const { return _tp & TP_INPUT; }
-  bool isOutput() const { return _tp & TP_OUTPUT; }
-  bool isDiscrete() const { return _tp & TP_DISCRETE; }
-  bool isFlow() const { return _tp & TP_FLOW; }
-  bool isStream() const { return _tp & TP_STREAM; }
-  bool isConstant() const { return _tp & TP_CONSTANT; }
-  string type() { return _type; };
-  virtual ElementType elementType() { return COMPONENT; }
-  string name() { return _decl_list->front()->name(); }
-  AST_DeclarationList nameList() { return _decl_list; }
-  AST_Class origin () { return _origin; }
-  void setOrigin(AST_Class c) { if (_origin==NULL) _origin = c; }
-  AST_TypePrefix typePrefix() { return _tp; }
-  AST_ExpressionList indexes() const {return _indexes;}
+  bool isParameter() const;
+  bool isInput() const;
+  bool isOutput() const;
+  bool isDiscrete() const;
+  bool isFlow() const;
+  bool isStream() const;
+  bool isConstant() const;
+  string type();
+  virtual ElementType elementType();
+  string name();
+  AST_DeclarationList nameList();
+  AST_Class origin ();
+  void setOrigin(AST_Class c);
+  AST_TypePrefix typePrefix();
+  AST_ExpressionList indexes() const;
 
 private:
   AST_DeclarationList _decl_list;
@@ -108,27 +108,29 @@ private:
   AST_ExpressionList _indexes;
   AST_Class _origin;
   AST_TypePrefix _tp;
-  
 };
 
+/* Class element */
 class AST_Element_ClassWrapper_: public AST_Element_ {
 public:
   AST_Element_ClassWrapper_(AST_Class c);
   string print() const ; 
-  virtual ElementType elementType() { return ELCLASS; }
-  AST_Class getClass() { return _c; }
+  virtual ElementType elementType();
+  AST_Class getClass();
 
 private:
   AST_Class _c; 
 };
 
+/* Comment */ 
 class AST_Comment_: public AST_Node_ {
 public:
-  AST_Comment_(AST_String st, AST_ArgumentList al): _st(st), _al(al) {}
-  AST_ArgumentList arguments() const { return _al; }
-  AST_String string()  const{ return _st; }
-  void setAnnotation(AST_ArgumentList al) { _al=al;}
-  friend ostream & operator<<(ostream &os , const AST_Comment &c );
+  AST_Comment_(AST_String st, AST_ArgumentList al);
+  AST_ArgumentList arguments() const;
+  AST_String string()  const;
+  void setAnnotation(AST_ArgumentList al);
+  DEFINE_CLASS_PRINTER(AST_Comment);
+
 private:
   AST_String _st;
   AST_ArgumentList _al;

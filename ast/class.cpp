@@ -20,6 +20,8 @@
 
 #include <ast/class.h>
 
+CLASSP_PRINTER_IMP(AST_Class);
+
 AST_String AST_Class_::name() const { 
   return _name;
 }
@@ -51,10 +53,6 @@ void AST_Class_::setBasic() {
   _basic=true; 
 }
 
-ostream & operator<<(ostream &os , const AST_Class &c ) {
-  os << *c;
-  return os;
-}
 
 ostream & operator<<(ostream &ret , const AST_Class_ &cl )  {
     
@@ -79,14 +77,6 @@ ostream & operator<<(ostream &ret , const AST_Class_ &cl )  {
     return ret;
 }
 
-/*
-void AST_Class_::addEquation(AST_Equation e) { 
-}
-
-void AST_Class_::removeEquation(AST_Equation e) { 
-}
-*/
-
 void AST_Class_::addClass(AST_Class c) { 
   AST_ListAppend(_sub_classes,c); 
   c->setFather(this);
@@ -109,4 +99,20 @@ void AST_Class_::addExtends(AST_String e) {
 }
 AST_StringList AST_Class_::getExtends() {
   return _extends_list;
+}
+
+void AST_Class_::setFinal() { 
+  _final=true; 
+}
+  
+void AST_Class_::setEncapsulated() { 
+  _encapsulated=true; 
+}
+
+void AST_Class_::setPrefixes(AST_ClassPrefix cp) { 
+  _prefix=cp; 
+}
+
+AST_ClassPrefix AST_Class_::prefix() const { 
+  return _prefix; 
 }
