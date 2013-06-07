@@ -155,7 +155,7 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq 
 	AST_Expression r = eq->right();
 	AST_Expression l = eq->left();
 	
-	if (IS_CREF(l) && IS_COMPARE(r)) {
+	/*if (IS_CREF(l) && IS_COMPARE(r)) {
 		disVarSet.insert(toStr(l->getAsComponentReference()->names()->front()));
 		AST_ListAppend(stList , make_when( r->getAsBinOp(), l->getAsComponentReference() ));
 		return NULL;
@@ -165,7 +165,7 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq 
 		disVarSet.insert(toStr(r->getAsComponentReference()->names()->front()));
 		AST_ListAppend(stList , make_when( l->getAsBinOp(), r->getAsComponentReference() ));
 		return NULL;
-	} 
+	} */
 	
 	AST_Expression _r = toMicro_exp(r,stList,iMap);
 	AST_Expression _l = toMicro_exp(l,stList,iMap);
