@@ -21,15 +21,14 @@
 #include <ast/ast_builder.h>
 #include <ast/stored_definition.h>
 
-AST_StoredDefinition_:: AST_StoredDefinition_(AST_ClassList ml, AST_String within): _model_list(ml), _within(within) {
-};
+CLASSP_PRINTER_IMP(AST_StoredDefinition);
 
-ostream & operator<<(ostream &os , const AST_StoredDefinition &sd )  {
-  depth=0;
-  os << *sd;
-  return os;
+AST_StoredDefinition_:: AST_StoredDefinition_(AST_ClassList ml, AST_String within): _model_list(ml), _within(within) { };
 
-}
+AST_ClassList AST_StoredDefinition_:: models() const { return _model_list; }
+
+AST_String AST_StoredDefinition_:: within() const { return _within; }
+
 ostream & operator<<(ostream &os , const AST_StoredDefinition_ &sd )  {
   AST_ClassListIterator it;
   AST_ClassList         cl = sd.models();

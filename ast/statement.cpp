@@ -21,11 +21,6 @@
 #include <ast/ast_builder.h>
 #include <ast/statement.h>
 #include <ast/expression.h>
-#include <iostream>
-#include <sstream>
-
-
-using namespace std;
 
 GET_AS_IMP(Statement,While);
 GET_AS_IMP(Statement,If);
@@ -33,10 +28,10 @@ GET_AS_IMP(Statement,For);
 GET_AS_IMP(Statement,When);
 GET_AS_IMP(Statement,Assign);
 
-ostream & operator<<(ostream &os , const AST_Statement_ &s ) {
-  os << s.print();  
-  return os;
-}
+CLASS_PRINTER_IMP(AST_Statement);
+
+/* Return statement */
+StatementType AST_Statement_Return_::statementType() {return STRETURN;}
 
 string AST_Statement_Return_::print() const { 
   stringstream ret(stringstream::out);
@@ -45,12 +40,24 @@ string AST_Statement_Return_::print() const {
   return ret.str();
 }
 
+/* Break statement */
+StatementType AST_Statement_Break_::statementType() {return STBREAK;}
+
 string AST_Statement_Break_::print() const { 
   stringstream ret(stringstream::out);
   MAKE_SPACE;
   ret << "break" << endl; 
   return ret.str();
 }
+
+/* Assign */
+AST_Statement_Assign_::AST_Statement_Assign_(AST_Expression_ComponentReference lhs,AST_Expression exp): _lhs(lhs), _exp(exp) { }
+
+AST_Expression AST_Statement_Assign_:: exp() const { return _exp; }
+
+AST_Expression_ComponentReference AST_Statement_Assign_:: lhs() const { return _lhs; }
+
+StatementType AST_Statement_Assign_:: statementType() {return STASSING;}
 
 string AST_Statement_Assign_::print() const { 
   stringstream ret(stringstream::out);
@@ -69,12 +76,10 @@ string AST_Statement_Assign_::print() const {
     
   return ret.str();
 }
-AST_Statement_Assign_::AST_Statement_Assign_(AST_Expression_ComponentReference lhs,AST_Expression exp): _lhs(lhs), _exp(exp) {
-}
 
 
-AST_Statement_For_::AST_Statement_For_(AST_ForIndexList index, AST_StatementList sts): _sts(sts),_ind(index) {
-}
+/* For statement */
+AST_Statement_For_::AST_Statement_For_(AST_ForIndexList index, AST_StatementList sts): _sts(sts),_ind(index) { }
 
 string AST_Statement_For_::print() const { 
   stringstream ret(stringstream::out);
@@ -89,7 +94,32 @@ string AST_Statement_For_::print() const {
   ret << "end for;" <<endl;
   return ret.str();
 }
+
+AST_StatementList AST_Statement_For_::statements() const { return _sts; }
+
+AST_ForIndexList AST_Statement_For_::forIndexList() const { return _ind; }
+
+StatementType AST_Statement_For_::statementType() {return STFOR;}
   
+/* When */
+AST_Statement_When_::AST_Statement_When_(AST_Expression cond, AST_StatementList sts, AST_Statement_ElseList else_st): _cond(cond), _sts(sts),_else_list(else_st) {
+}
+
+AST_Statement_While_::AST_Statement_While_(AST_Expression cond, AST_StatementList sts): _cond(cond), _sts(sts) {
+}
+
+StatementType AST_Statement_When_::statementType() {return STWHEN;}
+
+AST_Expression AST_Statement_While_::condition() const { return _cond; }
+
+StatementType AST_Statement_While_::statementType() {return STWHILE;}
+
+AST_Expression AST_Statement_When_::condition() const { return _cond; }
+
+AST_StatementList AST_Statement_When_::statements() const { return _sts; }
+
+AST_Statement_ElseList AST_Statement_When_::else_when() const { return _else_list; } 
+
 string AST_Statement_When_::print() const { 
   stringstream ret(stringstream::out);
   AST_StatementListIterator it;
@@ -116,6 +146,9 @@ string AST_Statement_When_::print() const {
   return ret.str();
 }
 
+/* While */
+AST_StatementList AST_Statement_While_::statements() const { return _sts; }
+
 string AST_Statement_While_::print() const { 
   stringstream ret(stringstream::out);
   AST_StatementListIterator it;
@@ -130,22 +163,21 @@ string AST_Statement_While_::print() const {
   return ret.str();
 }
 
-
-AST_Statement_When_::AST_Statement_When_(AST_Expression cond, AST_StatementList sts, AST_Statement_ElseList else_st): _cond(cond), _sts(sts),_else_list(else_st) {
-}
-
-AST_Statement_While_::AST_Statement_While_(AST_Expression cond, AST_StatementList sts): _cond(cond), _sts(sts) {
-}
-
-ostream & operator<<(ostream &os , const AST_Statement &s ) {
-  os << *s;
-  return os;
-}
-
-
+/* If */
 AST_Statement_If_::AST_Statement_If_(AST_Expression cond, AST_StatementList true_st, AST_Statement_ElseList else_list, AST_StatementList false_st): 
   _cond(cond), _true_st(true_st), _false_st(false_st), _else_list(else_list){
 }
+
+AST_Expression AST_Statement_If_::condition() const { return _cond; }
+
+AST_StatementList AST_Statement_If_::statements() const { return _true_st; }
+
+AST_StatementList AST_Statement_If_::else_statements()const  { return _false_st; }
+
+AST_Statement_ElseList AST_Statement_If_::else_if() const { return _else_list; } 
+
+StatementType AST_Statement_If_::statementType() {return STIF;}
+
 string AST_Statement_If_::print() const {
   stringstream ret(stringstream::out);
   AST_StatementListIterator it;
@@ -179,6 +211,7 @@ string AST_Statement_If_::print() const {
 
 }
 
+/* Output assigment */
 AST_Statement_OutputAssigment_:: AST_Statement_OutputAssigment_(AST_ExpressionList out_exps, AST_Expression_ComponentReference func, AST_ExpressionList args): 
   _out_exps(out_exps),_func(func),_args(args) {
 }
@@ -207,3 +240,18 @@ string AST_Statement_OutputAssigment_::print () const {
   ret << ");" << endl;
   return ret.str();
 }
+
+AST_ExpressionList AST_Statement_OutputAssigment_::out_expressions() const { return _out_exps; }
+
+AST_Expression_ComponentReference AST_Statement_OutputAssigment_::function() const { return _func; }
+
+AST_ExpressionList AST_Statement_OutputAssigment_::arguments() const { return _args; }
+
+StatementType AST_Statement_OutputAssigment_::statementType() {return STOUTASSING;}
+
+/* Else statement */
+AST_Statement_Else_::AST_Statement_Else_ (AST_Expression cond, AST_StatementList sts): _cond(cond), _sts(sts) {}
+
+AST_Expression AST_Statement_Else_::condition() const { return _cond; }
+
+AST_StatementList AST_Statement_Else_::statements() const { return _sts; }

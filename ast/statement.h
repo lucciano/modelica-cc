@@ -26,9 +26,11 @@
 class AST_Statement_: public AST_Node_
 {
 public:
-  friend ostream & operator<<(ostream &os , const AST_Statement_ &s );
+  DEFINE_CLASS_PRINTER(AST_Statement);
   virtual string print() const =0;
   virtual StatementType statementType() = 0;
+
+  /* Dynamic casts */
   GET_AS(Statement,While);
   GET_AS(Statement,If);
   GET_AS(Statement,For);
@@ -39,22 +41,23 @@ public:
 
 class AST_Statement_Return_: public AST_Statement_ {
   string print() const;
-  virtual StatementType statementType() {return STRETURN;}
+  virtual StatementType statementType();
 };
 
 class AST_Statement_Break_: public AST_Statement_ {
   string print() const;
-  virtual StatementType statementType() {return STBREAK;}
+  virtual StatementType statementType();
 };
 
 class AST_Statement_When_: public AST_Statement_ {
 public:
   AST_Statement_When_(AST_Expression cond, AST_StatementList,AST_Statement_ElseList);
   string print() const;
-  AST_Expression condition() const { return _cond; }
-  AST_StatementList statements() const { return _sts; }
-  AST_Statement_ElseList else_when() const { return _else_list; } 
-  virtual StatementType statementType() {return STWHEN;}
+  AST_Expression condition() const;
+  AST_StatementList statements() const;
+  AST_Statement_ElseList else_when() const;
+  virtual StatementType statementType();
+
 private:
   AST_Expression _cond;
   AST_StatementList _sts;
@@ -65,9 +68,10 @@ class AST_Statement_Assign_: public AST_Statement_ {
 public:
   AST_Statement_Assign_(AST_Expression_ComponentReference cr, AST_Expression exp);
   string print() const;
-  AST_Expression exp() const { return _exp; }
-  AST_Expression_ComponentReference lhs() const { return _lhs; }
-  virtual StatementType statementType() {return STASSING;}
+  AST_Expression exp() const;
+  AST_Expression_ComponentReference lhs() const;
+  virtual StatementType statementType();
+
 private:
   AST_Expression_ComponentReference _lhs;
   AST_Expression _exp;
@@ -77,24 +81,27 @@ class AST_Statement_If_: public AST_Statement_ {
 public:
   AST_Statement_If_(AST_Expression cond, AST_StatementList true_st, AST_Statement_ElseList, AST_StatementList false_st);
   string print() const;
-  AST_Expression condition() const { return _cond; }
-  AST_StatementList statements() const { return _true_st; }
-  AST_StatementList else_statements()const  { return _false_st; }
-  AST_Statement_ElseList else_if() const { return _else_list; } 
-  virtual StatementType statementType() {return STIF;}
+  AST_Expression condition() const;
+  AST_StatementList statements() const;
+  AST_StatementList else_statements()const;
+  AST_Statement_ElseList else_if() const;
+  virtual StatementType statementType();
+
 private:
   AST_Expression _cond;
   AST_StatementList _true_st, _false_st;
   AST_Statement_ElseList _else_list;
 };
 
+/* While */
 class AST_Statement_While_: public AST_Statement_ {
 public:
   AST_Statement_While_(AST_Expression cond, AST_StatementList);
   string print() const;
-  AST_Expression condition() const { return _cond; }
-  AST_StatementList statements() const { return _sts; }
-  virtual StatementType statementType() {return STWHILE;}
+  AST_Expression condition() const;
+  AST_StatementList statements() const;
+  virtual StatementType statementType();
+
 private:
   AST_Expression _cond;
   AST_StatementList _sts;
@@ -104,9 +111,10 @@ class AST_Statement_For_: public AST_Statement_ {
 public:
   AST_Statement_For_(AST_ForIndexList index, AST_StatementList);
   string print() const;
-  AST_StatementList statements() const { return _sts; }
-  AST_ForIndexList forIndexList() const { return _ind; }
-  virtual StatementType statementType() {return STFOR;}
+  AST_StatementList statements() const;
+  AST_ForIndexList forIndexList() const;
+  virtual StatementType statementType();
+
 private:
   AST_StatementList _sts;
   AST_ForIndexList _ind;
@@ -116,10 +124,11 @@ class AST_Statement_OutputAssigment_: public AST_Statement_ {
 public:
   AST_Statement_OutputAssigment_(AST_ExpressionList, AST_Expression_ComponentReference, AST_ExpressionList);
   string print() const;
-  AST_ExpressionList out_expressions() const { return _out_exps; }
-  AST_Expression_ComponentReference function() const { return _func; }
-  AST_ExpressionList arguments() const { return _args; }
-  virtual StatementType statementType() {return STOUTASSING;}
+  AST_ExpressionList out_expressions() const;
+  AST_Expression_ComponentReference function() const;
+  AST_ExpressionList arguments() const;
+  virtual StatementType statementType();
+
 private:
   AST_ExpressionList _out_exps;
   AST_Expression_ComponentReference _func;
@@ -128,9 +137,9 @@ private:
 
 class AST_Statement_Else_: public AST_Node_ {
 public:
-  AST_Statement_Else_ (AST_Expression cond, AST_StatementList sts): _cond(cond), _sts(sts) {}
-  AST_Expression condition() const { return _cond; }
-  AST_StatementList statements() const { return _sts; }
+  AST_Statement_Else_ (AST_Expression cond, AST_StatementList sts);
+  AST_Expression condition() const;
+  AST_StatementList statements() const;
   
 private:
   AST_Expression _cond;

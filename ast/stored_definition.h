@@ -27,9 +27,9 @@ class AST_StoredDefinition_: public AST_Node_
 {
 public:
   AST_StoredDefinition_(AST_ClassList ml, AST_String within);
-  friend ostream & operator<<(ostream &, const AST_StoredDefinition_ &) ;
-  AST_ClassList models() const { return _model_list; }
-  AST_String within() const { return _within; }
+  DEFINE_CLASS_PRINTER(AST_StoredDefinition);
+  AST_ClassList models() const;
+  AST_String within() const;
 
 private:
   AST_ClassList _model_list;
