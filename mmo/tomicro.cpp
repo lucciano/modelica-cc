@@ -23,7 +23,10 @@
 #include <iostream>
 using namespace std;
 
-MMO_ToMicroModelica_::MMO_ToMicroModelica_ (MMO_Class c): _c(c) {} ;
+MMO_ToMicroModelica_::MMO_ToMicroModelica_ (MMO_Class c): _c(c) 
+{
+	_pre = new std::set<string>;
+} ;
 
 
 void MMO_ToMicroModelica_::transform()
@@ -37,9 +40,16 @@ void MMO_ToMicroModelica_::transform()
 	/* Cambiamos los tipos y constantes Booleanas */ 
 	for(int i = 0; i < _c->getVarSymbolTable()->count();i++) {
 		VarInfo  v = _c->getVarSymbolTable()->varInfo(i);
+		string n   = _c->getVarSymbolTable()->varName(i);
+		v->setComment(NULL);
 		v->setModification( ChangeModifications(v->modification()));
+		if (_pre->find(n) != _pre->end())
+			v->setDiscrete();
+		
 		if ( ( !v->isConstant() && !v->isParameter() ) || v->type()->getType() == TYBOOLEAN) v->setType(ChangeToReal(v->type()));
 	}
+	ChangePre(_c->getIniEquations());
+	ChangePre(_c->getEquations());
 }
 
 
@@ -93,7 +103,9 @@ void MMO_ToMicroModelica_::transformEqList(AST_EquationList eqList , AST_Stateme
 			
 			case EQCALL:
 			{			
-				//AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
+				AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
+				if (toStr(c->name()) == "assert" ) 
+					AST_ListAppend(del,eqit);
 				break;
 			}	
 			
@@ -252,6 +264,9 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 		case EXPCALL:
 		{
 			AST_Expression_Call call = e->getAsCall();
+			if (toStr(call->name())  == "edge"){ 
+				return toMicro_exp( GREATER(  call->arguments()->front()   , R(0.5) ) , stList , iMap) ;
+			}
 			return call;
 		}
 		
@@ -460,6 +475,10 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 				return GREATER( VAR(_S("time")) , I(0) );
 			}
 			
+			if (toStr(call->name())  == "edge" ) {
+				return GREATER(  call->arguments()->front()   , R(0.5) );
+			}
+			
 			return call;
 		}
 		default:
@@ -475,11 +494,12 @@ void MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_StatementList s
 		case EQEQUALITY:
 		{ 
 			AST_Equation_Equality _e =  eq->getAsEquality();
-			ReplaceBoolean rb;
+			WhenEqualityTrasforms rb;
 			AST_Expression _r = rb.foldTraverse(_e->right());
 			if (_e->left()->expressionType() == EXPCOMPREF)
 			{
 				AST_Expression_ComponentReference cf = _e->left()->getAsComponentReference(); 
+				_pre->insert((cf->name()));
 				VarInfo varInfo = _c->getVarSymbolTable()->lookup( toStr(cf->names()->front()) );
 				if (varInfo == NULL) throw "Variable no encontrada" ;
 				if (varInfo->isState()) {
@@ -568,6 +588,7 @@ void MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_StatementList s
 			AST_EquationListIterator eqit;
 			foreach(eqit, f->equationList()) toMicro_eq_when(current_element(eqit),stmList);
 			AST_ListAppend(stms,newAST_Statement_For(f->forIndexList() , stmList ));
+			return;
 		}
 		
 		case EQCALL:
@@ -575,6 +596,7 @@ void MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_StatementList s
 			AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
 			AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp( copyAST_String(c->name()) )->getAsComponentReference();
 			AST_ListAppend(stms,newAST_Statement_Assign( aux , newAST_Expression_FunctionCallArgs(c->arguments()) ));
+			return;
 		}	
 		
 		default:
@@ -781,6 +803,50 @@ AST_Modification MMO_ToMicroModelica_::ChangeModifications(AST_Modification m)
 	}
 	return NULL;
 }
+
+void MMO_ToMicroModelica_::ChangePre(AST_EquationList eqList)
+{
+	PreChange pc(_pre);
+	AST_EquationListIterator eqit;
+    foreach(eqit,eqList) {		
+		AST_Equation eq = current_element(eqit);
+
+		switch (eq->equationType()) 
+		{
+			case EQEQUALITY:
+			{
+				AST_Equation_Equality e = eq->getAsEquality();
+				e->setLeft(pc.foldTraverse( e->left() ));
+				e->setRight(pc.foldTraverse( e->right() ));
+				break;
+			}
+			
+			case EQNONE:
+			{	
+				break;
+			}
+			
+			case EQFOR:
+			{
+				AST_Equation_For f = eq->getAsFor();
+				ChangePre(f->equationList());
+				break;
+			}
+			
+			case EQCALL:
+			{			
+				//AST_Expression_Call c = eq->getAsCall()->call()->getAsCall();
+				break;
+			}	
+			
+			default:
+				cerr << "Error: "  << eq->equationType() << endl;
+				throw "Not implemented yet!!";
+			
+		}		
+	}
+}
+
 
 MMO_ToMicroModelica newMMO_ToMicroModelica(MMO_Class  c )
 {

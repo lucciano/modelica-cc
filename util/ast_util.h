@@ -42,6 +42,16 @@
 #define IS_STATE(X) (_varSymbolTable->lookup(CREF_NAME(X))!=NULL && _varSymbolTable->lookup(CREF_NAME(X))->isState())
 #define IS_PARAMETER(X) (IS_UMINUS(X) ? _varSymbolTable->lookup(CREF_NAME(UMINUS_EXP(X)))!=NULL && _varSymbolTable->lookup(CREF_NAME(UMINUS_EXP(X)))->isParameter() :  _varSymbolTable->lookup(CREF_NAME(X))!=NULL && _varSymbolTable->lookup(CREF_NAME(X))->isParameter())
 
+#define VAR(v)			newAST_Expression_ComponentReferenceExp(v) 
+#define GREATER(l,r) 	newAST_Expression_BinOp(l, r, BINOPGREATER ) 
+#define LOWER(l,r) 		newAST_Expression_BinOp(l, r, BINOPLOWER )
+#define ADD(l,r) 		newAST_Expression_BinOp(l, r, BINOPADD )
+#define MULT(l,r) 		newAST_Expression_BinOp(l, r, BINOPMULT )
+#define SUB(l,r) 		newAST_Expression_BinOp(l, r, BINOPSUB )
+#define I(n) 			newAST_Expression_Integer(n)
+#define R(n) 			newAST_Expression_Real(n)
+#define PA(e)       	newAST_Expression_OutputExpressions(e) 
+#define UMENOS(e)   	SUB( I(1) , e )
 
 
 
@@ -101,6 +111,25 @@ class ReplaceBoolean: public AST_Expression_Fold<AST_Expression> {
 public:
    ReplaceBoolean();
 private:
+  virtual AST_Expression foldTraverseElement(AST_Expression);
+  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+};
+
+
+
+class WhenEqualityTrasforms: public AST_Expression_Fold<AST_Expression> {
+public:
+   WhenEqualityTrasforms();
+private:
+  virtual AST_Expression foldTraverseElement(AST_Expression);
+  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+};
+
+class PreChange: public AST_Expression_Fold<AST_Expression> {
+public:
+   PreChange(PreSet);
+private:
+  PreSet _pre;
   virtual AST_Expression foldTraverseElement(AST_Expression);
   virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
 };

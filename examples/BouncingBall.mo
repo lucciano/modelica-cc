@@ -13,7 +13,6 @@ equation
   foo = if impact then 1 else 2;
   der(v) = if flying then -g else 0;
   der(h) = v;
-
   when {h <= 0.0 and v <= 0.0,impact} then
     v_new = if edge(impact) then -e*pre(v) else 0;
     flying = v_new > 0;

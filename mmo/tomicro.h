@@ -49,6 +49,7 @@ typedef std::map<string, AST_Expression> 		IndexMap_;
 typedef std::map<string, AST_Expression> 		* IndexMap;
 
 
+
 class MMO_ToMicroModelica_ {
 public:
 	MMO_ToMicroModelica_(MMO_Class  c );
@@ -58,6 +59,7 @@ public:
 private:
 	MMO_Class  _c;
 	AST_String  new_label();
+	PreSet _pre;
 	
 	void transformEqList(AST_EquationList  , AST_StatementList,IndexMap );
 	
@@ -102,6 +104,9 @@ private:
 	
 	/* Analiza los statements */
 	void checkStatement(MMO_StatementList ls);
+	
+	/*  Aplica la funcion pre a quien corresponda */
+	void ChangePre(AST_EquationList eqList);
 };
 
 MMO_ToMicroModelica newMMO_ToMicroModelica(MMO_Class  c );

@@ -224,7 +224,7 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   MMO_EquationList  Inieqs = c.getIniEquations();
   MMO_StatementList Inistm = c.getIniStatements();
   MMO_ElementList 	ElemList = c.getElements();	
-  ret << "class " << c.name() << endl;
+  ret << "model " << c.name() << endl;
   
   VarSymbolTable symbolTable = c.getVarSymbolTable();
   int i; int symbolTableSize = symbolTable->count();

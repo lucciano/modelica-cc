@@ -24,7 +24,7 @@
 #include <iostream>
 #include <list>
 #include <string>
-
+#include <set>
 
 #define DEFINE_TYPE(X) class X##_; typedef X##_ *X;
 #define DEFINE_LIST(X) typedef std::list<X>  *X##List; typedef std::list<X>::iterator X##ListIterator; typedef std::list<X>::reverse_iterator X##ListReverseIterator;
@@ -39,6 +39,9 @@ extern int depth;
 class MCC_Parser;
 
 using namespace std;
+
+typedef std::set<string>                       PreSet_;
+typedef PreSet_                       		*PreSet;
 
 /* Basic AST Types */
 typedef bool                                 AST_Boolean;

@@ -172,3 +172,115 @@ AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression e) {
 	}
   }
 };
+
+WhenEqualityTrasforms::WhenEqualityTrasforms() {}
+
+AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression b1, AST_Expression b2, BinOpType t ) {
+  return newAST_Expression_BinOp(b1,b2,t);
+}
+
+AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression e) {
+  switch (e->expressionType()) {  
+    case EXPBOOLEAN: 
+    {
+		AST_Expression_Boolean b = e->getAsBoolean();
+		if (b->value()) return newAST_Expression_Real(1.0);
+		else return newAST_Expression_Real(0.0);
+	}
+	
+	case EXPUMINUS:
+	{
+			AST_Expression_UMinus u = e->getAsUMinus();
+			return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
+	}
+	
+	case EXPOUTPUT :
+	{
+			AST_Expression_Output b = e->getAsOutput();
+			return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
+	}
+	
+	case EXPCALL:
+	{
+		AST_Expression_Call call = e->getAsCall();
+		if (toStr(call->name())  == "edge"){ 
+			return  GREATER(  call->arguments()->front()   , R(0.5) ) ;
+		}
+		return call;
+	}
+	
+	case EXPCOMPREF:
+	{
+			return e;
+	}
+	
+	case EXPBOOLEANNOT:	
+	{
+		AST_Expression_BooleanNot no = e->getAsBooleanNot();
+		return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
+	}
+	
+	case EXPIF:
+	{
+		AST_Expression_If i = e->getAsIf();
+		AST_Expression eq1 = foldTraverse(i->then());
+		AST_Expression eq2 = foldTraverse(i->else_exp());
+		AST_Expression cond = foldTraverse(i->condition());
+		return newAST_Expression_If(cond,eq1,newAST_ExpressionList(),eq2);
+	}
+	
+	default:
+	{
+		return e;
+	}
+  }
+};
+
+PreChange::PreChange(PreSet p) {_pre = p;}
+
+AST_Expression PreChange::foldTraverseElement(AST_Expression b1, AST_Expression b2, BinOpType t ) {
+  return newAST_Expression_BinOp(b1,b2,t);
+}
+
+AST_Expression PreChange::foldTraverseElement(AST_Expression e) {
+  switch (e->expressionType()) {  
+	
+	case EXPUMINUS:
+	{
+			AST_Expression_UMinus u = e->getAsUMinus();
+			return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
+	}
+	
+	case EXPOUTPUT :
+	{
+			AST_Expression_Output b = e->getAsOutput();
+			return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
+	}
+	
+	case EXPCALL:
+	{
+		AST_Expression_Call call = e->getAsCall();
+		return call;
+	}
+	
+	case EXPCOMPREF:
+	{
+		AST_Expression_ComponentReference cr = e->getAsComponentReference();
+		if (_pre->find(cr->name()) != _pre->end())
+			return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList( (AST_Expression) cr));
+		return e;
+	}
+	
+	case EXPBOOLEANNOT:	
+	{
+		AST_Expression_BooleanNot no = e->getAsBooleanNot();
+		return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
+	}
+	
+	default:
+	{
+		return e;
+	}
+  }
+};
+
