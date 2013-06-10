@@ -26,7 +26,7 @@
 #define AST_CLASS
 
 class AST_Class_: public AST_Node_ {
-public: 
+public:
   AST_Class_(AST_String n,AST_Composition comp);
   DEFINE_CLASS_PRINTER(AST_Class);
   void setComposition(AST_Composition c);

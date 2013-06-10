@@ -56,7 +56,7 @@ public:
   virtual ModificationType modificationType();
   virtual string print() const =0;
 
-/* Conversion with dynamics casts */
+  /* Conversion with dynamics casts */
   GET_AS(Modification,Equal);
   GET_AS(Modification,Class);
   GET_AS(Modification,Assign);

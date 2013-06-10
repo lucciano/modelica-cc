@@ -140,7 +140,7 @@ public:
   AST_Statement_Else_ (AST_Expression cond, AST_StatementList sts);
   AST_Expression condition() const;
   AST_StatementList statements() const;
-  
+
 private:
   AST_Expression _cond;
   AST_StatementList  _sts;

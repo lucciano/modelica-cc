@@ -36,7 +36,7 @@ int main(int argc, char ** argv)
     return -1;
   }
   AST_Class c = parseClass(argv[1],&r);
-  if (r!=0)  
+  if (r!=0)
     return -1;
 
   MMO_Class mc = newMMO_Class(c,tyEnv);

@@ -33,7 +33,7 @@ public:
   DEFINE_CLASS_PRINTER(AST_Element);
   virtual string print() const =0;
   virtual ElementType elementType();
-  
+
   /* Dynamic casts */
   GET_AS(Element,Component);
   GET_AS(Element,ExtendsClause);
@@ -64,7 +64,7 @@ private:
 };
 
 /* Declaration */
-class AST_Declaration_: public AST_Element_{
+class AST_Declaration_: public AST_Element_ {
 public:
   AST_Declaration_(string name, AST_ExpressionList indexes, AST_Modification);
   string print() const;
@@ -114,15 +114,15 @@ private:
 class AST_Element_ClassWrapper_: public AST_Element_ {
 public:
   AST_Element_ClassWrapper_(AST_Class c);
-  string print() const ; 
+  string print() const ;
   virtual ElementType elementType();
   AST_Class getClass();
 
 private:
-  AST_Class _c; 
+  AST_Class _c;
 };
 
-/* Comment */ 
+/* Comment */
 class AST_Comment_: public AST_Node_ {
 public:
   AST_Comment_(AST_String st, AST_ArgumentList al);

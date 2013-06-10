@@ -32,7 +32,7 @@ CLASSP_PRINTER_IMP(AST_ForIndex);
 
 ostream & operator<<(ostream &os , const AST_ForIndex_ &f ) {
   os << f.variable();
-  if (f.in_exp()!=NULL) { 
+  if (f.in_exp()!=NULL) {
     os << " in " << f.in_exp();
   }
   return os;
@@ -66,7 +66,9 @@ AST_Expression AST_Equation_Equality_::right() const {
   return _right;
 }
 
-EquationType AST_Equation_Equality_::equationType() { return EQEQUALITY; }
+EquationType AST_Equation_Equality_::equationType() {
+  return EQEQUALITY;
+}
 
 /* Connect */
 AST_Equation_Connect_::AST_Equation_Connect_(AST_Expression_ComponentReference cr1, AST_Expression_ComponentReference cr2):_cr1(cr1), _cr2(cr2) { }
@@ -78,15 +80,21 @@ string AST_Equation_Connect_::print() const {
 }
 
 
-AST_Expression_ComponentReference AST_Equation_Connect_::left() { return _cr1; }
-AST_Expression_ComponentReference AST_Equation_Connect_::right() { return _cr2; }
-EquationType AST_Equation_Connect_::equationType() { return EQCONNECT; }
+AST_Expression_ComponentReference AST_Equation_Connect_::left() {
+  return _cr1;
+}
+AST_Expression_ComponentReference AST_Equation_Connect_::right() {
+  return _cr2;
+}
+EquationType AST_Equation_Connect_::equationType() {
+  return EQCONNECT;
+}
 
 /* Call */
 AST_Equation_Call_::AST_Equation_Call_(AST_Expression e):_call(e) {
 }
 
-AST_Expression AST_Equation_Call_::call () const { 
+AST_Expression AST_Equation_Call_::call () const {
   return _call;
 }
 
@@ -98,16 +106,30 @@ string AST_Equation_Call_::print () const {
 }
 
 
-EquationType AST_Equation_Call_::equationType() { return EQCALL; }
+EquationType AST_Equation_Call_::equationType() {
+  return EQCALL;
+}
 
 /* If equation */
- AST_Equation_If_:: AST_Equation_If_(AST_Expression cond, AST_EquationList eql, AST_Equation_ElseList elseif, AST_EquationList else_eq): _cond(cond), _eql(eql),_else(else_eq),_else_if(elseif) {};
-AST_Expression AST_Equation_If_:: condition() const { return _cond; };
-void AST_Equation_If_:: setCondition(AST_Expression c) { _cond=c; };
-AST_EquationList AST_Equation_If_:: equationList() const { return _eql; };
-AST_EquationList AST_Equation_If_:: equationElseList() const { return _else; };
-AST_Equation_ElseList AST_Equation_If_:: equationElseIf() const { return _else_if;}
-EquationType AST_Equation_If_:: equationType() { return EQIF; }
+AST_Equation_If_:: AST_Equation_If_(AST_Expression cond, AST_EquationList eql, AST_Equation_ElseList elseif, AST_EquationList else_eq): _cond(cond), _eql(eql),_else(else_eq),_else_if(elseif) {};
+AST_Expression AST_Equation_If_:: condition() const {
+  return _cond;
+};
+void AST_Equation_If_:: setCondition(AST_Expression c) {
+  _cond=c;
+};
+AST_EquationList AST_Equation_If_:: equationList() const {
+  return _eql;
+};
+AST_EquationList AST_Equation_If_:: equationElseList() const {
+  return _else;
+};
+AST_Equation_ElseList AST_Equation_If_:: equationElseIf() const {
+  return _else_if;
+}
+EquationType AST_Equation_If_:: equationType() {
+  return EQIF;
+}
 string AST_Equation_If_::print() const {
   stringstream ret(stringstream::out);
   AST_EquationListIterator it;
@@ -116,23 +138,23 @@ string AST_Equation_If_::print() const {
   ret << "if (" << condition() << ") then " << endl;
   BEGIN_BLOCK;
   foreach(it,equationList())
-    ret << current_element(it);
+  ret << current_element(it);
   END_BLOCK;
   foreach(else_it,equationElseIf()) {
     MAKE_SPACE;
     ret << "elseif " << current_element(else_it)->condition() << " then" << endl ;
     BEGIN_BLOCK;
     foreach(it, current_element(else_it)->equations())
-      ret << current_element(it);
+    ret << current_element(it);
     END_BLOCK;
 
   }
-  if (equationElseList()->size()) { 
+  if (equationElseList()->size()) {
     MAKE_SPACE;
     ret << "else" << endl;
     BEGIN_BLOCK;
-    foreach(it,equationElseList()) 
-      ret << current_element(it);
+    foreach(it,equationElseList())
+    ret << current_element(it);
     END_BLOCK;
   }
   MAKE_SPACE;
@@ -151,7 +173,7 @@ string AST_Equation_For_::print() const {
   AST_ListPrint(forIndexList(),ret,"for ",",",""," loop\n",false);
   BEGIN_BLOCK;
   foreach(it,eql)
-    ret << current_element(it);
+  ret << current_element(it);
   END_BLOCK;
   MAKE_SPACE;
   ret << "end for;"<< endl;
@@ -161,22 +183,42 @@ string AST_Equation_For_::print() const {
 }
 
 
-AST_EquationList AST_Equation_For_::equationList() const { return _eql; };
-AST_ForIndexList AST_Equation_For_::forIndexList() const { return _ind; };
-EquationType AST_Equation_For_::equationType() { return EQFOR; }
+AST_EquationList AST_Equation_For_::equationList() const {
+  return _eql;
+};
+AST_ForIndexList AST_Equation_For_::forIndexList() const {
+  return _ind;
+};
+EquationType AST_Equation_For_::equationType() {
+  return EQFOR;
+}
 
 /* For Index */
-AST_String AST_ForIndex_::variable() const { return _var; }
-AST_Expression AST_ForIndex_::in_exp() const { return _in; }
+AST_String AST_ForIndex_::variable() const {
+  return _var;
+}
+AST_Expression AST_ForIndex_::in_exp() const {
+  return _in;
+}
 AST_ForIndex_::AST_ForIndex_(AST_String var, AST_Expression exp):_var(var),_in(exp) {}
 
 /* When Equation */
 AST_Equation_When_::AST_Equation_When_(AST_Expression cond, AST_EquationList eql, AST_Equation_ElseList elsewhen): _cond(cond), _eql(eql),_else_when(elsewhen) {};
-AST_Expression AST_Equation_When_::condition() const { return _cond; };
-AST_EquationList AST_Equation_When_::equationList() const { return _eql; };
-EquationType AST_Equation_When_::equationType() { return EQWHEN; }
-AST_Equation_ElseList AST_Equation_When_::equationElseWhen() const { return _else_when;}
-void AST_Equation_When_::setCondition(AST_Expression e) { _cond=e; }
+AST_Expression AST_Equation_When_::condition() const {
+  return _cond;
+};
+AST_EquationList AST_Equation_When_::equationList() const {
+  return _eql;
+};
+EquationType AST_Equation_When_::equationType() {
+  return EQWHEN;
+}
+AST_Equation_ElseList AST_Equation_When_::equationElseWhen() const {
+  return _else_when;
+}
+void AST_Equation_When_::setCondition(AST_Expression e) {
+  _cond=e;
+}
 string AST_Equation_When_::print() const {
   stringstream ret(stringstream::out);
   AST_EquationList eql = equationList();
@@ -185,18 +227,18 @@ string AST_Equation_When_::print() const {
   MAKE_SPACE;
   ret << "when " << condition() << " then" << endl;
   BEGIN_BLOCK;
-  foreach(it,eql) 
-    ret << current_element(it);
+  foreach(it,eql)
+  ret << current_element(it);
   END_BLOCK;
   foreach(else_it,equationElseWhen()) {
     MAKE_SPACE;
     ret << "elsewhen " << current_element(else_it)->condition() << " then" << endl ;
     BEGIN_BLOCK;
     foreach(it, current_element(else_it)->equations())
-      ret << current_element(it);
+    ret << current_element(it);
     END_BLOCK;
   }
- 
+
   MAKE_SPACE;
   ret << "end when;" << endl;
   return ret.str();
@@ -206,6 +248,12 @@ string AST_Equation_When_::print() const {
 
 /* Else equation */
 AST_Equation_Else_::AST_Equation_Else_ (AST_Expression cond, AST_EquationList eqs): _cond(cond), _eqs(eqs) {}
-AST_Expression AST_Equation_Else_::condition() const { return _cond; }
-void AST_Equation_Else_::setCondition(AST_Expression e) { _cond=e; }
-AST_EquationList AST_Equation_Else_::equations() const { return _eqs; }
+AST_Expression AST_Equation_Else_::condition() const {
+  return _cond;
+}
+void AST_Equation_Else_::setCondition(AST_Expression e) {
+  _cond=e;
+}
+AST_EquationList AST_Equation_Else_::equations() const {
+  return _eqs;
+}

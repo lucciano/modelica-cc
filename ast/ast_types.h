@@ -132,15 +132,17 @@ DEFINE_LIST(AST_String);
 
 /* Enums */
 enum BinOpType { BINOPOR, BINOPAND, BINOPLOWER, BINOPLOWEREQ, BINOPGREATER, BINOPGREATEREQ, BINOPCOMPNE, BINOPCOMPEQ,
-                 BINOPADD, BINOPELADD, BINOPSUB, BINOPELSUB, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPEXP, BINOPELEXP };
+                 BINOPADD, BINOPELADD, BINOPSUB, BINOPELSUB, BINOPDIV, BINOPELDIV, BINOPMULT, BINOPELMULT, BINOPEXP, BINOPELEXP
+               };
 enum ElementType { ELNONE, COMPONENT, IMPORT, EXTENDS, ELCLASS };
 enum EquationType { EQNONE, EQEQUALITY, EQCONNECT,EQCALL, EQFOR, EQWHEN, EQIF };
 enum ExpressionType { EXPNONE ,EXPCOMPREF, EXPBINOP , EXPDERIVATIVE , EXPNULL, EXPEND, EXPIF, EXPCALLARG, EXPBRACE,
-                      EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT, EXPRANGE };
+                      EXPCALL, EXPELSEIF, EXPCOLON, EXPUMINUS, EXPBOOLEAN, EXPSTRING, EXPREAL, EXPINTEGER, EXPBOOLEANNOT, EXPOUTPUT, EXPRANGE
+                    };
 enum ModificationType { MODNONE ,MODEQUAL, MODASSIGN, MODCLASS };
 enum StatementType {STNONE ,  STRETURN, STBREAK, STWHEN ,STASSING, STFOR , STIF , STWHILE , STOUTASSING };
 
-/* Type prefixes*/ 
+/* Type prefixes*/
 enum TypePrefix {
   TP_INPUT      =(1<<1),
   TP_OUTPUT     =(1<<2),
@@ -179,38 +181,49 @@ enum ClassPrefix {
 
 
 template <typename T1>
-list<T1> * AST_ListAppend(list<T1> *l, T1 e) { l->push_back(e); return l; }
+list<T1> * AST_ListAppend(list<T1> *l, T1 e) {
+  l->push_back(e);
+  return l;
+}
 
 template <typename T1>
-list<T1> * AST_ListPrepend(list<T1> *l, T1 e) { l->push_front(e); return l; }
+list<T1> * AST_ListPrepend(list<T1> *l, T1 e) {
+  l->push_front(e);
+  return l;
+}
 
 template <typename T1>
-list<T1> * AST_ListRemove(list<T1> *l, T1 e) { l->remove(e); return l; }
+list<T1> * AST_ListRemove(list<T1> *l, T1 e) {
+  l->remove(e);
+  return l;
+}
 
 template <typename T1>
-T1 AST_ListFirst(list<T1> *l) {return l->front();}
+T1 AST_ListFirst(list<T1> *l) {
+  return l->front();
+}
 
 
 template <typename T1>
 list<T1> * AST_ListConcat(list<T1> *l1,list<T1> *l2) {
-	l1->insert(l1->end(), l2->begin() , l2->end());
-	return l1;
+  l1->insert(l1->end(), l2->begin() , l2->end());
+  return l1;
 }
 
 /* Crea una copia de la lista*/
 template <typename T1>
 list<T1> * AST_ListCopy(list<T1> *l1 ) {
-	list<T1> * ls = new list<T1>;
-	ls->assign(l1->begin(), l1->end());
-	return ls;
+  list<T1> * ls = new list<T1>;
+  ls->assign(l1->begin(), l1->end());
+  return ls;
 }
 
 /* Genera una lista con un solo elemento */
 template <typename T1>
 list<T1> * newAST_SimpleList(T1  t) {
-	list<T1> * ls = new list<T1>;
-	ls->push_back(t);
-	return ls;
+  list<T1> * ls = new list<T1>;
+  ls->push_back(t);
+  return ls;
 }
 
 /* Imprime una lista */

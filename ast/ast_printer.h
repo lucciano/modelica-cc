@@ -35,7 +35,7 @@ using namespace std;
                                 os << *e; return os;  }
 #define CLASS_PRINTER_IMP(X) ostream & operator<<(ostream &os, \
                                     const X##_ &e ){ os << e.print(); return os; } \
-                             CLASSP_PRINTER_IMP(X) 
+                             CLASSP_PRINTER_IMP(X)
 
 DEFINE_PRINTER(AST_Argument);
 DEFINE_PRINTER(AST_Comment);

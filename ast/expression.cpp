@@ -25,8 +25,9 @@
 #include <ast/ast_node.h>
 #include <ast/expression.h>
 
-const char *BinOpTypeName[] =  {" or ", " and ", "<", "<=", ">", ">=", "<>", "==", 
-                                "+", ".+", "-", ".-", "/", "./","*", ".*", "^", ".^" };
+const char *BinOpTypeName[] =  {" or ", " and ", "<", "<=", ">", ">=", "<>", "==",
+                                "+", ".+", "-", ".-", "/", "./","*", ".*", "^", ".^"
+                               };
 GET_AS_IMP(Expression,BinOp);
 GET_AS_IMP(Expression,Boolean);
 GET_AS_IMP(Expression,BooleanNot);
@@ -42,46 +43,56 @@ GET_AS_IMP(Expression,Range);
 GET_AS_IMP(Expression,Real);
 GET_AS_IMP(Expression,UMinus);
 
-ExpressionType AST_Expression_::expressionType()              { return EXPNONE; }
+ExpressionType AST_Expression_::expressionType()              {
+  return EXPNONE;
+}
 
 CLASS_PRINTER_IMP(AST_Expression);
 
 /* Binary operation */
 AST_Expression_BinOp_::AST_Expression_BinOp_(AST_Expression e1,AST_Expression e2, BinOpType t): _e1(e1), _e2(e2), _t(t) { }
 
-ExpressionType AST_Expression_BinOp_::expressionType()        { return EXPBINOP; }
+ExpressionType AST_Expression_BinOp_::expressionType()        {
+  return EXPBINOP;
+}
 
-AST_Expression AST_Expression_BinOp_::left() const  { return _e1; }
+AST_Expression AST_Expression_BinOp_::left() const  {
+  return _e1;
+}
 
-AST_Expression AST_Expression_BinOp_::right() const { return _e2; }
+AST_Expression AST_Expression_BinOp_::right() const {
+  return _e2;
+}
 
-BinOpType AST_Expression_BinOp_::binopType() const  { return _t;}
+BinOpType AST_Expression_BinOp_::binopType() const  {
+  return _t;
+}
 
-string AST_Expression_BinOp_::print() const { 
+string AST_Expression_BinOp_::print() const {
   stringstream ret(stringstream::out);
   /* Print parenthesis */
-   if (left()->expressionType()==EXPBINOP) {
-     AST_Expression_BinOp b = left()->getAsBinOp();
-     if (b->binopType()<binopType()) { // Parenthesis needed for left op
-       ret << "(" << left() << ")";
-     } else {
-       ret << left();
-     }
-   } else {
-       ret << left();
-   }
-   ret << BinOpTypeName[binopType()];
-   if (right()->expressionType()==EXPBINOP) {
-     AST_Expression_BinOp b = right()->getAsBinOp();
-     if (b->binopType()<binopType()) { // Parenthesis needed for left op
-       ret << "(" << right() << ")";
-     } else {
-       ret << right();
-     }
-   } else {
-     ret << right();
-   }
-   return ret.str();
+  if (left()->expressionType()==EXPBINOP) {
+    AST_Expression_BinOp b = left()->getAsBinOp();
+    if (b->binopType()<binopType()) { // Parenthesis needed for left op
+      ret << "(" << left() << ")";
+    } else {
+      ret << left();
+    }
+  } else {
+    ret << left();
+  }
+  ret << BinOpTypeName[binopType()];
+  if (right()->expressionType()==EXPBINOP) {
+    AST_Expression_BinOp b = right()->getAsBinOp();
+    if (b->binopType()<binopType()) { // Parenthesis needed for left op
+      ret << "(" << right() << ")";
+    } else {
+      ret << right();
+    }
+  } else {
+    ret << right();
+  }
+  return ret.str();
 }
 
 /* Integer */
@@ -91,9 +102,11 @@ AST_Integer AST_Expression_Integer_::val() {
   return _i;
 }
 
-ExpressionType AST_Expression_Integer_::expressionType()      { return EXPINTEGER; }
+ExpressionType AST_Expression_Integer_::expressionType()      {
+  return EXPINTEGER;
+}
 
-string AST_Expression_Integer_::print() const { 
+string AST_Expression_Integer_::print() const {
   stringstream ret(stringstream::out);
   ret << _i ;
   return ret.str();
@@ -102,79 +115,91 @@ string AST_Expression_Integer_::print() const {
 /* Real */
 AST_Expression_Real_::AST_Expression_Real_(double d):_d(d) { }
 
-ExpressionType AST_Expression_Real_::expressionType()         { return EXPREAL; }
+ExpressionType AST_Expression_Real_::expressionType()         {
+  return EXPREAL;
+}
 
-string AST_Expression_Real_::print() const { 
+string AST_Expression_Real_::print() const {
   stringstream ret(stringstream::out);
   ret <<  _d;
   return ret.str();
 }
 
 /* String */
-AST_Expression_String_::AST_Expression_String_(string s): _s(s){ }
+AST_Expression_String_::AST_Expression_String_(string s): _s(s) { }
 
-ExpressionType AST_Expression_String_::expressionType()       { return EXPSTRING; }
+ExpressionType AST_Expression_String_::expressionType()       {
+  return EXPSTRING;
+}
 
-string AST_Expression_String_::print() const { 
+string AST_Expression_String_::print() const {
   stringstream ret(stringstream::out);
   ret << "\"" << _s << "\"";
   return ret.str();
 }
 
 /* Boolean */
-AST_Expression_Boolean_::AST_Expression_Boolean_(bool b):_b(b){ }
+AST_Expression_Boolean_::AST_Expression_Boolean_(bool b):_b(b) { }
 
-ExpressionType AST_Expression_Boolean_::expressionType()      { return EXPBOOLEAN; }
+ExpressionType AST_Expression_Boolean_::expressionType()      {
+  return EXPBOOLEAN;
+}
 
-bool AST_Expression_Boolean_::value() { return _b;}
-string AST_Expression_Boolean_::print() const { 
+bool AST_Expression_Boolean_::value() {
+  return _b;
+}
+string AST_Expression_Boolean_::print() const {
   stringstream ret(stringstream::out);
   ret << (_b ? "true" : "false") ;
   return ret.str();
 }
 
 /* Derivative */
-AST_Expression_Derivative_::AST_Expression_Derivative_(AST_ExpressionList el):_el(el){ }
+AST_Expression_Derivative_::AST_Expression_Derivative_(AST_ExpressionList el):_el(el) { }
 
-ExpressionType AST_Expression_Derivative_::expressionType()   { return EXPDERIVATIVE; }
+ExpressionType AST_Expression_Derivative_::expressionType()   {
+  return EXPDERIVATIVE;
+}
 
-AST_ExpressionList AST_Expression_Derivative_::arguments() { return _el; }
+AST_ExpressionList AST_Expression_Derivative_::arguments() {
+  return _el;
+}
 
-string AST_Expression_Derivative_::print() const { 
+string AST_Expression_Derivative_::print() const {
   stringstream ret(stringstream::out);
   ret << "der(" << *_el->front() << ")";
   return ret.str();
 };
 
 /* Unary minus */
-AST_Expression_UMinus_::AST_Expression_UMinus_(AST_Expression e): _e(e){ };
+AST_Expression_UMinus_::AST_Expression_UMinus_(AST_Expression e): _e(e) { };
 
-ExpressionType AST_Expression_UMinus_::expressionType() { 
-  return EXPUMINUS; 
+ExpressionType AST_Expression_UMinus_::expressionType() {
+  return EXPUMINUS;
 }
 
-AST_Expression AST_Expression_UMinus_::exp() const { 
-  return _e; 
+AST_Expression AST_Expression_UMinus_::exp() const {
+  return _e;
 }
 
-string AST_Expression_UMinus_::print() const { 
+string AST_Expression_UMinus_::print() const {
   stringstream ret(stringstream::out);
   ret << "(-" <<  _e << ")";
   return ret.str();
 };
 
 /* Boolean not */
-AST_Expression_BooleanNot_::AST_Expression_BooleanNot_(AST_Expression e):_e(e){};
+AST_Expression_BooleanNot_::AST_Expression_BooleanNot_(AST_Expression e):_e(e) {};
 
-ExpressionType AST_Expression_BooleanNot_::expressionType()   { 
-  return EXPBOOLEANNOT; 
+ExpressionType AST_Expression_BooleanNot_::expressionType()   {
+  return EXPBOOLEANNOT;
 }
 
-AST_Expression AST_Expression_BooleanNot_::exp() const { 
-  return _e; 
+AST_Expression AST_Expression_BooleanNot_::exp() const {
+  return _e;
 }
 
-string AST_Expression_BooleanNot_::print() const { 
+string AST_Expression_BooleanNot_::print() const {
   stringstream ret(stringstream::out);
   ret << "not " <<  exp();
   return ret.str();
@@ -183,18 +208,24 @@ string AST_Expression_BooleanNot_::print() const {
 /* Function call */
 AST_Expression_Call_::AST_Expression_Call_(AST_String name, AST_ExpressionList args):_name(name), _args(args) { };
 
-ExpressionType AST_Expression_Call_::expressionType()         { return EXPCALL; }
+ExpressionType AST_Expression_Call_::expressionType()         {
+  return EXPCALL;
+}
 
-AST_String AST_Expression_Call_::name() const { return _name; }
+AST_String AST_Expression_Call_::name() const {
+  return _name;
+}
 
-AST_ExpressionList AST_Expression_Call_::arguments() const { return _args; }
+AST_ExpressionList AST_Expression_Call_::arguments() const {
+  return _args;
+}
 
 string AST_Expression_Call_::print() const {
   stringstream ret;
   AST_ExpressionListIterator it;
   ret << name() << "(" ;
   int size = arguments()->size(),i=0;
-  foreach(it,arguments()) {   
+  foreach(it,arguments()) {
     i++;
     ret << current_element(it);
     ret << (i<size ? "," : "");
@@ -206,9 +237,13 @@ string AST_Expression_Call_::print() const {
 /* Call arguments */
 AST_Expression_CallArgs_::AST_Expression_CallArgs_(AST_ExpressionList args): _args(args) { };
 
-ExpressionType AST_Expression_CallArgs_::expressionType() { return EXPCALLARG; }
+ExpressionType AST_Expression_CallArgs_::expressionType() {
+  return EXPCALLARG;
+}
 
-AST_ExpressionList AST_Expression_CallArgs_::arguments() const { return _args; }
+AST_ExpressionList AST_Expression_CallArgs_::arguments() const {
+  return _args;
+}
 
 string AST_Expression_CallArgs_::print() const {
   stringstream ret(stringstream::out);
@@ -219,9 +254,13 @@ string AST_Expression_CallArgs_::print() const {
 /* Brace expression */
 AST_Expression_Brace_::AST_Expression_Brace_(AST_ExpressionList args): _args(args) { };
 
-ExpressionType AST_Expression_Brace_::expressionType() { return EXPBRACE; }
+ExpressionType AST_Expression_Brace_::expressionType() {
+  return EXPBRACE;
+}
 
-AST_ExpressionList AST_Expression_Brace_::arguments() const { return _args; }
+AST_ExpressionList AST_Expression_Brace_::arguments() const {
+  return _args;
+}
 
 string AST_Expression_Brace_::print() const {
   stringstream ret(stringstream::out);
@@ -231,9 +270,11 @@ string AST_Expression_Brace_::print() const {
 
 
 /* Component Reference */
-AST_Expression_ComponentReference_::AST_Expression_ComponentReference_():_name(newAST_StringList()), _indexes(newAST_ExpressionListList()){};
+AST_Expression_ComponentReference_::AST_Expression_ComponentReference_():_name(newAST_StringList()), _indexes(newAST_ExpressionListList()) {};
 
-ExpressionType AST_Expression_ComponentReference_::expressionType() { return EXPCOMPREF; }
+ExpressionType AST_Expression_ComponentReference_::expressionType() {
+  return EXPCOMPREF;
+}
 
 string AST_Expression_ComponentReference_::print() const {
   stringstream ret;
@@ -248,7 +289,7 @@ string AST_Expression_ComponentReference_::print() const {
       ret << "[";
       int size2=current_element(exp_it)->size(),i2=0;
       foreach (exp_it2,current_element(exp_it))
-        ret << current_element(exp_it2) << (++i2<size2 ? "," : "");
+      ret << current_element(exp_it2) << (++i2<size2 ? "," : "");
       ret << "]";
     }
     ret << (i<size ? "." : "");
@@ -268,46 +309,46 @@ void AST_Expression_ComponentReference_::prepend(AST_String s, AST_ExpressionLis
   AST_ListAppend(indexes(),subs);
 }
 
-AST_StringList AST_Expression_ComponentReference_::names() const { 
-  return _name; 
+AST_StringList AST_Expression_ComponentReference_::names() const {
+  return _name;
 }
 
-string AST_Expression_ComponentReference_::name() { 
-  return print(); 
-} 
-  
-AST_ExpressionListList AST_Expression_ComponentReference_::indexes() const { 
-  return _indexes ; 
+string AST_Expression_ComponentReference_::name() {
+  return print();
+}
+
+AST_ExpressionListList AST_Expression_ComponentReference_::indexes() const {
+  return _indexes ;
 }
 
 
 
 /* If expression */
-AST_Expression_If_::AST_Expression_If_(AST_Expression cond, AST_Expression then, AST_Expression else_exp, AST_ExpressionList elseif_list): _cond(cond), 
-                                                                                                           _then(then), 
-                                                                                                           _else_exp(else_exp),
-                                                                                                           _elseif_list(elseif_list) {
+AST_Expression_If_::AST_Expression_If_(AST_Expression cond, AST_Expression then, AST_Expression else_exp, AST_ExpressionList elseif_list): _cond(cond),
+  _then(then),
+  _else_exp(else_exp),
+  _elseif_list(elseif_list) {
 }
 
-ExpressionType AST_Expression_If_::expressionType() { 
-  return EXPIF; 
+ExpressionType AST_Expression_If_::expressionType() {
+  return EXPIF;
 }
 
-AST_Expression AST_Expression_If_::else_exp()  const        { 
+AST_Expression AST_Expression_If_::else_exp()  const        {
   return _else_exp;
-} 
+}
 
-AST_ExpressionList AST_Expression_If_::elseif_list()  const { 
+AST_ExpressionList AST_Expression_If_::elseif_list()  const {
   return _elseif_list;
 }
 
-AST_Expression AST_Expression_If_::condition() const { 
-  return _cond; 
+AST_Expression AST_Expression_If_::condition() const {
+  return _cond;
 }
 
-AST_Expression AST_Expression_If_::then()  const { 
-  return _then; 
-}           
+AST_Expression AST_Expression_If_::then()  const {
+  return _then;
+}
 
 /* Else if expressioon */
 AST_Expression_If_ElseIf AST_Expression_::getAsElseIf() {
@@ -315,8 +356,8 @@ AST_Expression_If_ElseIf AST_Expression_::getAsElseIf() {
 };
 
 AST_Expression_If_ElseIf_::AST_Expression_If_ElseIf_  (AST_Expression c, AST_Expression t) : _cond(c) , _then(t) {};
-ExpressionType AST_Expression_If_ElseIf_::expressionType()    { 
-  return EXPELSEIF; 
+ExpressionType AST_Expression_If_ElseIf_::expressionType()    {
+  return EXPELSEIF;
 }
 
 AST_Expression AST_Expression_If_ElseIf_::condition() {
@@ -328,9 +369,9 @@ AST_Expression AST_Expression_If_ElseIf_::then() {
 }
 
 string AST_Expression_If_ElseIf_::print() const {
-	stringstream ret;
-	ret << " elseif " << _cond << " then " << _then ;
-	return ret.str();
+  stringstream ret;
+  ret << " elseif " << _cond << " then " << _then ;
+  return ret.str();
 }
 
 string AST_Expression_If_::print () const {
@@ -338,22 +379,24 @@ string AST_Expression_If_::print () const {
   AST_ExpressionListIterator it;
   ret << "if "<< condition() << " then " << then() ;
   if (! elseif_list()->empty())
-  foreach(it , elseif_list() )
-	  ret << current_element(it)->getAsElseIf() ;
+    foreach(it , elseif_list() )
+    ret << current_element(it)->getAsElseIf() ;
   ret << " else " << else_exp() ;
   return ret.str();
 }
 
 /* End for subscripts */
-ExpressionType AST_Expression_End_::expressionType()          { return EXPEND; }
-string AST_Expression_End_::print() const { 
+ExpressionType AST_Expression_End_::expressionType()          {
+  return EXPEND;
+}
+string AST_Expression_End_::print() const {
   return "end";
 }
 
 /* Output expression */
 AST_Expression_Output_::AST_Expression_Output_(AST_ExpressionList l): _list(l) { }
-ExpressionType AST_Expression_Output_::expressionType() { 
-  return EXPOUTPUT; 
+ExpressionType AST_Expression_Output_::expressionType() {
+  return EXPOUTPUT;
 }
 
 string AST_Expression_Output_::print () const {
@@ -368,19 +411,19 @@ string AST_Expression_Output_::print () const {
   }
   ret << ")";
   return ret.str();
-  
+
 }
 
 AST_ExpressionList AST_Expression_Output_::expressionList()
 {
-	return _list;
+  return _list;
 }
 
 
 /* Range expression */
 AST_Expression_Range_::AST_Expression_Range_(AST_ExpressionList l): _list(l) { }
-ExpressionType AST_Expression_Range_::expressionType() { 
-  return EXPRANGE; 
+ExpressionType AST_Expression_Range_::expressionType() {
+  return EXPRANGE;
 }
 
 string AST_Expression_Range_::print () const {
@@ -397,13 +440,21 @@ string AST_Expression_Range_::print () const {
 
 AST_ExpressionList AST_Expression_Range_::expressionList()
 {
-	return _list;
+  return _list;
 }
 
 /* Null Expression */
-ExpressionType AST_Expression_Null_::expressionType()         { return EXPNULL; }
-string AST_Expression_Null_::print() const { return "NULLEXP!!!";};
+ExpressionType AST_Expression_Null_::expressionType()         {
+  return EXPNULL;
+}
+string AST_Expression_Null_::print() const {
+  return "NULLEXP!!!";
+};
 
 /* Colon expression */
-ExpressionType AST_Expression_Colon_::expressionType()        { return EXPCOLON; }
-string AST_Expression_Colon_::print() const { return ":";};
+ExpressionType AST_Expression_Colon_::expressionType()        {
+  return EXPCOLON;
+}
+string AST_Expression_Colon_::print() const {
+  return ":";
+};

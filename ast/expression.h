@@ -31,7 +31,7 @@ public:
   DEFINE_CLASS_PRINTER(AST_Expression);
   virtual string print() const =0;
   virtual ExpressionType expressionType();
-   
+
   /* Dynamic casts */
   GET_AS(Expression,BinOp);
   GET_AS(Expression,Boolean);
@@ -68,7 +68,9 @@ public:
   AST_Expression_Real_(double d);
   string print() const ;
   virtual ExpressionType expressionType();
-  double val() { return _d; }
+  double val() {
+    return _d;
+  }
 
 private:
   double _d;

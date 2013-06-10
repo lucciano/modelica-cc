@@ -32,7 +32,7 @@ public:
   void setLineNum(int linenum);
   int lineNum() const;
 
-private:    
+private:
   int _linenum;
 };
 #endif

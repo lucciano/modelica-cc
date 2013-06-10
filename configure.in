@@ -2,9 +2,12 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
+AC_LANG([C++])
 AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([macros])
+m4_include([macros/ax_boost_base.m4])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -29,9 +32,13 @@ else
 fi
 
 
+
 # Checks for libraries.
+AC_LANG([C++])
+AC_CHECK_LIB([ginac],[GiNaC::ex::evalf],[], [], [])
 
 # Checks for header files.
+AX_BOOST_BASE([],[], AC_MSG_ERROR([MCC needs boost library.]))
 AC_FUNC_ALLOCA
 AC_CHECK_HEADERS([malloc.h stdlib.h string.h unistd.h])
 

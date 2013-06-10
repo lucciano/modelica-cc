@@ -84,7 +84,7 @@ public:
 
 private:
   AST_Expression _call;
-}; 
+};
 
 /* If equation */
 class AST_Equation_If_: public AST_Equation_ {
@@ -127,7 +127,7 @@ public:
   string print() const;
   AST_String variable() const;
   AST_Expression in_exp() const;
-  
+
 private:
   AST_String _var;
   AST_Expression _in;
@@ -140,7 +140,7 @@ public:
   AST_Expression condition() const;
   void setCondition(AST_Expression e);
   AST_EquationList equations() const;
-  
+
 private:
   AST_Expression _cond;
   AST_EquationList _eqs;

@@ -32,10 +32,10 @@
 /* Argument modification */
 AST_ArgumentList newAST_ArgumentList();
 AST_Argument newAST_Argument_Modification(AST_String,AST_Modification);
-AST_Argument newAST_Redeclaration(AST_Boolean, AST_Boolean, AST_Argument); 
+AST_Argument newAST_Redeclaration(AST_Boolean, AST_Boolean, AST_Argument);
 AST_Argument newAST_ShortClass(AST_ClassPrefix,AST_String, AST_ShortClassExp);
 AST_ShortClassExp newAST_ShortClassExp(AST_TypePrefix, AST_String, AST_ExpressionList, AST_ArgumentList);
-AST_ShortClassExp newAST_ShortClassExp_Enum(AST_StringList); 
+AST_ShortClassExp newAST_ShortClassExp_Enum(AST_StringList);
 AST_Argument AST_ArgumentSet(AST_Boolean, AST_Boolean, AST_Argument);
 AST_Argument newAST_ElementModification(AST_String, AST_Modification);
 AST_Argument AST_ArgumentSetReplaceable(AST_Argument);
@@ -160,9 +160,9 @@ AST_Equation_ElseList newAST_Equation_ElseList();
 AST_Equation_Else newAST_Equation_Else(AST_Expression, AST_EquationList);
 
 /* Modification */
-AST_Modification newAST_Modification_Class(AST_ArgumentList,AST_Expression); 
+AST_Modification newAST_Modification_Class(AST_ArgumentList,AST_Expression);
 AST_Modification newAST_Modification_Equal(AST_Expression);
-AST_Modification newAST_Modification_Assign(AST_Expression); 
+AST_Modification newAST_Modification_Assign(AST_Expression);
 AST_Modification newAST_ModificationNull();
 
 /* Statements */
