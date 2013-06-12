@@ -15,17 +15,17 @@ model Prueba
 	end sin;	
 	
 equation
-	j = if b < 50 then 1 else 5;
-	for i in {1,2,3} loop
-		m[i] = if tt then 1 else 2;
-		m[i] = i > 4;
-	end	for;
-	when {f , sample(0,1)} then 
-		when f then 
+	if tt then 
+		if j then 
 			a = 1;
-		elsewhen f then 
-			b = 2;
-			c = 2;
-		end when;
-	end when;
+		else 
+			b = 15;
+		end if;	
+	else 
+		c = 15;
+	end if;	
+algorithm
+	when j then 
+		tt := true;
+	end when;	
 end Prueba;     

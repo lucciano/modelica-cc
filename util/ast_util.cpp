@@ -206,6 +206,7 @@ AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression e) {
 		if (toStr(call->name())  == "edge"){ 
 			return  GREATER(  call->arguments()->front()   , R(0.5) ) ;
 		}
+		
 		return call;
 	}
 	
@@ -260,6 +261,8 @@ AST_Expression PreChange::foldTraverseElement(AST_Expression e) {
 	case EXPCALL:
 	{
 		AST_Expression_Call call = e->getAsCall();
+		AST_ExpressionListIterator it;
+		foreach(it , call->arguments()) current_element(it) = foldTraverse(current_element(it));
 		return call;
 	}
 	
