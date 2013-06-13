@@ -171,11 +171,11 @@ void RemoveAlias::removeAliasEquations(MMO_Class c) {
           if (!IS_STATE(left)) {
             cerr << "ADDING ALIAS " << left << " FOR " << right << " FROM ALIAS EQ: " << eqeq;
             addAlias(right,left);
-            AST_ListAppend(remove,eqeq);
+            AST_ListAppend(remove,static_cast<AST_Equation>(eqeq));
           } else if (!IS_STATE(right)) {
             cerr << "ADDING ALIAS " << right << " FOR " << left << " FROM ALIAS EQ: " << eqeq;
             addAlias(left,right);
-            AST_ListAppend(remove,eqeq);
+            AST_ListAppend(remove,static_cast<AST_Equation>(eqeq));
           }
         }
         break;
