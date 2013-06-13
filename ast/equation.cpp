@@ -178,8 +178,6 @@ string AST_Equation_For_::print() const {
   MAKE_SPACE;
   ret << "end for;"<< endl;
   return ret.str();
-
-  return ret.str();
 }
 
 

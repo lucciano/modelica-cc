@@ -111,11 +111,11 @@ AST_ElementList newAST_ElementList() {
 }
 
 AST_Element AST_ImportToElement(AST_Element_ImportClause i) {
-  return (AST_Element)i;
+  return i;
 }
 
 AST_Element AST_ExtendsToElement(AST_Element_ExtendsClause e) {
-  return (AST_Element)e;
+  return e;
 }
 
 AST_Element_ExtendsClause newAST_Element_ExtendsClause(AST_String name) {
@@ -129,7 +129,7 @@ AST_Element newAST_Element_ClassWrapper(AST_Class c) {
 }
 
 AST_Element AST_Element_ComponentToElement(AST_Element_Component c) {
-  return (AST_Element)c;
+  return c;
 }
 
 AST_CompositionElementList newAST_CompositionElementList() {
@@ -416,11 +416,6 @@ AST_ClassPrefix AST_ClassPrefix_AddPartial(AST_Boolean partial, AST_ClassPrefix 
 
 AST_Equation newAST_EquationFor(AST_ForIndexList ind, AST_EquationList eql) {
   return new AST_Equation_For_(ind,eql);
-}
-
-AST_Expression newAST_Expression_Else(AST_Expression,AST_Expression) {
-  /* TODO */
-  return NULL;
 }
 
 AST_ForIndex newAST_ForIndex(AST_String ident, AST_Expression exp) {

@@ -270,7 +270,7 @@ AST_Expression PreChange::foldTraverseElement(AST_Expression e) {
 	{
 		AST_Expression_ComponentReference cr = e->getAsComponentReference();
 		if (_pre->find(cr->name()) != _pre->end())
-			return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList( (AST_Expression) cr));
+			return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(static_cast<AST_Expression>(cr)));
 		return e;
 	}
 	

@@ -54,7 +54,7 @@ int main(int argc, char ** argv)
 
 	fstream fs;
 	if (out!=NULL) {
-		fs.open (out, fstream::out | fstream::out);
+		fs.open (out, fstream::out);
 	}
 
   

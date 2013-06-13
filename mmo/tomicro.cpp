@@ -504,7 +504,7 @@ void MMO_ToMicroModelica_::toMicro_eq_when (AST_Equation eq, MMO_StatementList s
 				if (varInfo == NULL) throw "Variable no encontrada" ;
 				if (varInfo->isState()) {
 					AST_ExpressionList ls = newAST_ExpressionList(); 
-					AST_ListAppend(ls, (AST_Expression)cf );
+					AST_ListAppend(ls,static_cast<AST_Expression>(cf));
 					AST_ListAppend(ls,  _r );
 					AST_Expression_ComponentReference aux = newAST_Expression_ComponentReferenceExp(_S("reinit"))->getAsComponentReference();
 					AST_ListAppend(stms,newAST_Statement_Assign( aux , newAST_Expression_FunctionCallArgs(ls) ));
@@ -793,7 +793,7 @@ AST_Modification MMO_ToMicroModelica_::ChangeModifications(AST_Modification m)
 				foreach(it, cc->arguments()) {
 					AST_Argument_Modification mm = current_element(it)->getAsModification();
 					if ( toStr(mm->name()) == "start")	AST_ListAppend(args , newAST_Argument_Modification(mm->name() , ChangeModifications(mm->modification()) )   );
-					else AST_ListAppend(args, (AST_Argument) mm);
+					else AST_ListAppend(args,static_cast<AST_Argument>(mm));
 				}
 			}
 			return newAST_Modification_Class(args,_e);
