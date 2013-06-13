@@ -265,7 +265,7 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 		{
 			AST_Expression_Call call = e->getAsCall();
 			if (toStr(call->name())  == "edge"){ 
-				return toMicro_exp( GREATER(  call->arguments()->front()   , R(0.5) ) , stList , iMap) ;
+				return toMicro_exp( GREATER(  call->arguments()->front()   , _R(0.5) ) , stList , iMap) ;
 			}
 			return call;
 		}
@@ -452,7 +452,7 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 			AST_Expression_ComponentReference cf = e->getAsComponentReference();
 			Type t = _c->getVariableType(cf->names()->front());
 			if (t != NULL && t->getType() == TYBOOLEAN) {
-				return GREATER( cf , R(0.5)  );
+				return GREATER( cf , _R(0.5)  );
 			} else 
 				return cf;
 		}
@@ -468,15 +468,15 @@ AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_Stateme
 				AST_Expression per =   current_element (  ++call->arguments()->begin()   );
 				
 				AST_ListAppend(ls ,  newAST_Statement_Assign(cr, ADD(  cr ,per )  ) );
-				return GREATER( VAR(_S("time")) , cr );
+				return GREATER( _VAR(_S("time")) , cr );
 			}
 			
 			if ( toStr(call->name()) == "initial") {
-				return GREATER( VAR(_S("time")) , I(0) );
+				return GREATER( _VAR(_S("time")) , I(0) );
 			}
 			
 			if (toStr(call->name())  == "edge" ) {
-				return GREATER(  call->arguments()->front()   , R(0.5) );
+				return GREATER(  call->arguments()->front()   , _R(0.5) );
 			}
 			
 			return call;

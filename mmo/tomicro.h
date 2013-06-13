@@ -23,6 +23,7 @@
 #include <ast/equation.h>
 #include <ast/statement.h>
 #include <util/type.h>
+#include <util/ast_util.h>
 #include <set>
 
 #ifndef TOMICRO_H
@@ -31,16 +32,16 @@
 
 DEFINE_TYPE(MMO_ToMicroModelica);
 
-#define VAR(v)			newAST_Expression_ComponentReferenceExp(v) 
-#define GREATER(l,r) 	newAST_Expression_BinOp(l, r, BINOPGREATER ) 
-#define LOWER(l,r) 		newAST_Expression_BinOp(l, r, BINOPLOWER )
-#define ADD(l,r) 		newAST_Expression_BinOp(l, r, BINOPADD )
-#define MULT(l,r) 		newAST_Expression_BinOp(l, r, BINOPMULT )
-#define SUB(l,r) 		newAST_Expression_BinOp(l, r, BINOPSUB )
-#define I(n) 			newAST_Expression_Integer(n)
-#define R(n) 			newAST_Expression_Real(n)
-#define PA(e)       	newAST_Expression_OutputExpressions(e) 
-#define UMENOS(e)   	SUB( I(1) , e )
+//#define VAR(v)			newAST_Expression_ComponentReferenceExp(v)
+//#define GREATER(l,r) 	newAST_Expression_BinOp(l, r, BINOPGREATER )
+//#define LOWER(l,r) 		newAST_Expression_BinOp(l, r, BINOPLOWER )
+//#define ADD(l,r) 		newAST_Expression_BinOp(l, r, BINOPADD )
+//#define MULT(l,r) 		newAST_Expression_BinOp(l, r, BINOPMULT )
+//#define SUB(l,r) 		newAST_Expression_BinOp(l, r, BINOPSUB )
+//#define I(n) 			newAST_Expression_Integer(n)
+//#define R(n) 			newAST_Expression_Real(n)
+//#define PA(e)       	newAST_Expression_OutputExpressions(e)
+//#define UMENOS(e)   	SUB( I(1) , e )
 
 #define IS_COMPARE(X)	((X)->expressionType()==EXPBINOP && ( (X)->getAsBinOp()->binopType() >= BINOPLOWER  && (X)->getAsBinOp()->binopType() <= BINOPCOMPEQ  ))
 #define IS_CREF(X)    	((X)->expressionType()==EXPCOMPREF)

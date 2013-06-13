@@ -103,4 +103,6 @@ private:
 ostream & operator<<(ostream &os , const MMO_Class &c );
 MMO_Class newMMO_Class(AST_Class, TypeSymbolTable);
 
+MMO_EquationList newMMO_EquationList();
+
 #endif

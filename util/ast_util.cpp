@@ -204,7 +204,7 @@ AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression e) {
 	{
 		AST_Expression_Call call = e->getAsCall();
 		if (toStr(call->name())  == "edge"){ 
-			return  GREATER(  call->arguments()->front()   , R(0.5) ) ;
+			return  GREATER(  call->arguments()->front()   , _R(0.5) ) ;
 		}
 		
 		return call;

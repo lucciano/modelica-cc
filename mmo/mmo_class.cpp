@@ -260,3 +260,6 @@ MMO_Class newMMO_Class(AST_Class c, TypeSymbolTable t)
 	return new MMO_Class_(c,t);
 }
 
+MMO_EquationList newMMO_EquationList() {
+  return new list<MMO_Equation>;
+}

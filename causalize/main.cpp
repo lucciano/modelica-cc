@@ -23,6 +23,7 @@
 #include <parser/parse.h>
 #include <ast/stored_definition.h>
 #include <ast/class.h>
+#include <ast/ast_types.h>
 #include <util/symbol_table.h>
 #include <mmo/mmo_class.h>
 #include <causalize/state_variables_finder.h>
@@ -46,6 +47,14 @@ int main(int argc, char ** argv)
   TypeSymbolTable tyEnv = newTypeSymbolTable();
   MMO_Class c = newMMO_Class(sd->models()->front(), tyEnv);
 
+  MMO_EquationListIterator iter;
+  MMO_EquationList acausalEquations = c->getEquations();
+
+  cout << "Acausal Equations: " << endl;
+  foreach(iter, acausalEquations) {
+    cout << current_element(iter) << endl;
+  }
+
   StateVariablesFinder *stateFinder = new StateVariablesFinder(c);
   stateFinder->findStateVariables();
   DiscreteVariablesFinder *discreteVarFinder = new DiscreteVariablesFinder(c);
@@ -53,16 +62,12 @@ int main(int argc, char ** argv)
   UnknownsCollector *collector = new UnknownsCollector(c);
   AST_ExpressionList unknowns = collector->collectUnknowns();
   CausalizationStrategy *strategy = new CausalizationStrategy(c->getEquations(), unknowns);
-  strategy->causalize();
+  MMO_EquationList causalizedEquations = strategy->causalize();
 
-//  UnknownsCollector *collector = new UnknownsCollector(c);
-//  list<string> *unknowns = collector->collectUnknowns();
-//  list<string>::iterator unknownsIter;
-//  cout << "Unknowns: ";
-//  foreach(unknownsIter, unknowns) {
-//    cout << current_element(unknownsIter) << " ";
-//  }
-//  cout << endl;
+  cout << "Causalized Equations: " << endl;
+  foreach(iter, causalizedEquations) {
+    cout << current_element(iter) << endl;
+  }
 
   return 0;
 }
