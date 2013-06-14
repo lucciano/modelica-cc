@@ -35,7 +35,7 @@ fi
 
 # Checks for libraries.
 AC_LANG([C++])
-AC_CHECK_LIB([ginac],[GiNaC::ex::evalf],[], [], [])
+AC_CHECK_HEADERS([ginac/ginac.h],[],[AC_MSG_ERROR([MCC needs libginac.])],[])
 
 # Checks for header files.
 AX_BOOST_BASE([],[], AC_MSG_ERROR([MCC needs boost library.]))
