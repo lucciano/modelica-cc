@@ -5,6 +5,7 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             util/type_check.o \
             util/symbol_table.o \
             util/solve.o \
+            util/ginac_interface.o \
             causalize/main.o \
             causalize/state_variables_finder.o \
             causalize/discrete_variables_finder.o \

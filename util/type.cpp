@@ -22,112 +22,114 @@
 
 ostream & operator<<(ostream &os , const Type_ &e )
 {
-    os << e.print();  
+    os << e.print();
     return os;
 }
 
-ostream & operator<<(ostream &os , const Type &e ) 
+ostream & operator<<(ostream &os , const Type &e )
 {
-  os << *e;
-  return os;
+    os << *e;
+    return os;
 }
 
-string Type_Real_ :: print() const 
+string Type_Real_ :: print() const
 {
-	stringstream ret(stringstream::out);
+    stringstream ret(stringstream::out);
     ret << "Real" ;
     return ret.str();
 }
 
 string Type_Integer_ :: print() const
 {
-	stringstream ret(stringstream::out);
+    stringstream ret(stringstream::out);
     ret << "Integer" ;
     return ret.str();
 }
 
 string Type_Boolean_ :: print() const
 {
-	stringstream ret(stringstream::out);
+    stringstream ret(stringstream::out);
     ret << "Boolean" ;
     return ret.str();
 }
 
 string Type_String_ :: print() const
 {
-	stringstream ret(stringstream::out);
+    stringstream ret(stringstream::out);
     ret << "String" ;
     return ret.str();
 }
 
 string Type_Array_ :: print() const
 {
-	stringstream ret(stringstream::out);
-	AST_ExpressionList exls = newAST_ExpressionList();
-	Type tt = _t;
-	AST_ListPrepend(exls, _dim);
-	while ( tt->getType() == TYARRAY ) {
-		AST_ListPrepend(exls, tt->getAsArray()->dimension() );
-		tt = tt->getAsArray()-> arrayOf();
-	}
-	
-	ret <<  tt->print() << " [" ;
-	AST_ExpressionListIterator exit = exls->begin();
-	int s = exls->size();
-	for(int i = 0; i < s; i++)
-		ret << current_element(exit++) <<  ( i + 1 < s ? "," :   "") ;
-	
-	ret << "]" ;
+    stringstream ret(stringstream::out);
+    AST_ExpressionList exls = newAST_ExpressionList();
+    Type tt = _t;
+    AST_ListPrepend(exls, _dim);
+    while ( tt->getType() == TYARRAY ) {
+        AST_ListPrepend(exls, tt->getAsArray()->dimension() );
+        tt = tt->getAsArray()-> arrayOf();
+    }
+
+    ret <<  tt->print() << " [" ;
+    AST_ExpressionListIterator exit = exls->begin();
+    int s = exls->size();
+    for(int i = 0; i < s; i++)
+        ret << current_element(exit++) <<  ( i + 1 < s ? "," :   "") ;
+
+    ret << "]" ;
     return ret.str();
 }
 
-Type_Array_::Type_Array_(Type t, AST_Expression dim): _t(t) ,_dim(dim) {}; 
+Type_Array_::Type_Array_(Type t, AST_Expression dim): _t(t) ,_dim(dim) {};
 
-Type Type_Array_ ::arrayOf() { return _t;}
-
-Type_Array Type_::getAsArray() 
-{
-  return dynamic_cast<Type_Array_*>(this);
+Type Type_Array_ ::arrayOf() {
+    return _t;
 }
 
-Type_Tupla Type_::getAsTupla() 
+Type_Array Type_::getAsArray()
 {
-  return dynamic_cast<Type_Tupla_*>(this);
+    return dynamic_cast<Type_Array_*>(this);
 }
 
-Type_Function Type_::getAsFunction() 
+Type_Tupla Type_::getAsTupla()
 {
-  return dynamic_cast<Type_Function_ *>(this);
+    return dynamic_cast<Type_Tupla_*>(this);
+}
+
+Type_Function Type_::getAsFunction()
+{
+    return dynamic_cast<Type_Function_ *>(this);
 }
 
 
 int operator==( Type_ &e1 ,  Type_ &e2 )
 {
     if (e1.getType() == e2.getType()) {
-		switch (e1.getType())
-		{
-			case TYARRAY:
-				return ( *(e1.getAsArray()->arrayOf()) == e2.getAsArray()->arrayOf() );
-			case TYTUPLA:
-			{
-				Type_Tupla t1 = e1.getAsTupla(),t2 = e2.getAsTupla();
-				if ( t2->tupla()->size() != t1->tupla()->size() ) return 0;
-				TypeListIterator it1 = t1->tupla()->begin() , it2 = t1->tupla()->begin();
-				foreach(it1,t1->tupla()) {
-					if ( *current_element(it1)  != current_element(it2) ) return 0;
-					it2++;
-				}
-				return 1;
-			}
-			case TYFUNCTION: // No es necesario!!
-			{
-				Type_Function f1 = e1.getAsFunction(),f2 = e2.getAsFunction();
-				return (  *(f1->output()) == f2->output() );
-			}
-			default:
-				return 1;	
-		}
-	} else return 0; 
+        switch (e1.getType())
+        {
+        case TYARRAY:
+            return ( *(e1.getAsArray()->arrayOf()) == e2.getAsArray()->arrayOf() );
+        case TYTUPLA:
+        {
+            Type_Tupla t1 = e1.getAsTupla(),t2 = e2.getAsTupla();
+            if ( t2->tupla()->size() != t1->tupla()->size() ) return 0;
+            TypeListIterator it1 = t1->tupla()->begin() , it2 = t1->tupla()->begin();
+            foreach(it1,t1->tupla()) {
+                if ( *current_element(it1)  != current_element(it2) ) return 0;
+                it2++;
+            }
+            return 1;
+        }
+        case TYFUNCTION: // No es necesario!!
+        {
+            Type_Function f1 = e1.getAsFunction(),f2 = e2.getAsFunction();
+            return (  *(f1->output()) == f2->output() );
+        }
+        default:
+            return 1;
+        }
+    } else return 0;
 }
 
 int operator==( Type_ &e1  ,  Type e2 )
@@ -150,16 +152,16 @@ Type_Tupla_::Type_Tupla_(TypeList tyl): _tyl(tyl) {};
 
 string Type_Tupla_ :: print() const
 {
-	stringstream ret(stringstream::out);
-	TypeListIterator tyit;
-	int i = 0 , s = _tyl->size();
-	ret << "< " ;
-	foreach(tyit , _tyl) {
-		i++;
-		ret << current_element(tyit);
-		if (i < s) ret << " , " ;
-	}
-	ret << " > " ;
+    stringstream ret(stringstream::out);
+    TypeListIterator tyit;
+    int i = 0 , s = _tyl->size();
+    ret << "< " ;
+    foreach(tyit , _tyl) {
+        i++;
+        ret << current_element(tyit);
+        if (i < s) ret << " , " ;
+    }
+    ret << " > " ;
     return ret.str();
 }
 
@@ -167,19 +169,19 @@ Type_Function_::Type_Function_(Type o , TypeList i): _input(i) , _output(o)  {};
 
 string Type_Function_ :: print() const
 {
-	stringstream ret(stringstream::out);
-	TypeListIterator tyit;
-	int i = 0 , s = _input->size();
-	
-	ret << _output << "  function ";
-	
-	ret << "( " ;
-	foreach(tyit , _input) {
-		i++;
-		ret << current_element(tyit);
-		if (i < s) ret << " , " ;
-	}
-	ret << " ) " ;
+    stringstream ret(stringstream::out);
+    TypeListIterator tyit;
+    int i = 0 , s = _input->size();
+
+    ret << _output << "  function ";
+
+    ret << "( " ;
+    foreach(tyit , _input) {
+        i++;
+        ret << current_element(tyit);
+        if (i < s) ret << " , " ;
+    }
+    ret << " ) " ;
     return ret.str();
 }
 

@@ -22,7 +22,7 @@
 #include <ast/expression.h>
 #include <util/symbol_table.h>
 
-#ifndef AST_UTIL 
+#ifndef AST_UTIL
 #define AST_UTIL
 #define IS_CREF(X) ((X)->expressionType()==EXPCOMPREF)
 #define IS_UMINUS(X) ((X)->expressionType()==EXPUMINUS)
@@ -57,81 +57,81 @@
 
 class AST_Expression_Traverse {
 public:
-  AST_Expression mapTraverse(AST_Expression);
+    AST_Expression mapTraverse(AST_Expression);
 private:
-  virtual AST_Expression mapTraverseElement(AST_Expression) = 0;
+    virtual AST_Expression mapTraverseElement(AST_Expression) = 0;
 };
 
 template<class R>
 class AST_Expression_Fold {
 public:
-  R foldTraverse(AST_Expression e) {
-    switch (e->expressionType()) {
-      case EXPBINOP:
+    R foldTraverse(AST_Expression e) {
+        switch (e->expressionType()) {
+        case EXPBINOP:
         {
-        AST_Expression_BinOp b = e->getAsBinOp();
-        return foldTraverseElement (foldTraverse(b->left()),foldTraverse(b->right()),b->binopType());
+            AST_Expression_BinOp b = e->getAsBinOp();
+            return foldTraverseElement (foldTraverse(b->left()),foldTraverse(b->right()),b->binopType());
         }
-      default:
-        return foldTraverseElement(e);
-    }
-  };
+        default:
+            return foldTraverseElement(e);
+        }
+    };
 private:
-  virtual R foldTraverseElement(AST_Expression) = 0;
-  virtual R foldTraverseElement(R, R, BinOpType) = 0;
+    virtual R foldTraverseElement(AST_Expression) = 0;
+    virtual R foldTraverseElement(R, R, BinOpType) = 0;
 
 };
 
 class EqualExp {
 public:
-  static bool equalTraverse(AST_Expression a, AST_Expression b);
+    static bool equalTraverse(AST_Expression a, AST_Expression b);
 private:
-  static bool equalTraverseElement(AST_Expression a, AST_Expression b);
+    static bool equalTraverseElement(AST_Expression a, AST_Expression b);
 };
 
 class IsConstant: public AST_Expression_Fold<bool> {
 public:
-   IsConstant(VarSymbolTable st): _st(st) {};
+    IsConstant(VarSymbolTable st): _st(st) {};
 private:
-  virtual bool foldTraverseElement(AST_Expression);
-  virtual bool foldTraverseElement(bool , bool , BinOpType);
-  VarSymbolTable _st;
+    virtual bool foldTraverseElement(AST_Expression);
+    virtual bool foldTraverseElement(bool , bool , BinOpType);
+    VarSymbolTable _st;
 };
 
 class ReplaceExp: public AST_Expression_Traverse  {
-  public:
+public:
     AST_Expression replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in);
 private:
-  virtual AST_Expression mapTraverseElement(AST_Expression);
-  AST_Expression _rep, _for_exp, _in;
+    virtual AST_Expression mapTraverseElement(AST_Expression);
+    AST_Expression _rep, _for_exp, _in;
 };
 
 
 class ReplaceBoolean: public AST_Expression_Fold<AST_Expression> {
 public:
-   ReplaceBoolean();
+    ReplaceBoolean();
 private:
-  virtual AST_Expression foldTraverseElement(AST_Expression);
-  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+    virtual AST_Expression foldTraverseElement(AST_Expression);
+    virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
 };
 
 
 
 class WhenEqualityTrasforms: public AST_Expression_Fold<AST_Expression> {
 public:
-   WhenEqualityTrasforms();
+    WhenEqualityTrasforms();
 private:
-  virtual AST_Expression foldTraverseElement(AST_Expression);
-  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+    virtual AST_Expression foldTraverseElement(AST_Expression);
+    virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
 };
 
 class PreChange: public AST_Expression_Fold<AST_Expression> {
 public:
-   PreChange(PreSet);
+    PreChange(PreSet);
 private:
-  PreSet _pre;
-  virtual AST_Expression foldTraverseElement(AST_Expression);
-  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+    PreSet _pre;
+    virtual AST_Expression foldTraverseElement(AST_Expression);
+    virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
 };
 
 #endif

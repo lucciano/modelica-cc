@@ -27,15 +27,6 @@
 
 class EquationSolver {
 public:
-  static AST_Expression solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr);
-};
-
-class ConvertToGiNaC: public AST_Expression_Fold<GiNaC::ex> {
-public:
-  GiNaC::symbol& getSymbol(AST_Expression_ComponentReference);
-private:
-  virtual GiNaC::ex foldTraverseElement(AST_Expression);
-  virtual GiNaC::ex foldTraverseElement(GiNaC::ex , GiNaC::ex , BinOpType);
-  map<string, GiNaC::symbol> directory;
+    static AST_Expression solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr);
 };
 #endif

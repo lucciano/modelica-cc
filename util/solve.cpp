@@ -25,90 +25,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
+#include <util/ginac_interface.h>
 
-#ifdef MATHOMATIC
-extern "C" {
-#include <mathomatic.h>
-}
-
-AST_Equation_Equality EquationSolver::solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr) {
-  stringstream eqs(ios_base::out);
-  stringstream crs(ios_base::out);
-  int r;
-
-  cerr << "Solving for " << cr << " from " << eq->print();
-  eqs << eq;
-  crs << "solve " << cr;
-  matho_init();
-  char *eq_buff= new char[eqs.str().size()];
-  char *cr_buff= new char[crs.str().size()];
-  strcpy(eq_buff,eqs.str().c_str());
-  strcpy(cr_buff,crs.str().c_str());
-  char *out;
-  matho_process(eq_buff,&out);
-  matho_process(cr_buff,&out);
-  printf("Library result string:\n%s\n", out);
-  string res(out+4);
-  AST_Expression e= parseExpression(res,&r);
-  cerr << "Result " << e << endl;
-  clear_all();
-  delete eq_buff;
-  delete cr_buff;
-  return NULL;
-}
-
-#else
-// GiNaC
-
-#include <ginac/ginac.h>
 AST_Expression EquationSolver::solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr) {
-  ConvertToGiNaC tog;
-  stringstream eqs(ios_base::out);
-  int r;
-
-  GiNaC::ex left=tog.foldTraverse(eq->left());
-  GiNaC::ex right=tog.foldTraverse(eq->right());
-  GiNaC::ex res= lsolve(left==right, tog.getSymbol(cr));
-  eqs << res;
-  AST_Expression rhs=parseExpression(eqs.str().c_str(),&r);
-  return rhs;
+    ConvertToGiNaC tog(NULL); // No var symbol table needed for now
+    ConvertToExpression toe;
+    GiNaC::ex left=tog.convert(eq->left());
+    GiNaC::ex right=tog.convert(eq->right());
+    GiNaC::ex res= lsolve(left==right, tog.getSymbol(cr));
+    return toe.convert(res);
 }
 
-
-GiNaC::ex ConvertToGiNaC::foldTraverseElement(GiNaC::ex l, GiNaC::ex r, BinOpType b) {
-  switch (b) {
-    case BINOPADD:
-      return l+r;
-    case BINOPSUB:
-      return l-r;
-    case BINOPMULT:
-      return l*r;
-    case BINOPDIV:
-      return l/r;
-  }
-}
-
-GiNaC::symbol& ConvertToGiNaC::getSymbol(AST_Expression_ComponentReference cr) {
-  string s=cr->name();
-  map<string, GiNaC::symbol>::iterator i = directory.find(s);
-  if (i != directory.end())
-    return i->second;
-  else
-  return directory.insert(make_pair(s, GiNaC::symbol(s))).first->second;
-}
-
-GiNaC::ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
-  switch (e->expressionType()) {
-    case EXPREAL: 
-     return GiNaC::ex(e->getAsReal()->val());
-     break;
-    case EXPINTEGER: 
-     return GiNaC::ex(e->getAsInteger()->val());
-     break;
-    case EXPCOMPREF: {
-     return getSymbol(e->getAsComponentReference());
-    }
-     break;
-  }
-}
-#endif
