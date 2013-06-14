@@ -26,266 +26,266 @@
 using namespace std;
 
 AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
-    AST_Expression e2 = mapTraverseElement(e);
-    switch (e2->expressionType()) {
-    case EXPBINOP:
-    {
-        AST_Expression_BinOp b = e2->getAsBinOp();
-        return newAST_Expression_BinOp(mapTraverse(b->left()),mapTraverse(b->right()), b->binopType());
+  AST_Expression e2 = mapTraverseElement(e);
+  switch (e2->expressionType()) {
+  case EXPBINOP:
+  {
+    AST_Expression_BinOp b = e2->getAsBinOp();
+    return newAST_Expression_BinOp(mapTraverse(b->left()),mapTraverse(b->right()), b->binopType());
+  }
+  case EXPBOOLEANNOT:
+  {
+    AST_Expression_BooleanNot n = e2->getAsBooleanNot();
+    return newAST_Expression_BooleanNot(mapTraverse(n->exp()));
+  }
+  case EXPUMINUS:
+  {
+    AST_Expression_UMinus m = e2->getAsUMinus();
+    return newAST_Expression_UnaryMinus(mapTraverse(m->exp()));
+  }
+  case EXPOUTPUT :
+  {
+    AST_Expression_Output b = e2->getAsOutput();
+    AST_ExpressionList ls = new list < AST_Expression > ();
+    AST_ListAppend(ls,mapTraverse( b->expressionList()->front() ))	;
+    return newAST_Expression_OutputExpressions(ls);
+  }
+  case EXPIF:
+  {
+    AST_Expression_If i = e2->getAsIf();
+    return newAST_Expression_If(mapTraverse(i->condition()), mapTraverse(i->then()), i->elseif_list(), mapTraverse(i->else_exp()));
+  }
+  case EXPCALL:
+  {
+    AST_Expression_Call c = e2->getAsCall();
+    AST_ExpressionList args = newAST_ExpressionList();
+    AST_ExpressionListIterator args_it;
+    foreach(args_it,c->arguments()) {
+      AST_ListAppend(args,mapTraverse(current_element(args_it)));
     }
-    case EXPBOOLEANNOT:
-    {
-        AST_Expression_BooleanNot n = e2->getAsBooleanNot();
-        return newAST_Expression_BooleanNot(mapTraverse(n->exp()));
-    }
-    case EXPUMINUS:
-    {
-        AST_Expression_UMinus m = e2->getAsUMinus();
-        return newAST_Expression_UnaryMinus(mapTraverse(m->exp()));
-    }
-    case EXPOUTPUT :
-    {
-        AST_Expression_Output b = e2->getAsOutput();
-        AST_ExpressionList ls = new list < AST_Expression > ();
-        AST_ListAppend(ls,mapTraverse( b->expressionList()->front() ))	;
-        return newAST_Expression_OutputExpressions(ls);
-    }
-    case EXPIF:
-    {
-        AST_Expression_If i = e2->getAsIf();
-        return newAST_Expression_If(mapTraverse(i->condition()), mapTraverse(i->then()), i->elseif_list(), mapTraverse(i->else_exp()));
-    }
-    case EXPCALL:
-    {
-        AST_Expression_Call c = e2->getAsCall();
-        AST_ExpressionList args = newAST_ExpressionList();
-        AST_ExpressionListIterator args_it;
-        foreach(args_it,c->arguments()) {
-            AST_ListAppend(args,mapTraverse(current_element(args_it)));
-        }
-        return newAST_Expression_Call(c->name(),newAST_StringNull(),args);
-    }
-    default:
-        /* TODO */
-        break;
-    }
-    return e2;
+    return newAST_Expression_Call(c->name(),newAST_StringNull(),args);
+  }
+  default:
+    /* TODO */
+    break;
+  }
+  return e2;
 }
 
 bool EqualExp::equalTraverse(AST_Expression a, AST_Expression b) {
-    if (a->expressionType()!=b->expressionType()) return false;
-    switch (a->expressionType()) {
-    case EXPBINOP:
-    {
-        AST_Expression_BinOp binOpA = a->getAsBinOp();
-        AST_Expression_BinOp binOpB = b->getAsBinOp();
-        equalTraverse(binOpA->left(), binOpB->left()) && equalTraverse(binOpA->right(), binOpB->right());
-    }
-    break;
-    default:
-        return equalTraverseElement(a, b);
-    }
-    return false;
+  if (a->expressionType()!=b->expressionType()) return false;
+  switch (a->expressionType()) {
+  case EXPBINOP:
+  {
+    AST_Expression_BinOp binOpA = a->getAsBinOp();
+    AST_Expression_BinOp binOpB = b->getAsBinOp();
+    equalTraverse(binOpA->left(), binOpB->left()) && equalTraverse(binOpA->right(), binOpB->right());
+  }
+  break;
+  default:
+    return equalTraverseElement(a, b);
+  }
+  return false;
 }
 
 bool EqualExp::equalTraverseElement(AST_Expression a, AST_Expression b) {
-    if (a->expressionType()!=b->expressionType()) return false;
-    switch (a->expressionType()) {
-    case EXPCOMPREF:
-    {
-        return CREF_NAME(a)==CREF_NAME(b);
-        break;
-    }
-    case EXPDERIVATIVE:
-    {
-        AST_Expression_ComponentReference compRef1 = a->getAsDerivative()->arguments()->front()->getAsComponentReference();
-        AST_Expression_ComponentReference compRef2 = b->getAsDerivative()->arguments()->front()->getAsComponentReference();
-        return CREF_NAME(compRef1)==CREF_NAME(compRef2);
-        break;
-    }
-    // TODO faltan casos a considerar.
-    default:
-        break;
-    }
-    return false;
+  if (a->expressionType()!=b->expressionType()) return false;
+  switch (a->expressionType()) {
+  case EXPCOMPREF:
+  {
+    return CREF_NAME(a)==CREF_NAME(b);
+    break;
+  }
+  case EXPDERIVATIVE:
+  {
+    AST_Expression_ComponentReference compRef1 = a->getAsDerivative()->arguments()->front()->getAsComponentReference();
+    AST_Expression_ComponentReference compRef2 = b->getAsDerivative()->arguments()->front()->getAsComponentReference();
+    return CREF_NAME(compRef1)==CREF_NAME(compRef2);
+    break;
+  }
+  // TODO faltan casos a considerar.
+  default:
+    break;
+  }
+  return false;
 }
 
 bool IsConstant::foldTraverseElement(bool b1, bool b2, BinOpType ) {
-    return b1 && b2;
+  return b1 && b2;
 }
 
 bool IsConstant::foldTraverseElement(AST_Expression e) {
-    switch (e->expressionType()) {
-    case EXPREAL:
-    case EXPINTEGER:
-    case EXPSTRING:
-    case EXPBOOLEAN:
-        return true;
-    case EXPCOMPREF:
-    {
-        AST_Expression_ComponentReference cr = e->getAsComponentReference();
-        VarInfo v = _st->lookup(cr->name());
-        if (v->isParameter()) return true;
-        // Check symbol table!!!
-        return false;
-    }
-    default:
-        break;
-    }
+  switch (e->expressionType()) {
+  case EXPREAL:
+  case EXPINTEGER:
+  case EXPSTRING:
+  case EXPBOOLEAN:
+    return true;
+  case EXPCOMPREF:
+  {
+    AST_Expression_ComponentReference cr = e->getAsComponentReference();
+    VarInfo v = _st->lookup(cr->name());
+    if (v->isParameter()) return true;
+    // Check symbol table!!!
     return false;
+  }
+  default:
+    break;
+  }
+  return false;
 };
 
 
 
 
 AST_Expression ReplaceExp::replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in) {
-    _rep=rep;
-    _for_exp=for_exp;
-    _in=in;
-    return mapTraverse(in);
+  _rep=rep;
+  _for_exp=for_exp;
+  _in=in;
+  return mapTraverse(in);
 }
 AST_Expression ReplaceExp::mapTraverseElement(AST_Expression e) {
-    if (EqualExp::equalTraverse(e,_rep))
-        return _for_exp;
-    return e;
+  if (EqualExp::equalTraverse(e,_rep))
+    return _for_exp;
+  return e;
 }
 
 
 ReplaceBoolean::ReplaceBoolean() {}
 
 AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression b1, AST_Expression b2, BinOpType t ) {
-    return newAST_Expression_BinOp(b1,b2,t);
+  return newAST_Expression_BinOp(b1,b2,t);
 }
 
 AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression e) {
-    switch (e->expressionType()) {
-    case EXPBOOLEAN:
-    {
-        AST_Expression_Boolean b = e->getAsBoolean();
-        if (b->value()) return newAST_Expression_Real(1.0);
-        else return newAST_Expression_Real(0.0);
-    }
+  switch (e->expressionType()) {
+  case EXPBOOLEAN:
+  {
+    AST_Expression_Boolean b = e->getAsBoolean();
+    if (b->value()) return newAST_Expression_Real(1.0);
+    else return newAST_Expression_Real(0.0);
+  }
 
-    default:
-    {
-        return e;
-    }
-    }
+  default:
+  {
+    return e;
+  }
+  }
 };
 
 WhenEqualityTrasforms::WhenEqualityTrasforms() {}
 
 AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression b1, AST_Expression b2, BinOpType t ) {
-    return newAST_Expression_BinOp(b1,b2,t);
+  return newAST_Expression_BinOp(b1,b2,t);
 }
 
 AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression e) {
-    switch (e->expressionType()) {
-    case EXPBOOLEAN:
-    {
-        AST_Expression_Boolean b = e->getAsBoolean();
-        if (b->value()) return newAST_Expression_Real(1.0);
-        else return newAST_Expression_Real(0.0);
+  switch (e->expressionType()) {
+  case EXPBOOLEAN:
+  {
+    AST_Expression_Boolean b = e->getAsBoolean();
+    if (b->value()) return newAST_Expression_Real(1.0);
+    else return newAST_Expression_Real(0.0);
+  }
+
+  case EXPUMINUS:
+  {
+    AST_Expression_UMinus u = e->getAsUMinus();
+    return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
+  }
+
+  case EXPOUTPUT :
+  {
+    AST_Expression_Output b = e->getAsOutput();
+    return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
+  }
+
+  case EXPCALL:
+  {
+    AST_Expression_Call call = e->getAsCall();
+    if (toStr(call->name())  == "edge") {
+      return  GREATER(  call->arguments()->front()   , _R(0.5) ) ;
     }
 
-    case EXPUMINUS:
-    {
-        AST_Expression_UMinus u = e->getAsUMinus();
-        return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
-    }
+    return call;
+  }
 
-    case EXPOUTPUT :
-    {
-        AST_Expression_Output b = e->getAsOutput();
-        return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
-    }
+  case EXPCOMPREF:
+  {
+    return e;
+  }
 
-    case EXPCALL:
-    {
-        AST_Expression_Call call = e->getAsCall();
-        if (toStr(call->name())  == "edge") {
-            return  GREATER(  call->arguments()->front()   , _R(0.5) ) ;
-        }
+  case EXPBOOLEANNOT:
+  {
+    AST_Expression_BooleanNot no = e->getAsBooleanNot();
+    return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
+  }
 
-        return call;
-    }
+  case EXPIF:
+  {
+    AST_Expression_If i = e->getAsIf();
+    AST_Expression eq1 = foldTraverse(i->then());
+    AST_Expression eq2 = foldTraverse(i->else_exp());
+    AST_Expression cond = foldTraverse(i->condition());
+    return newAST_Expression_If(cond,eq1,newAST_ExpressionList(),eq2);
+  }
 
-    case EXPCOMPREF:
-    {
-        return e;
-    }
-
-    case EXPBOOLEANNOT:
-    {
-        AST_Expression_BooleanNot no = e->getAsBooleanNot();
-        return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
-    }
-
-    case EXPIF:
-    {
-        AST_Expression_If i = e->getAsIf();
-        AST_Expression eq1 = foldTraverse(i->then());
-        AST_Expression eq2 = foldTraverse(i->else_exp());
-        AST_Expression cond = foldTraverse(i->condition());
-        return newAST_Expression_If(cond,eq1,newAST_ExpressionList(),eq2);
-    }
-
-    default:
-    {
-        return e;
-    }
-    }
+  default:
+  {
+    return e;
+  }
+  }
 };
 
 PreChange::PreChange(PreSet p) {
-    _pre = p;
+  _pre = p;
 }
 
 AST_Expression PreChange::foldTraverseElement(AST_Expression b1, AST_Expression b2, BinOpType t ) {
-    return newAST_Expression_BinOp(b1,b2,t);
+  return newAST_Expression_BinOp(b1,b2,t);
 }
 
 AST_Expression PreChange::foldTraverseElement(AST_Expression e) {
-    switch (e->expressionType()) {
+  switch (e->expressionType()) {
 
-    case EXPUMINUS:
-    {
-        AST_Expression_UMinus u = e->getAsUMinus();
-        return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
-    }
+  case EXPUMINUS:
+  {
+    AST_Expression_UMinus u = e->getAsUMinus();
+    return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
+  }
 
-    case EXPOUTPUT :
-    {
-        AST_Expression_Output b = e->getAsOutput();
-        return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
-    }
+  case EXPOUTPUT :
+  {
+    AST_Expression_Output b = e->getAsOutput();
+    return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
+  }
 
-    case EXPCALL:
-    {
-        AST_Expression_Call call = e->getAsCall();
-        AST_ExpressionListIterator it;
-        foreach(it , call->arguments()) current_element(it) = foldTraverse(current_element(it));
-        return call;
-    }
+  case EXPCALL:
+  {
+    AST_Expression_Call call = e->getAsCall();
+    AST_ExpressionListIterator it;
+    foreach(it , call->arguments()) current_element(it) = foldTraverse(current_element(it));
+    return call;
+  }
 
-    case EXPCOMPREF:
-    {
-        AST_Expression_ComponentReference cr = e->getAsComponentReference();
-        if (_pre->find(cr->name()) != _pre->end())
-            return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(static_cast<AST_Expression>(cr)));
-        return e;
-    }
+  case EXPCOMPREF:
+  {
+    AST_Expression_ComponentReference cr = e->getAsComponentReference();
+    if (_pre->find(cr->name()) != _pre->end())
+      return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(static_cast<AST_Expression>(cr)));
+    return e;
+  }
 
-    case EXPBOOLEANNOT:
-    {
-        AST_Expression_BooleanNot no = e->getAsBooleanNot();
-        return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
-    }
+  case EXPBOOLEANNOT:
+  {
+    AST_Expression_BooleanNot no = e->getAsBooleanNot();
+    return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
+  }
 
-    default:
-    {
-        return e;
-    }
-    }
+  default:
+  {
+    return e;
+  }
+  }
 };
 

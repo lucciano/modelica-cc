@@ -28,55 +28,55 @@ VarInfo_::VarInfo_ ( Type t, AST_TypePrefix tp, AST_Modification m, AST_Comment 
 
 
 bool VarInfo_::isState() {
-    return _state;
+  return _state;
 };
 
 void VarInfo_::setState() {
-    _state = true;
+  _state = true;
 };
 
 void VarInfo_::setDiscrete() {
-    _discrete = true;
+  _discrete = true;
 }
 
 Type VarInfo_::type() {
-    return _t;
+  return _t;
 };
 
 TypeSymbolTable_::TypeSymbolTable_() {
-    insert("String",  new Type_String_()  );
-    insert("Real",    new Type_Real_()    );
-    insert("Integer", new Type_Integer_() );
-    insert("Boolean", new Type_Boolean_() );
+  insert("String",  new Type_String_()  );
+  insert("Real",    new Type_Real_()    );
+  insert("Integer", new Type_Integer_() );
+  insert("Boolean", new Type_Boolean_() );
 }
 
 void VarSymbolTable_::initialize(TypeSymbolTable ty) {
-    VarInfo v=newVarInfo(ty->lookup("Real"),0,NULL,NULL);
-    v->setBuiltIn();
-    insert("time",v);
+  VarInfo v=newVarInfo(ty->lookup("Real"),0,NULL,NULL);
+  v->setBuiltIn();
+  insert("time",v);
 }
 ;
 ostream & operator<<(ostream &ret , const VarInfo_ &e )
 {
-    if (e.isParameter()) ret << "parameter ";
-    if (e.isDiscrete())  ret << "discrete ";
-    if (e.isConstant())  ret << "constant ";
-    if (e.isInput())     ret << "input ";
-    if (e.isOutput())    ret << "output ";
-    ret << e._t;
-    return ret;
+  if (e.isParameter()) ret << "parameter ";
+  if (e.isDiscrete())  ret << "discrete ";
+  if (e.isConstant())  ret << "constant ";
+  if (e.isInput())     ret << "input ";
+  if (e.isOutput())    ret << "output ";
+  ret << e._t;
+  return ret;
 }
 
 
 VarInfo newVarInfo( Type t, AST_TypePrefix tp, AST_Modification m , AST_Comment c) {
-    return new VarInfo_(t,tp,m,c);
+  return new VarInfo_(t,tp,m,c);
 }
 
 VarSymbolTable newVarSymbolTable()
 {
-    return new VarSymbolTable_;
+  return new VarSymbolTable_;
 }
 TypeSymbolTable newTypeSymbolTable()
 {
-    return new TypeSymbolTable_;
+  return new TypeSymbolTable_;
 }

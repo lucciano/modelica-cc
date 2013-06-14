@@ -27,6 +27,6 @@
 
 class EquationSolver {
 public:
-    static AST_Expression solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr);
+  static AST_Expression solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr);
 };
 #endif

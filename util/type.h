@@ -42,99 +42,99 @@ DEFINE_LIST(Type);
 
 class Type_ {
 public:
-    virtual TypesType getType() = 0;
-    virtual string print() const =0;
-    friend ostream & operator<<(ostream &os , const Type_ &e );
-    friend ostream & operator<<(ostream &os , const Type &e );
+  virtual TypesType getType() = 0;
+  virtual string print() const =0;
+  friend ostream & operator<<(ostream &os , const Type_ &e );
+  friend ostream & operator<<(ostream &os , const Type &e );
 
-    friend int operator==( Type_ &e1 ,  Type_ &e2 );
-    friend int operator==( Type_ &e1 ,  Type e2 );
+  friend int operator==( Type_ &e1 ,  Type_ &e2 );
+  friend int operator==( Type_ &e1 ,  Type e2 );
 
-    friend int operator!=( Type_ &e1 ,  Type_ &e2 );
-    friend int operator!=( Type_ &e1 ,  Type e2 );
+  friend int operator!=( Type_ &e1 ,  Type_ &e2 );
+  friend int operator!=( Type_ &e1 ,  Type e2 );
 
-    Type_Array getAsArray();
-    Type_Tupla getAsTupla();
-    Type_Function getAsFunction();
+  Type_Array getAsArray();
+  Type_Tupla getAsTupla();
+  Type_Function getAsFunction();
 };
 
 class Type_Real_ : public Type_ {
 public:
-    virtual TypesType getType() {
-        return TYREAL;
-    }
-    string print() const;
+  virtual TypesType getType() {
+    return TYREAL;
+  }
+  string print() const;
 };
 
 class Type_Integer_ : public Type_ {
 public:
-    virtual TypesType getType() {
-        return TYINTEGER;
-    }
-    string print() const;
+  virtual TypesType getType() {
+    return TYINTEGER;
+  }
+  string print() const;
 };
 
 class Type_Boolean_ : public Type_ {
 public:
-    virtual TypesType getType() {
-        return TYBOOLEAN;
-    }
-    string print() const;
+  virtual TypesType getType() {
+    return TYBOOLEAN;
+  }
+  string print() const;
 };
 
 class Type_String_ : public Type_ {
 public:
-    virtual TypesType getType() {
-        return TYSTRING ;
-    }
-    string print() const;
+  virtual TypesType getType() {
+    return TYSTRING ;
+  }
+  string print() const;
 };
 
 class Type_Array_ : public Type_ {
 public:
-    Type_Array_(Type t, AST_Expression dim);
-    virtual TypesType getType() {
-        return TYARRAY ;
-    }
-    string print() const;
-    Type arrayOf();
-    AST_Expression dimension() {
-        return _dim;
-    }
+  Type_Array_(Type t, AST_Expression dim);
+  virtual TypesType getType() {
+    return TYARRAY ;
+  }
+  string print() const;
+  Type arrayOf();
+  AST_Expression dimension() {
+    return _dim;
+  }
 private:
-    Type _t;
-    AST_Expression _dim;
+  Type _t;
+  AST_Expression _dim;
 };
 
 class Type_Tupla_ : public Type_ {
 public:
-    Type_Tupla_(TypeList tyl);
-    string print() const;
-    TypeList tupla() {
-        return _tyl;
-    }
-    virtual TypesType getType() {
-        return TYTUPLA ;
-    }
+  Type_Tupla_(TypeList tyl);
+  string print() const;
+  TypeList tupla() {
+    return _tyl;
+  }
+  virtual TypesType getType() {
+    return TYTUPLA ;
+  }
 private:
-    TypeList _tyl;
+  TypeList _tyl;
 };
 
 class Type_Function_ : public Type_ {
 public:
-    Type_Function_( Type output , TypeList input);
-    string print() const;
-    TypeList input() {
-        return _input;
-    }
-    Type output() {
-        return _output;
-    }
-    virtual TypesType getType() {
-        return TYFUNCTION ;
-    }
+  Type_Function_( Type output , TypeList input);
+  string print() const;
+  TypeList input() {
+    return _input;
+  }
+  Type output() {
+    return _output;
+  }
+  virtual TypesType getType() {
+    return TYFUNCTION ;
+  }
 private:
-    TypeList _input;
-    Type _output;
+  TypeList _input;
+  Type _output;
 };
 #endif

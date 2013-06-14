@@ -28,11 +28,15 @@
 #include <util/ginac_interface.h>
 
 AST_Expression EquationSolver::solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr) {
-    ConvertToGiNaC tog(NULL); // No var symbol table needed for now
-    ConvertToExpression toe;
-    GiNaC::ex left=tog.convert(eq->left());
-    GiNaC::ex right=tog.convert(eq->right());
-    GiNaC::ex res= lsolve(left==right, tog.getSymbol(cr));
-    return toe.convert(res);
+  ConvertToGiNaC tog(NULL); // No var symbol table needed for now
+  ConvertToExpression toe;
+  GiNaC::ex left=tog.convert(eq->left());
+  GiNaC::ex right=tog.convert(eq->right());
+  if (!left.has(tog.getSymbol(cr)) && !right.has(tog.getSymbol(cr))) {
+    cerr << "SOLVE: Variable " << tog.getSymbol(cr) << " not found in equation"<<endl;
+    return newAST_Expression_Null();
+  }
+  GiNaC::ex res= lsolve(left==right, tog.getSymbol(cr));
+  return toe.convert(res);
 }
 
