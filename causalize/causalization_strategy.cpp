@@ -8,6 +8,7 @@
 #include <causalize/causalization_strategy.h>
 #include <ast/equation.h>
 #include <causalize/compref_occurrence_traverse.h>
+#include <causalize/debug.h>
 
 #include <iostream>
 
@@ -15,6 +16,8 @@ CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations,
 		AST_ExpressionList unknowns) {
 
 	// TODO [Moya] check #equations = # unknowns
+
+  int index = 0;
 
   _acausalEqs = new list<Vertex>;
   _unknowns = new list<Vertex>;
@@ -25,28 +28,41 @@ CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations,
   MMO_EquationListIterator eqIter;
   AST_ExpressionListIterator expIter;
 
+  DEBUG('c', INFO, "Building causalization graph...\n");
+
+  DEBUG('c', INFO, "Equation indexes:\n");
+
   foreach(eqIter, equations) {
     VertexProperties *vp = new VertexProperties;
     vp->eq = current_element(eqIter);
+    vp->index = index++;
     Vertex v = add_vertex(*vp, _graph);
     _acausalEqs->push_back(v);
+    DEBUG('c', INFO, "%s: %d\n", vp->eq->print().c_str(), vp->index);
   }
 
+  DEBUG('c', INFO, "Unknown indexes:\n");
+
+  index = 0;
   foreach(expIter, unknowns) {
     VertexProperties *vp = new VertexProperties;
     vp->unknown = current_element(expIter);
+    vp->index = index++;
     Vertex v = add_vertex(*vp, _graph);
     _unknowns->push_back(v);
+    DEBUG('c', INFO, "%s: %d\n", vp->unknown->print().c_str(), vp->index);
    }
 
-  list<Vertex>::iterator acausalEqsIter, unknownsIter;
+  DEBUG('c', INFO, "Graph edges:\n");
 
+  list<Vertex>::iterator acausalEqsIter, unknownsIter;
   foreach(acausalEqsIter, _acausalEqs) {
     foreach(unknownsIter, _unknowns) {
       Vertex eqVertex = current_element(acausalEqsIter);
       Vertex unknownVertex = current_element(unknownsIter);
       if(occur(_graph[unknownVertex].unknown, _graph[eqVertex].eq)) {
         add_edge(eqVertex, unknownVertex, BLACK, _graph);
+        DEBUG('c', INFO, "(%d, %d)\n", _graph[eqVertex].index, _graph[unknownVertex].index);
       }
     }
   }
@@ -59,6 +75,16 @@ CausalizationStrategy::~CausalizationStrategy() {
 MMO_EquationList CausalizationStrategy::causalize() {
 
   if(_acausalEqs->empty()) {
+
+    MMO_EquationListIterator iter;
+
+    foreach(iter, _causalEqs1) {
+      cout << current_element(iter);
+    }
+    foreach(iter, _causalEqsN) {
+      cout << current_element(iter);
+    }
+
     _causalEqs1->insert(_causalEqs1->end(), _causalEqsN->begin(), _causalEqsN->end());
     return _causalEqs1;
   }
@@ -71,9 +97,11 @@ MMO_EquationList CausalizationStrategy::causalize() {
     Vertex eq = current_element(iter);
     Edge blackEdge;
     if(processVertex(eq, &blackEdge) == 1) {
-      colorAdjacentEdges(target(blackEdge, _graph));
+      Vertex unknown = target(blackEdge, _graph);
+      colorAdjacentEdges(unknown, blackEdge);
       _causalEqs1->push_back(_graph[eq].eq);
       _acausalEqs->erase(iter);
+      _unknowns->remove(unknown);
     }
   }
 
@@ -84,7 +112,7 @@ MMO_EquationList CausalizationStrategy::causalize() {
     Edge blackEdge;
     if(processVertex(unknown, &blackEdge) == 1) {
       Vertex eq = target(blackEdge, _graph);
-      colorAdjacentEdges(eq);
+      colorAdjacentEdges(eq, blackEdge);
       _causalEqsN->push_back(_graph[eq].eq);
       _acausalEqs->remove(eq);
       _unknowns->erase(iter);
@@ -121,9 +149,14 @@ int CausalizationStrategy::processVertex(Vertex v, Edge *blackEdge) {
   return blackEdges;
 }
 
-void CausalizationStrategy::colorAdjacentEdges(Vertex v) {
+// TODO se puede optimizar ya que hay vertices para los cuales
+// puede que ya no sea necesario colorear nada porque ya han sido
+// coloreados.
+void CausalizationStrategy::colorAdjacentEdges(Vertex v, Edge blackEdge) {
   CausalizationGraph::out_edge_iterator ei, ei_end;
   for(boost::tie(ei, ei_end) = out_edges(v, _graph); ei != ei_end; ei++) {
-    _graph[*ei] = BLUE;
+    if (*ei != blackEdge) {
+      _graph[*ei] = BLUE;
+    }
   }
 }

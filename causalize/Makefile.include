@@ -5,16 +5,15 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             util/type_check.o \
             util/symbol_table.o \
             causalize/main.o \
+            causalize/debug.o \
             causalize/state_variables_finder.o \
             causalize/discrete_variables_finder.o \
             causalize/unknowns_collector.o \
             causalize/compref_occurrence_traverse.o \
             causalize/causalization_strategy.o
 
-LIB_CAUSALIZE = -lginac
-
 causalize/causalize: $(OBJS_CAUSALIZE)
-	$(CXX) $(CXXFLAGS) -o causalize/causalize $(OBJS_CAUSALIZE) $(LIB_CAUSALIZE)
+	$(CXX) $(CXXFLAGS) -o causalize/causalize $(OBJS_CAUSALIZE)
 
 
 

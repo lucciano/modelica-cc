@@ -30,17 +30,34 @@
 #include <causalize/discrete_variables_finder.h>
 #include <causalize/unknowns_collector.h>
 #include <causalize/causalization_strategy.h>
+#include <causalize/debug.h>
 
 using namespace std;
 
 int main(int argc, char ** argv)
 {
+
   int r;
+  int opt;
+
   if (argc<2) {
-    cerr << "Usage:\ncausalize file.mo\n";
+    cerr << "Usage:\ncausalize [-d] file.mo\n";
     return -1;
   }
-  AST_StoredDefinition sd = parseFile(argv[1],&r);
+
+  while ((opt = getopt(argc, argv, "d:")) != -1) {
+    switch (opt) {
+     case 'd':
+       if (optarg != NULL) {
+         debugInit(optarg);
+       } else {
+         debugInit("+");
+       }
+       break;
+    }
+  }
+
+  AST_StoredDefinition sd = parseFile(argv[optind],&r);
   if (r!=0) 
     return -1;
 
@@ -50,10 +67,10 @@ int main(int argc, char ** argv)
   MMO_EquationListIterator iter;
   MMO_EquationList acausalEquations = c->getEquations();
 
-  cout << "Acausal Equations: " << endl;
-  foreach(iter, acausalEquations) {
-    cout << current_element(iter) << endl;
-  }
+//  cout << "Acausal Equations: " << endl;
+//  foreach(iter, acausalEquations) {
+//    cout << current_element(iter);
+//  }
 
   StateVariablesFinder *stateFinder = new StateVariablesFinder(c);
   stateFinder->findStateVariables();
@@ -64,10 +81,10 @@ int main(int argc, char ** argv)
   CausalizationStrategy *strategy = new CausalizationStrategy(c->getEquations(), unknowns);
   MMO_EquationList causalizedEquations = strategy->causalize();
 
-  cout << "Causalized Equations: " << endl;
-  foreach(iter, causalizedEquations) {
-    cout << current_element(iter) << endl;
-  }
+//  cout << "Causalized Equations: " << endl;
+//  foreach(iter, causalizedEquations) {
+//    cout << current_element(iter);
+//  }
 
   return 0;
 }

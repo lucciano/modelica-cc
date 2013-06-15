@@ -18,6 +18,7 @@ enum EdgeColor { BLACK, BLUE };
 struct VertexProperties {
   MMO_Equation eq;
   AST_Expression unknown;
+  int index; // only for debugging purposes
 };
 
 typedef boost::adjacency_list<boost::listS,
@@ -32,8 +33,8 @@ public:
 	MMO_EquationList causalize();
 private:
 	bool occur(AST_Expression unknown, MMO_Equation equation);
-	int processVertex(Vertex v, Edge *black_edge);
-	void colorAdjacentEdges(Vertex v);
+	int processVertex(Vertex v, Edge *blackEdge);
+	void colorAdjacentEdges(Vertex v, Edge blackEdge);
 	CausalizationGraph _graph;
 	list<Vertex> *_acausalEqs;
 	list<Vertex> *_unknowns;
