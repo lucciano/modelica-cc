@@ -38,5 +38,6 @@ AST_Expression EquationSolver::solve(AST_Equation_Equality eq, AST_Expression_Co
   }
   GiNaC::ex res= lsolve(left==right, tog.getSymbol(cr));
   return toe.convert(res);
+  return NULL;
 }
 
