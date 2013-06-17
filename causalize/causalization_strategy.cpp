@@ -38,7 +38,7 @@ CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations,
     vp->index = index++;
     Vertex v = add_vertex(*vp, _graph);
     _acausalEqs->push_back(v);
-    DEBUG('c', INFO, "%s: %d\n", vp->eq->print().c_str(), vp->index);
+    DEBUG('c', INFO, "%d: %s", vp->index, vp->eq->print().c_str());
   }
 
   DEBUG('c', INFO, "Unknown indexes:\n");
@@ -50,7 +50,7 @@ CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations,
     vp->index = index++;
     Vertex v = add_vertex(*vp, _graph);
     _unknowns->push_back(v);
-    DEBUG('c', INFO, "%s: %d\n", vp->unknown->print().c_str(), vp->index);
+    DEBUG('c', INFO, "%d: %s\n", vp->index, vp->unknown->print().c_str());
    }
 
   DEBUG('c', INFO, "Graph edges:\n");
@@ -62,10 +62,11 @@ CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations,
       Vertex unknownVertex = current_element(unknownsIter);
       if(occur(_graph[unknownVertex].unknown, _graph[eqVertex].eq)) {
         add_edge(eqVertex, unknownVertex, BLACK, _graph);
-        DEBUG('c', INFO, "(%d, %d)\n", _graph[eqVertex].index, _graph[unknownVertex].index);
+        DEBUG('c', INFO, "(%d, %d) ", _graph[eqVertex].index, _graph[unknownVertex].index);
       }
     }
   }
+  DEBUG('c', INFO, "\n");
 
 }
 
