@@ -76,16 +76,6 @@ CausalizationStrategy::~CausalizationStrategy() {
 MMO_EquationList CausalizationStrategy::causalize() {
 
   if(_acausalEqs->empty()) {
-
-    MMO_EquationListIterator iter;
-
-    foreach(iter, _causalEqs1) {
-      cout << current_element(iter);
-    }
-    foreach(iter, _causalEqsN) {
-      cout << current_element(iter);
-    }
-
     _causalEqs1->insert(_causalEqs1->end(), _causalEqsN->begin(), _causalEqsN->end());
     return _causalEqs1;
   }

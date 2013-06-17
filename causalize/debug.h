@@ -35,6 +35,11 @@ enum Level {ERROR, WARNING, INFO};
 void debugInit(const char* flags);
 
 /**
+ * Print an INFO debug message, if flag is enabled.
+ **/
+void DEBUG (char flag, const char* format, ...);
+
+/**
  * Print a debug message, if flag is enabled.
  *
  * The format parameter and the subsequent vararg are pass to the printf function.

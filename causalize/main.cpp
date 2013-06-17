@@ -67,10 +67,10 @@ int main(int argc, char ** argv)
   MMO_EquationListIterator iter;
   MMO_EquationList acausalEquations = c->getEquations();
 
-//  cout << "Acausal Equations: " << endl;
-//  foreach(iter, acausalEquations) {
-//    cout << current_element(iter);
-//  }
+  DEBUG('c', "Acausal Equations:\n");
+  foreach(iter, acausalEquations) {
+    DEBUG('c', INFO, "%s", current_element(iter)->print().c_str());
+  }
 
   StateVariablesFinder *stateFinder = new StateVariablesFinder(c);
   stateFinder->findStateVariables();
@@ -81,10 +81,10 @@ int main(int argc, char ** argv)
   CausalizationStrategy *strategy = new CausalizationStrategy(c->getEquations(), unknowns);
   MMO_EquationList causalizedEquations = strategy->causalize();
 
-//  cout << "Causalized Equations: " << endl;
-//  foreach(iter, causalizedEquations) {
-//    cout << current_element(iter);
-//  }
+  DEBUG('c', "Causalized Equations:\n");
+  foreach(iter, causalizedEquations) {
+    DEBUG('c', "%s", current_element(iter)->print().c_str());
+  }
 
   return 0;
 }

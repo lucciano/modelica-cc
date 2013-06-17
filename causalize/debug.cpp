@@ -37,28 +37,37 @@ bool debugIsEnabled(char flag) {
       return false;
 }
 
-void DEBUG(char flag, Level level, const char *format, ...) {
+void vDEBUG(char flag, Level level, const char *format, va_list ap) {
   if (debugIsEnabled(flag)) {
-    va_list ap;
-    // You will get an unused variable message here -- ignore it.
-    va_start(ap, format);
     switch(level) {
       case ERROR:
         vfprintf(stderr, format, ap);
-        va_end(ap);
         fflush(stderr);
         break;
       case WARNING:
         vfprintf(stderr, format, ap);
-        va_end(ap);
         fflush(stderr);
         break;
       case INFO:
         vfprintf(stdout, format, ap);
-        va_end(ap);
         fflush(stdout);
         break;
     }
   }
 }
+
+void DEBUG(char flag, const char *format, ...) {
+  va_list ap;
+  va_start(ap, format);
+  vDEBUG(flag, INFO, format, ap);
+  va_end(ap);
+}
+
+void DEBUG(char flag, Level level, const char *format, ...) {
+  va_list ap;
+  va_start(ap, format);
+  vDEBUG(flag, level, format, ap);
+  va_end(ap);
+}
+
 
