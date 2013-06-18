@@ -15,17 +15,7 @@ model Prueba
 	end sin;	
 	
 equation
-	if tt then 
-		if j then 
-			a = 1;
-		else 
-			b = 15;
-		end if;	
-	else 
-		c = 15;
-	end if;	
-algorithm
-	when j then 
-		tt := true;
-	end when;	
+	for i in {1,2,3} loop
+		a = m[i] < 20;
+	end for;	
 end Prueba;     

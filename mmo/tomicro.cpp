@@ -34,6 +34,10 @@ void MMO_ToMicroModelica_::transform()
 	/* Aca comienza todo el ciclo */
 	checkStatement(_c->getStatements());
 	checkStatement(_c->getIniStatements());
+	
+	initialFrame.push(_c->getIniStatements());
+	
+	
 	transformEqList(_c->getIniEquations() , _c->getIniStatements(), NULL );
 	transformEqList(_c->getEquations()    , _c->getStatements()   , NULL );
 	
@@ -152,6 +156,13 @@ AST_Expression negar_cond(AST_Expression cond)
 	}
 }
 
+MMO_Statement MMO_ToMicroModelica_::make_if(AST_Expression cond , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , I(1)) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , I(0)) );
+	AST_Statement_ElseList elList = newAST_Statement_ElseList(); 
+	return newAST_Statement_If( cond , l1 , elList , l2 );	
+}
 
 MMO_Statement MMO_ToMicroModelica_::make_when(AST_Expression cond , AST_Expression_ComponentReference var)
 {
@@ -202,7 +213,6 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 				case BINOPCOMPNE: 
 				case BINOPCOMPEQ:
 				{
-					
 					AST_Expression e1 =  toMicro_exp(b->left(),stList,iMap);
 					AST_Expression e2 =  toMicro_exp(b->right(),stList,iMap);
 					AST_ExpressionList indexList = newAST_ExpressionList();
@@ -227,6 +237,7 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 					}
 					AST_Expression _b = newAST_Expression_BinOp( e1 , e2 ,b->binopType()  );
 					AST_ListAppend(stList, make_when( _b, cr->getAsComponentReference() ));
+					AST_ListAppend(initialFrame.top(), make_if( _b, cr->getAsComponentReference() ));
 					return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(cr));
 					
 				}
@@ -635,10 +646,19 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_for (AST_Equation_For f, MMO_State
 	IndexMap _iMap = viewIndex(iMap,f->forIndexList());
 	MMO_StatementList stLs = newAST_StatementList();
 	
+	initialFrame.push(newAST_StatementList());
+	
 	transformEqList(f->equationList() , stLs , _iMap);
 	
 	if (stLs->size() > 0)
 		AST_ListAppend(stList , newAST_Statement_For(f->forIndexList() , stLs) ) ;
+	
+	MMO_StatementList iniLS = initialFrame.top();
+	initialFrame.pop();
+	
+	if (iniLS->size() > 0)
+		AST_ListAppend(initialFrame.top() , newAST_Statement_For(f->forIndexList() , iniLS) ) ;	
+		
 	return f;
 } 
 

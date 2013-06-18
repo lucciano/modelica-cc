@@ -25,6 +25,7 @@
 #include <util/type.h>
 #include <util/ast_util.h>
 #include <set>
+#include <stack>
 
 #ifndef TOMICRO_H
 #define TOMICRO_H
@@ -62,6 +63,8 @@ private:
 	AST_String  new_label();
 	PreSet _pre;
 	
+	stack<MMO_StatementList> initialFrame;
+	
 	void transformEqList(AST_EquationList  , AST_StatementList,IndexMap );
 	
 	/*  Trasforma las Equaciones de Igualdad*/
@@ -78,6 +81,9 @@ private:
 	
 	 /*  Transforma las equaciones WHEN */ 
 	void				toMicro_eq_when (AST_Equation,MMO_StatementList );
+	 
+	/* Genera el if para statement initial */
+	MMO_Statement 		make_if(AST_Expression cond , AST_Expression_ComponentReference var);
 	
 	/* Niega las primeras i-th condiciones (Utilizado en el IF )*/
 	AST_Expression 		makeCondition(AST_ExpressionList  , unsigned int  );
