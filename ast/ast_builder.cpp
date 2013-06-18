@@ -155,7 +155,11 @@ AST_ExpressionList newAST_ExpressionList() {
   return l;
 }
 
-AST_Argument AST_ArgumentSet(bool b1, bool b2, AST_Argument arg) {
+AST_Argument AST_ArgumentSet(bool each, bool final, AST_Argument arg) {
+  if (each) 
+    arg->setEach();
+  if (final)
+    arg->setFinal();
   return arg;
 }
 

@@ -812,7 +812,14 @@ AST_Modification MMO_ToMicroModelica_::ChangeModifications(AST_Modification m)
 				AST_ArgumentListIterator it;
 				foreach(it, cc->arguments()) {
 					AST_Argument_Modification mm = current_element(it)->getAsModification();
-					if ( toStr(mm->name()) == "start")	AST_ListAppend(args , newAST_Argument_Modification(mm->name() , ChangeModifications(mm->modification()) )   );
+					if ( toStr(mm->name()) == "start")	{
+            AST_Argument mod = newAST_Argument_Modification(mm->name() , ChangeModifications(mm->modification()) );
+            if (mm->isFinal())
+              mod->setFinal();
+            if (mm->hasEach())
+              mod->setEach();
+            AST_ListAppend(args , mod);
+          }
 					else AST_ListAppend(args,static_cast<AST_Argument>(mm));
 				}
 			}

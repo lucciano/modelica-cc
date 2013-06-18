@@ -86,6 +86,8 @@ AST_Argument_Modification_::AST_Argument_Modification_(AST_String name, AST_Modi
 
 string AST_Argument_Modification_::print() const {
   stringstream ret(stringstream::out);
+  if (hasEach()) 
+    ret << "each ";
   if (modification()!=NULL)
     ret << name() << modification();
   else
@@ -116,3 +118,21 @@ ModificationType AST_Modification_Assign_::modificationType() {
 
 
 
+/* Argumnet */
+void AST_Argument_::setFinal() {
+  _final=true;
+}
+
+void AST_Argument_::setEach() {
+  _each=true;
+}
+
+bool AST_Argument_::hasEach() const {
+  return _each;
+}
+
+bool AST_Argument_::isFinal() const {
+  return _final;
+}
+AST_Argument_::AST_Argument_(): _final(false), _each(false) {
+}

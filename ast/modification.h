@@ -28,11 +28,17 @@
 class AST_Argument_: public AST_Node_ {
 public:
   DEFINE_CLASS_PRINTER(AST_Argument);
+  AST_Argument_();
   virtual string print() const =0;
-
+  void setFinal();
+  void setEach();
+  bool isFinal() const;
+  bool hasEach() const; 
   /* Conversion with dynamics casts */
   GET_AS(Argument,Modification);
   GET_AS(Argument,Redeclaration);
+private:
+  bool _final,_each;
 };
 
 class AST_Argument_Modification_: public AST_Argument_ {
