@@ -19,6 +19,7 @@
 
 #include <causalize/debug.h>
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -37,37 +38,28 @@ bool debugIsEnabled(char flag) {
       return false;
 }
 
-void vDEBUG(char flag, Level level, const char *format, va_list ap) {
+void DEBUG(char flag, const char *format, ...) {
   if (debugIsEnabled(flag)) {
-    switch(level) {
-      case ERROR:
-        vfprintf(stderr, format, ap);
-        fflush(stderr);
-        break;
-      case WARNING:
-        vfprintf(stderr, format, ap);
-        fflush(stderr);
-        break;
-      case INFO:
-        vfprintf(stdout, format, ap);
-        fflush(stdout);
-        break;
-    }
+    va_list ap;
+    va_start(ap, format);
+    vfprintf(stdout, format, ap);
+    fflush(stdout);
+    va_end(ap);
   }
 }
 
-void DEBUG(char flag, const char *format, ...) {
-  va_list ap;
-  va_start(ap, format);
-  vDEBUG(flag, INFO, format, ap);
-  va_end(ap);
+bool isDebugParam(char *param) {
+  if (strcmp(param, "c") == 0) {
+    return true;
+  }
+  return false;
 }
 
-void DEBUG(char flag, Level level, const char *format, ...) {
+void ERROR(const char *format, ...) {
   va_list ap;
   va_start(ap, format);
-  vDEBUG(flag, level, format, ap);
+  vfprintf(stderr, format, ap);
+  fflush(stderr);
   va_end(ap);
+  exit(EXIT_FAILURE);
 }
-
-

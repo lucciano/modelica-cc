@@ -18,6 +18,7 @@
 
 ******************************************************************************/
 
+#include <cstdlib>
 #include <iostream>
 
 #include <parser/parse.h>
@@ -31,6 +32,7 @@
 #include <causalize/unknowns_collector.h>
 #include <causalize/causalization_strategy.h>
 #include <causalize/debug.h>
+
 
 using namespace std;
 
@@ -48,10 +50,10 @@ int main(int argc, char ** argv)
   while ((opt = getopt(argc, argv, "d:")) != -1) {
     switch (opt) {
      case 'd':
-       if (optarg != NULL) {
+       if (optarg != NULL && isDebugParam(optarg)) {
          debugInit(optarg);
        } else {
-         debugInit("+");
+         ERROR("command-line option d has no arguments\n");
        }
        break;
     }
@@ -69,7 +71,7 @@ int main(int argc, char ** argv)
 
   DEBUG('c', "Acausal Equations:\n");
   foreach(iter, acausalEquations) {
-    DEBUG('c', INFO, "%s", current_element(iter)->print().c_str());
+    DEBUG('c', "%s", current_element(iter)->print().c_str());
   }
 
   StateVariablesFinder *stateFinder = new StateVariablesFinder(c);

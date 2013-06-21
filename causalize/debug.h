@@ -22,7 +22,6 @@
 // debugging messages, controllable from the command line arguments
 // passed to modelicacc after de -d option.
 
-enum Level {ERROR, WARNING, INFO};
 
 /**
  * Initialize so that only DEBUG messages with a flag in flagList
@@ -39,9 +38,11 @@ void debugInit(const char* flags);
  **/
 void DEBUG (char flag, const char* format, ...);
 
-/**
- * Print a debug message, if flag is enabled.
- *
- * The format parameter and the subsequent vararg are pass to the printf function.
- **/
-void DEBUG (char flag, Level level, const char* format, ...);
+bool isDebugParam(char *param);
+
+/*
+ * Print an ERROR message. Then exits with EXIT_FAILURE status.
+ */
+void ERROR(const char *format, ...);
+
+
