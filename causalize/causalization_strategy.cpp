@@ -139,23 +139,3 @@ bool CausalizationStrategy::occur(AST_Expression unknown, MMO_Equation equation)
   return false;
 }
 
-//int CausalizationStrategy::processVertex(Vertex v, Edge *blackEdge) {
-//  CausalizationGraph::out_edge_iterator ei, ei_end;
-//  int blackEdges = 0;
-//  for(boost::tie(ei, ei_end) = out_edges(v, _graph); ei != ei_end; ei++) {
-//    if (_graph[*ei] == BLACK) {
-//      ++blackEdges;
-//      *blackEdge = *ei;
-//    }
-//  }
-//  return blackEdges;
-//}
-//
-//void CausalizationStrategy::removeAdjacentEdges(Vertex v, Edge e) {
-//  CausalizationGraph::out_edge_iterator ei, ei_end;
-//  for(boost::tie(ei, ei_end) = out_edges(v, _graph); ei != ei_end; ei++) {
-//    if (*ei != e) {
-//      remove_edge(*ei, _graph);
-//    }
-//  }
-//}
