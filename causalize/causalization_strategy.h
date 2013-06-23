@@ -13,8 +13,6 @@
 
 using namespace std;
 
-enum EdgeColor { BLACK, BLUE };
-
 struct VertexProperties {
   MMO_Equation eq;
   AST_Expression unknown;
@@ -22,7 +20,7 @@ struct VertexProperties {
 };
 
 typedef boost::adjacency_list<boost::listS,
-        boost::listS, boost::undirectedS, VertexProperties, EdgeColor> CausalizationGraph;
+        boost::listS, boost::undirectedS, VertexProperties> CausalizationGraph;
 typedef CausalizationGraph::vertex_descriptor Vertex;
 typedef CausalizationGraph::edge_descriptor Edge;
 
@@ -40,5 +38,4 @@ private:
 	list<Vertex> *_unknowns;
 	MMO_EquationList _causalEqs1; // equations numbered starting from 1
 	MMO_EquationList _causalEqsN; // equations numbered starting from n
-
 };
