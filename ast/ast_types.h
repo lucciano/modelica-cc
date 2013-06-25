@@ -221,6 +221,11 @@ list<T1> * AST_ListCopy(list<T1> *l1 ) {
   return ls;
 }
 
+template <typename T1>
+int AST_Length(list<T1> *l1) {
+  return l1->size();
+}
+
 /* Genera una lista con un solo elemento */
 template <typename T1>
 list<T1> * newAST_SimpleList(T1  t) {

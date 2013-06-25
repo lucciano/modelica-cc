@@ -29,21 +29,38 @@
 #include <ginac/ginac.h>
 #include <util/ginac_interface.h>
 
+using namespace GiNaC;
 REGISTER_FUNCTION(der, dummy())
-
+void my_print_power_dflt(const power & p, const print_dflt & c, unsigned level) {
+  // get the precedence of the 'power' class
+  unsigned power_prec = p.precedence();
+     
+  // if the parent operator has the same or a higher precedence
+  // we need parentheses around the power
+  if (level >= power_prec)
+    c.s << '(';
+  if (p.op(1).match(-1)) { 
+    c.s << "(1/" << p.op(0) << ")";
+  } else {
+    c.s << p.op(0) << "^" << p.op(1);
+  }
+  // don't forget the closing parenthesis
+  if (level >= power_prec)
+    c.s << ')';
+}
 ConvertToGiNaC::ConvertToGiNaC(VarSymbolTable  varEnv, bool forDerivation): _varEnv(varEnv),_forDerivation(forDerivation) {}
 
-GiNaC::ex ConvertToGiNaC::convert(AST_Expression e) {
+ex ConvertToGiNaC::convert(AST_Expression e) {
   return foldTraverse(e);
 }
 
 
-static GiNaC::ex var_derivative(const GiNaC::ex & x,const GiNaC::ex & y, unsigned diff_param) {
+static ex var_derivative(const ex & x,const ex & y, unsigned diff_param) {
   return der(x);
 }
 REGISTER_FUNCTION(var, derivative_func(var_derivative))
 
-GiNaC::ex ConvertToGiNaC::foldTraverseElement(GiNaC::ex l, GiNaC::ex r, BinOpType b) {
+ex ConvertToGiNaC::foldTraverseElement(ex l, ex r, BinOpType b) {
   switch (b) {
   case BINOPADD:
     return l+r;
@@ -56,36 +73,36 @@ GiNaC::ex ConvertToGiNaC::foldTraverseElement(GiNaC::ex l, GiNaC::ex r, BinOpTyp
   }
 }
 
-GiNaC::symbol& ConvertToGiNaC::getSymbol(AST_Expression_Derivative der) {
+symbol& ConvertToGiNaC::getSymbol(AST_Expression_Derivative der) {
   AST_Expression_ComponentReference cr=der->arguments()->front()->getAsComponentReference();
   string s=cr->name();
   s.insert(0,"__der_");
   AST_Expression_ComponentReference new_cr=AST_Expression_ComponentReference_Add(newAST_Expression_ComponentReference(),newAST_String(s),newAST_ExpressionList());
   return getSymbol(new_cr);
 }
-GiNaC::symbol& ConvertToGiNaC::getSymbol(AST_Expression_ComponentReference cr) {
+symbol& ConvertToGiNaC::getSymbol(AST_Expression_ComponentReference cr) {
   string s=cr->name();
-  map<string, GiNaC::symbol>::iterator i = directory.find(s);
+  map<string, symbol>::iterator i = directory.find(s);
   if (i != directory.end())
     return i->second;
   else
-    return directory.insert(make_pair(s, GiNaC::symbol(s))).first->second;
+    return directory.insert(make_pair(s, symbol(s))).first->second;
 }
 
-GiNaC::symbol& ConvertToGiNaC::getTime() {
+symbol& ConvertToGiNaC::getTime() {
   string s="time";
-  map<string, GiNaC::symbol>::iterator i = directory.find(s);
+  map<string, symbol>::iterator i = directory.find(s);
   if (i != directory.end())
     return i->second;
-  return directory.insert(make_pair(s, GiNaC::symbol(s))).first->second;
+  return directory.insert(make_pair(s, symbol(s))).first->second;
 }
 
-GiNaC::ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
+ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
   switch (e->expressionType()) {
   case EXPREAL:
-    return GiNaC::ex(e->getAsReal()->val());
+    return ex(e->getAsReal()->val());
   case EXPINTEGER:
-    return GiNaC::ex(e->getAsInteger()->val());
+    return ex(e->getAsInteger()->val());
   case EXPCOMPREF: {
     if (!_forDerivation)
       return getSymbol(e->getAsComponentReference());
@@ -99,15 +116,26 @@ GiNaC::ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
   }
   case EXPDERIVATIVE:
     return getSymbol(e->getAsDerivative());
+  case EXPCALL: 
+    {
+      AST_Expression_Call c=e->getAsCall();
+      if (*c->name()=="sin") {
+        return sin(convert(AST_ListFirst(c->arguments())));
+      } else {
+        cerr << "Function call : " << c->name() << " not converted to GiNaC" << endl;
+        return ex(0);
+      }
+    }
   default:
     cerr << "Expression: " << e << " not converted to GiNaC" << endl;
-    return GiNaC::ex(0);
+    return ex(0);
   }
 }
 
-AST_Expression ConvertToExpression::convert(GiNaC::ex exp) {
+AST_Expression ConvertToExpression::convert(ex exp) {
   stringstream s(ios_base::out);
   int r;
+  set_print_func<power,print_dflt>(my_print_power_dflt);
   s << exp;
   AST_Expression e= parseExpression(s.str().c_str(),&r);
   assert(e!=NULL && r==0) ;

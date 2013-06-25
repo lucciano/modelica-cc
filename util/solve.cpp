@@ -25,19 +25,38 @@
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
+#include <cassert>
 #include <util/ginac_interface.h>
 
-AST_Expression EquationSolver::solve(AST_Equation_Equality eq, AST_Expression_ComponentReference cr) {
+MMO_EquationList EquationSolver::solve(MMO_EquationList eqs, AST_ExpressionList crs) {
   ConvertToGiNaC tog(NULL); // No var symbol table needed for now
   ConvertToExpression toe;
+  assert(AST_Length(eqs)==1); 
+  assert(AST_Length(crs)==1); 
+  AST_Equation_Equality eq=AST_ListFirst(eqs)->getAsEquality();
+  assert(eq!=NULL); 
+
   GiNaC::ex left=tog.convert(eq->left());
   GiNaC::ex right=tog.convert(eq->right());
-  if (!left.has(tog.getSymbol(cr)) && !right.has(tog.getSymbol(cr))) {
-    cerr << "SOLVE: Variable " << tog.getSymbol(cr) << " not found in equation"<<endl;
-    return newAST_Expression_Null();
+  AST_Expression cr_exp=AST_ListFirst(crs);
+  if (cr_exp->expressionType()==EXPCOMPREF) {
+    AST_Expression_ComponentReference cr=cr_exp->getAsComponentReference();
+    if (!left.has(tog.getSymbol(cr)) && !right.has(tog.getSymbol(cr))) {
+      cerr << "SOLVE: Variable " << tog.getSymbol(cr) << " not found in equation"<<endl;
+      return newAST_EquationList();
+    }
+    GiNaC::ex rhs= lsolve(left==right, tog.getSymbol(cr));
+    AST_Equation res=newAST_Equation_Equality(cr,toe.convert(rhs));
+    return newAST_SimpleList(res);
+  } else if (cr_exp->expressionType()==EXPDERIVATIVE) {
+    AST_Expression_Derivative der=cr_exp->getAsDerivative();
+    if (!left.has(tog.getSymbol(der)) && !right.has(tog.getSymbol(der))) {
+      cerr << "SOLVE: Derivative " << tog.getSymbol(der) << " not found in equation"<<endl;
+      return newAST_EquationList();
+    }
+    GiNaC::ex rhs= lsolve(left==right, tog.getSymbol(der));
+    AST_Equation res=newAST_Equation_Equality(der,toe.convert(rhs));
+    return newAST_SimpleList(res);
   }
-  GiNaC::ex res= lsolve(left==right, tog.getSymbol(cr));
-  return toe.convert(res);
-  return NULL;
 }
 

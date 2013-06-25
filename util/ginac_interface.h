@@ -32,9 +32,9 @@ public:
   ConvertToGiNaC(VarSymbolTable  varEnv,bool forDerivation=false);
   GiNaC::ex convert(AST_Expression);
   GiNaC::symbol& getSymbol(AST_Expression_ComponentReference);
+  GiNaC::symbol& getSymbol(AST_Expression_Derivative);
   GiNaC::symbol& getTime();
 private:
-  GiNaC::symbol& getSymbol(AST_Expression_Derivative);
   virtual GiNaC::ex foldTraverseElement(AST_Expression);
   virtual GiNaC::ex foldTraverseElement(GiNaC::ex , GiNaC::ex , BinOpType);
   map<string, GiNaC::symbol> directory;
