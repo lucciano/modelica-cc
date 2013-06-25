@@ -34,12 +34,12 @@ REGISTER_FUNCTION(der, dummy())
 void my_print_power_dflt(const power & p, const print_dflt & c, unsigned level) {
   // get the precedence of the 'power' class
   unsigned power_prec = p.precedence();
-     
+
   // if the parent operator has the same or a higher precedence
   // we need parentheses around the power
   if (level >= power_prec)
     c.s << '(';
-  if (p.op(1).match(-1)) { 
+  if (p.op(1).match(-1)) {
     c.s << "(1/" << p.op(0) << ")";
   } else {
     c.s << p.op(0) << "^" << p.op(1);
@@ -48,6 +48,24 @@ void my_print_power_dflt(const power & p, const print_dflt & c, unsigned level) 
   if (level >= power_prec)
     c.s << ')';
 }
+
+void my_print_mul_dflt(const mul & m, const print_dflt & c, unsigned level) {
+  // get the precedence of the 'power' class
+  unsigned power_prec = m.precedence();
+  if (level >= power_prec)
+    c.s << '(';
+  if (m.op(1).match(pow(wild(),-1))) {
+    c.s << m.op(0) << "/" << m.op(1).op(0);
+  } else if (m.op(0).match(pow(wild(),-1))) {
+    c.s << m.op(1) << "/" << m.op(0).op(0);
+  } else {
+    c.s << m.op(0) << "*" << m.op(1);
+  }
+  if (level >= power_prec)
+    c.s << ')';
+}
+
+
 ConvertToGiNaC::ConvertToGiNaC(VarSymbolTable  varEnv, bool forDerivation): _varEnv(varEnv),_forDerivation(forDerivation) {}
 
 ex ConvertToGiNaC::convert(AST_Expression e) {
@@ -116,16 +134,16 @@ ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
   }
   case EXPDERIVATIVE:
     return getSymbol(e->getAsDerivative());
-  case EXPCALL: 
-    {
-      AST_Expression_Call c=e->getAsCall();
-      if (*c->name()=="sin") {
-        return sin(convert(AST_ListFirst(c->arguments())));
-      } else {
-        cerr << "Function call : " << c->name() << " not converted to GiNaC" << endl;
-        return ex(0);
-      }
+  case EXPCALL:
+  {
+    AST_Expression_Call c=e->getAsCall();
+    if (*c->name()=="sin") {
+      return sin(convert(AST_ListFirst(c->arguments())));
+    } else {
+      cerr << "Function call : " << c->name() << " not converted to GiNaC" << endl;
+      return ex(0);
     }
+  }
   default:
     cerr << "Expression: " << e << " not converted to GiNaC" << endl;
     return ex(0);
@@ -136,6 +154,7 @@ AST_Expression ConvertToExpression::convert(ex exp) {
   stringstream s(ios_base::out);
   int r;
   set_print_func<power,print_dflt>(my_print_power_dflt);
+  set_print_func<mul,print_dflt>(my_print_mul_dflt);
   s << exp;
   AST_Expression e= parseExpression(s.str().c_str(),&r);
   assert(e!=NULL && r==0) ;
