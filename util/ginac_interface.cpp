@@ -64,7 +64,19 @@ void my_print_mul_dflt(const mul & m, const print_dflt & c, unsigned level) {
   if (level >= power_prec)
     c.s << ')';
 }
-
+void my_print_add_dflt(const add & s, const print_dflt & c, unsigned level) {
+  // get the precedence of the 'power' class
+  unsigned power_prec = s.precedence();
+  if (level >= power_prec)
+    c.s << '(';
+  if (s.op(0).match(-wild()) && !s.op(1).match(-wild())) {
+    c.s << s.op(1) << "-" << s.op(0).op(0);
+  } else {
+    c.s << s.op(0) << "+" << s.op(1);
+  }
+  if (level >= power_prec)
+    c.s << ')';
+}
 
 ConvertToGiNaC::ConvertToGiNaC(VarSymbolTable  varEnv, bool forDerivation): _varEnv(varEnv),_forDerivation(forDerivation) {}
 
@@ -155,6 +167,7 @@ AST_Expression ConvertToExpression::convert(ex exp) {
   int r;
   set_print_func<power,print_dflt>(my_print_power_dflt);
   set_print_func<mul,print_dflt>(my_print_mul_dflt);
+  set_print_func<add,print_dflt>(my_print_add_dflt);
   s << exp;
   AST_Expression e= parseExpression(s.str().c_str(),&r);
   assert(e!=NULL && r==0) ;
