@@ -14,8 +14,8 @@
 using namespace std;
 
 struct VertexProperties {
-  MMO_Equation eq;
-  AST_Expression unknown;
+  MMO_EquationList eqs;
+  AST_ExpressionList unknowns;
   int index; // only for debugging purposes
 };
 
@@ -31,8 +31,10 @@ public:
 	MMO_EquationList causalize();
 private:
 	bool occur(AST_Expression unknown, MMO_Equation equation);
-	int processVertex(Vertex v, Edge *blackEdge);
-	void colorAdjacentEdges(Vertex v, Edge blackEdge);
+	void makeCausal1(MMO_EquationList eqs, AST_ExpressionList unknowns);
+	void makeCausalN(MMO_EquationList eqs, AST_ExpressionList unknowns);
+//	int processVertex(Vertex v, Edge *blackEdge);
+//	void colorAdjacentEdges(Vertex v, Edge blackEdge);
 	CausalizationGraph _graph;
 	list<Vertex> *_acausalEqs;
 	list<Vertex> *_unknowns;

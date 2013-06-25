@@ -4,6 +4,8 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             util/type.o \
             util/type_check.o \
             util/symbol_table.o \
+            util/solve.o \
+            util/ginac_interface.o \
             causalize/main.o \
             causalize/debug.o \
             causalize/state_variables_finder.o \
@@ -12,8 +14,10 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             causalize/compref_occurrence_traverse.o \
             causalize/causalization_strategy.o
 
+LIB_CAUSALIZE = -lginac
+
 causalize/causalize: $(OBJS_CAUSALIZE)
-	$(CXX) $(CXXFLAGS) -o causalize/causalize $(OBJS_CAUSALIZE)
+	$(CXX) $(CXXFLAGS) -o causalize/causalize $(OBJS_CAUSALIZE) $(LIB_CAUSALIZE)
 
 
 
