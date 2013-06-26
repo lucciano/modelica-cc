@@ -121,8 +121,8 @@ MMO_EquationList CausalizationStrategy::causalize() {
   }
 
   if (acausalEqsSize == _acausalEqs->size()) {
-    DEBUG('c', "Algebraic loop(s) detected.\n");
-    exit(0);
+    cerr << "Algebraic loop(s) detected." << endl;
+    exit(-1);
   }
 
   causalize();
