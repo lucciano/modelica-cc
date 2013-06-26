@@ -55,9 +55,9 @@ void my_print_mul_dflt(const mul & m, const print_dflt & c, unsigned level) {
   if (level >= power_prec)
     c.s << '(';
   if (m.op(1).match(pow(wild(),-1))) {
-    c.s << m.op(0) << "/" << m.op(1).op(0);
+    c.s << "(" << m.op(0) << "/" << m.op(1).op(0) << ")";
   } else if (m.op(0).match(pow(wild(),-1))) {
-    c.s << m.op(1) << "/" << m.op(0).op(0);
+    c.s << "(" << m.op(1) << "/" << m.op(0).op(0) << ")";
   } else {
     c.s << m.op(0) << "*" << m.op(1);
   }
@@ -127,6 +127,9 @@ symbol& ConvertToGiNaC::getTime() {
   return directory.insert(make_pair(s, symbol(s))).first->second;
 }
 
+ex ConvertToGiNaC::foldTraverseElementUMinus(AST_Expression e) {
+  return -convert(e->getAsUMinus()->exp());
+}
 ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
   switch (e->expressionType()) {
   case EXPREAL:
@@ -146,6 +149,8 @@ ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
   }
   case EXPDERIVATIVE:
     return getSymbol(e->getAsDerivative());
+  /*case EXPUMINUS:
+    return -convert(e->getAsUMinus()->exp());*/
   case EXPCALL:
   {
     AST_Expression_Call c=e->getAsCall();
@@ -166,8 +171,8 @@ AST_Expression ConvertToExpression::convert(ex exp) {
   stringstream s(ios_base::out);
   int r;
   set_print_func<power,print_dflt>(my_print_power_dflt);
-  set_print_func<mul,print_dflt>(my_print_mul_dflt);
-  set_print_func<add,print_dflt>(my_print_add_dflt);
+  //set_print_func<mul,print_dflt>(my_print_mul_dflt);
+  //set_print_func<add,print_dflt>(my_print_add_dflt);
   s << exp;
   AST_Expression e= parseExpression(s.str().c_str(),&r);
   assert(e!=NULL && r==0) ;

@@ -14,6 +14,7 @@ public:
 	CompRefOccurrenceTraverse(AST_Expression unknown);
 	virtual ~CompRefOccurrenceTraverse();
 private:
+	virtual bool foldTraverseElementUMinus(AST_Expression exp);
 	virtual bool foldTraverseElement(AST_Expression equation);
 	virtual bool foldTraverseElement(bool , bool , BinOpType);
 	AST_Expression _unknown;

@@ -114,6 +114,9 @@ bool IsConstant::foldTraverseElement(bool b1, bool b2, BinOpType ) {
   return b1 && b2;
 }
 
+bool IsConstant::foldTraverseElementUMinus(AST_Expression e) {
+  return foldTraverse(e->getAsUMinus()->exp()); 
+}
 bool IsConstant::foldTraverseElement(AST_Expression e) {
   switch (e->expressionType()) {
   case EXPREAL:
@@ -157,6 +160,10 @@ AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression b1, AST_Expres
   return newAST_Expression_BinOp(b1,b2,t);
 }
 
+AST_Expression ReplaceBoolean::foldTraverseElementUMinus(AST_Expression u) {
+  return foldTraverse(u->getAsUMinus()->exp());
+}
+
 AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression e) {
   switch (e->expressionType()) {
   case EXPBOOLEAN:
@@ -179,6 +186,10 @@ AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression b1, AST
   return newAST_Expression_BinOp(b1,b2,t);
 }
 
+AST_Expression WhenEqualityTrasforms::foldTraverseElementUMinus(AST_Expression u) {
+   return newAST_Expression_UnaryMinus( foldTraverse(u->getAsUMinus()->exp()) );
+}
+
 AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression e) {
   switch (e->expressionType()) {
   case EXPBOOLEAN:
@@ -188,12 +199,12 @@ AST_Expression WhenEqualityTrasforms::foldTraverseElement(AST_Expression e) {
     else return newAST_Expression_Real(0.0);
   }
 
-  case EXPUMINUS:
+/*  case EXPUMINUS:
   {
     AST_Expression_UMinus u = e->getAsUMinus();
     return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
   }
-
+*/
   case EXPOUTPUT :
   {
     AST_Expression_Output b = e->getAsOutput();
@@ -245,15 +256,20 @@ AST_Expression PreChange::foldTraverseElement(AST_Expression b1, AST_Expression 
   return newAST_Expression_BinOp(b1,b2,t);
 }
 
+
+AST_Expression PreChange::foldTraverseElementUMinus(AST_Expression u) {
+   return newAST_Expression_UnaryMinus( foldTraverse(u->getAsUMinus()->exp()) );
+}
+
 AST_Expression PreChange::foldTraverseElement(AST_Expression e) {
   switch (e->expressionType()) {
-
+/*
   case EXPUMINUS:
   {
     AST_Expression_UMinus u = e->getAsUMinus();
     return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
   }
-
+*/
   case EXPOUTPUT :
   {
     AST_Expression_Output b = e->getAsOutput();

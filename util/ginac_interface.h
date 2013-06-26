@@ -36,6 +36,7 @@ public:
   GiNaC::symbol& getTime();
 private:
   virtual GiNaC::ex foldTraverseElement(AST_Expression);
+  virtual GiNaC::ex foldTraverseElementUMinus(AST_Expression);
   virtual GiNaC::ex foldTraverseElement(GiNaC::ex , GiNaC::ex , BinOpType);
   map<string, GiNaC::symbol> directory;
   bool _forDerivation;

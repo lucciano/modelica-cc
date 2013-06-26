@@ -7,7 +7,7 @@ model lotkaVoltera
   Real rabbits(start = 700) "Rabbits with start population 700";
   Real foxes(start = 10) "Foxes with start population 10";
 equation
-  der(rabbits) = g_r*rabbits - d_rf*rabbits*foxes;
+  0 = -der(rabbits) + g_r*rabbits - d_rf*rabbits*foxes;
   der(foxes) = if (foxes>5 or rabbits > 500 and foxes < 20) then g_fr*d_rf*rabbits*foxes - d_f*foxes else 0;
   annotation (uses(Modelica(version="3.0")));
 end lotkaVoltera;

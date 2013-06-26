@@ -19,6 +19,11 @@ bool CompRefOccurrenceTraverse::foldTraverseElement(AST_Expression e) {
 	return EqualExp::equalTraverse(e, _unknown);
 }
 
+
+bool CompRefOccurrenceTraverse::foldTraverseElementUMinus(AST_Expression u) {
+	return foldTraverse(u->getAsUMinus()->exp());
+}
+
 bool CompRefOccurrenceTraverse::foldTraverseElement(bool bool1, bool bool2, BinOpType enumBinOpType) {
   return bool1 || bool2;
 }

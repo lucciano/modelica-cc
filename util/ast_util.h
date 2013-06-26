@@ -72,12 +72,23 @@ public:
       AST_Expression_BinOp b = e->getAsBinOp();
       return foldTraverseElement (foldTraverse(b->left()),foldTraverse(b->right()),b->binopType());
     }
+    case EXPOUTPUT:
+    {
+      AST_Expression_Output o = e->getAsOutput();
+      return foldTraverse(AST_ListFirst(o->expressionList()));
+    }
+    case EXPUMINUS:
+    {
+      AST_Expression_UMinus u = e->getAsUMinus();
+      return foldTraverseElementUMinus(u);
+    }
     default:
       return foldTraverseElement(e);
     }
   };
 private:
   virtual R foldTraverseElement(AST_Expression) = 0;
+  virtual R foldTraverseElementUMinus(AST_Expression) = 0;
   virtual R foldTraverseElement(R, R, BinOpType) = 0;
 
 };
@@ -95,6 +106,7 @@ public:
 private:
   virtual bool foldTraverseElement(AST_Expression);
   virtual bool foldTraverseElement(bool , bool , BinOpType);
+  virtual bool foldTraverseElementUMinus(AST_Expression);
   VarSymbolTable _st;
 };
 
@@ -113,6 +125,7 @@ public:
 private:
   virtual AST_Expression foldTraverseElement(AST_Expression);
   virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+  virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
 };
 
 
@@ -123,6 +136,7 @@ public:
 private:
   virtual AST_Expression foldTraverseElement(AST_Expression);
   virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+  virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
 };
 
 class PreChange: public AST_Expression_Fold<AST_Expression> {
@@ -132,6 +146,7 @@ private:
   PreSet _pre;
   virtual AST_Expression foldTraverseElement(AST_Expression);
   virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+  virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
 };
 
 #endif

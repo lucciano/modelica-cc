@@ -70,6 +70,7 @@ int main(int argc, char ** argv)
   MMO_EquationList acausalEquations = c->getEquations();
 
   DEBUG('c', "Acausal Equations:\n");
+  cout << c;
   foreach(iter, acausalEquations) {
     DEBUG('c', "%s", current_element(iter)->print().c_str());
   }
