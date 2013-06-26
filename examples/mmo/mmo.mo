@@ -15,7 +15,6 @@ model Prueba
 	end sin;	
 	
 equation
-	for i in {1,2,3} loop
-		a = m[i] < 20;
-	end for;	
+	b = sing(c);
+		
 end Prueba;     

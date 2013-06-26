@@ -75,6 +75,11 @@ private:
 	 
 	/* Crea un Statement_When  para la discontinuidad */ 
 	MMO_Statement 		make_when(AST_Expression  , AST_Expression_ComponentReference );
+	MMO_Statement 		make_whenABS(AST_Expression  , AST_Expression_ComponentReference );
+	MMO_Statement 		make_whenMin(AST_Expression, AST_Expression  , AST_Expression_ComponentReference );
+	MMO_Statement 		make_whenMax(AST_Expression, AST_Expression  , AST_Expression_ComponentReference );
+	MMO_Statement 		make_whenSING(AST_Expression  , AST_Expression_ComponentReference );
+	AST_Expression		create_Variable();
 	 
 	/* Procesa la condicion del When */
 	AST_Expression 		whenCondition(AST_Expression , AST_StatementList  );
@@ -83,8 +88,11 @@ private:
 	void				toMicro_eq_when (AST_Equation,MMO_StatementList );
 	 
 	/* Genera el if para statement initial */
-	MMO_Statement 		make_if(AST_Expression cond , AST_Expression_ComponentReference var);
-	
+	MMO_Statement 		make_if(AST_Expression  , AST_Expression_ComponentReference var);
+	MMO_Statement 		make_ifABS(AST_Expression  , AST_Expression_ComponentReference var);
+	MMO_Statement 		make_ifMin(AST_Expression, AST_Expression  , AST_Expression_ComponentReference var);
+	MMO_Statement 		make_ifMax(AST_Expression, AST_Expression  , AST_Expression_ComponentReference var);
+	MMO_Statement 		make_ifSING(AST_Expression  , AST_Expression_ComponentReference var);
 	/* Niega las primeras i-th condiciones (Utilizado en el IF )*/
 	AST_Expression 		makeCondition(AST_ExpressionList  , unsigned int  );
 	

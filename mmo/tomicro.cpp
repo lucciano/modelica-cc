@@ -173,6 +173,77 @@ MMO_Statement MMO_ToMicroModelica_::make_when(AST_Expression cond , AST_Expressi
 }
 
 
+MMO_Statement MMO_ToMicroModelica_::make_ifABS(AST_Expression e , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , e) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , UNARYM(e)) );
+	AST_Statement_ElseList elList = newAST_Statement_ElseList(); 
+	return newAST_Statement_If( GREATER(e,I(0)) , l1 , elList , l2 );	
+}
+
+MMO_Statement MMO_ToMicroModelica_::make_whenABS(AST_Expression e , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , e) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , UNARYM(e)) );
+	AST_Statement_ElseList elList = newAST_SimpleList( newAST_Statement_Else ( LOWER(e,I(0)) , l2 )); 
+	return newAST_Statement_When( GREATER(e,I(0)) , l1 , elList );	
+}
+
+MMO_Statement MMO_ToMicroModelica_::make_ifMin(AST_Expression e1 , AST_Expression e2 , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , e1) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , e2) );
+	AST_Statement_ElseList elList = newAST_Statement_ElseList(); 
+	return newAST_Statement_If( LOWER(e1,e2) , l1 , elList , l2 );	
+}
+
+MMO_Statement MMO_ToMicroModelica_::make_whenMin(AST_Expression e1,AST_Expression e2 , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , e1) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , e2) );
+	AST_Statement_ElseList elList = newAST_SimpleList( newAST_Statement_Else ( GREATER(e1,e2) , l2 )); 
+	return newAST_Statement_When( LOWER(e1,e2) , l1 , elList );	
+}
+
+MMO_Statement MMO_ToMicroModelica_::make_ifMax(AST_Expression e1 , AST_Expression e2 , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , e1) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , e2) );
+	AST_Statement_ElseList elList = newAST_Statement_ElseList(); 
+	return newAST_Statement_If( GREATER(e1,e2) , l1 , elList , l2 );	
+}
+
+MMO_Statement MMO_ToMicroModelica_::make_whenMax(AST_Expression e1,AST_Expression e2 , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , e1) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , e2) );
+	AST_Statement_ElseList elList = newAST_SimpleList( newAST_Statement_Else ( LOWER(e1,e2) , l2 )); 
+	return newAST_Statement_When( GREATER(e1,e2) , l1 , elList );	
+}
+
+MMO_Statement MMO_ToMicroModelica_::make_ifSING(AST_Expression e , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , I( 1)) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , I( 0)) );
+	AST_StatementList l3          = newAST_SimpleList( newAST_Statement_Assign(var , I(-1)) );
+	AST_Statement_ElseList elList = newAST_Statement_ElseList();
+	AST_Statement_ElseList elList2 = newAST_Statement_ElseList(); 
+	AST_StatementList ll		  = newAST_SimpleList( newAST_Statement_If( EQUAL(e,I(0)) , l2 , elList , l1 ) );
+	return newAST_Statement_If( GREATEREQ(e,I(0)) , ll , elList2 , l3 );	
+}
+
+MMO_Statement MMO_ToMicroModelica_::make_whenSING(AST_Expression e , AST_Expression_ComponentReference var)
+{
+	AST_StatementList l1          = newAST_SimpleList( newAST_Statement_Assign(var , I( 1)) );
+	AST_StatementList l2          = newAST_SimpleList( newAST_Statement_Assign(var , I( 0)) );
+	AST_StatementList l3          = newAST_SimpleList( newAST_Statement_Assign(var , I(-1)) );
+	AST_Statement_ElseList elList2 = newAST_Statement_ElseList(); 
+	AST_StatementList ll		  = newAST_SimpleList( newAST_Statement_If( EQUAL(e,I(0)) , l2 , elList2 , l1 ) );
+	AST_Statement_ElseList elList = newAST_SimpleList( newAST_Statement_Else ( LOWER(e,I(0)) , l3 )); 
+	return newAST_Statement_When( GREATEREQ(e,I(0)) , ll , elList );	
+}
+
+
 MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq , AST_StatementList stList,IndexMap iMap)
 {
 	AST_Expression r = eq->right();
@@ -195,7 +266,12 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq 
 	return newAST_Equation_Equality( _l , _r );
 }
 
-
+AST_Expression MMO_ToMicroModelica_::create_Variable()
+{
+	AST_String name = new_label();
+	_c->addVariable( name , _S("Real"),  newAST_TypePrefix(TP_DISCRETE));	
+	return newAST_Expression_ComponentReferenceExp (name);	
+}
 
 AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_StatementList stList , IndexMap iMap)
 {	
@@ -277,6 +353,36 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 			AST_Expression_Call call = e->getAsCall();
 			if (toStr(call->name())  == "edge"){ 
 				return toMicro_exp( GREATER(  call->arguments()->front()   , _R(0.5) ) , stList , iMap) ;
+			}
+			if (toStr(call->name())  == "abs"){
+				AST_Expression cr = create_Variable();
+				AST_Expression e = toMicro_exp(call->arguments()->front() , stList , iMap);
+				AST_ListAppend(stList, make_whenABS(e, cr->getAsComponentReference()));	
+				AST_ListAppend(initialFrame.top(), make_ifABS( e, cr->getAsComponentReference() ));
+				return cr;
+			}
+			if (toStr(call->name())  == "sing"){
+				AST_Expression cr = create_Variable();
+				AST_Expression e = toMicro_exp(call->arguments()->front() , stList , iMap);
+				AST_ListAppend(stList, make_whenSING(e, cr->getAsComponentReference()));	
+				AST_ListAppend(initialFrame.top(), make_ifSING( e, cr->getAsComponentReference() ));
+				return cr;
+			}
+			if (toStr(call->name())  == "min"){
+				AST_Expression cr = create_Variable();
+				AST_Expression e1 = toMicro_exp(call->arguments()->front() , stList , iMap);
+				AST_Expression e2 = toMicro_exp(current_element(++call->arguments()->begin()) , stList , iMap);
+				AST_ListAppend(stList, make_whenMin(e1,e2, cr->getAsComponentReference()));	
+				AST_ListAppend(initialFrame.top(), make_ifMin( e1,e2, cr->getAsComponentReference() ));
+				return cr;
+			}
+			if (toStr(call->name())  == "max"){
+				AST_Expression cr = create_Variable();
+				AST_Expression e1 = toMicro_exp(call->arguments()->front() , stList , iMap);
+				AST_Expression e2 = toMicro_exp(current_element(++call->arguments()->begin()) , stList , iMap);
+				AST_ListAppend(stList, make_whenMax(e1,e2, cr->getAsComponentReference()));	
+				AST_ListAppend(initialFrame.top(), make_ifMax( e1,e2, cr->getAsComponentReference() ));
+				return cr;
 			}
 			return call;
 		}

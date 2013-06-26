@@ -52,7 +52,10 @@
 #define _R(n) 			newAST_Expression_Real(n)
 #define _PA(e)       	newAST_Expression_OutputExpressions(e)
 #define UMENOS(e)   	SUB( I(1) , e )
-
+#define UNARYM(e)		newAST_Expression_UnaryMinus(e)
+#define GREATEREQ(l,r) 	newAST_Expression_BinOp(l, r, BINOPGREATEREQ )
+#define LOWEREQ(l,r) 	newAST_Expression_BinOp(l, r, BINOPLOWERWQ )
+#define EQUAL(l,r)	 	newAST_Expression_BinOp(l, r,  BINOPCOMPEQ)
 
 
 class AST_Expression_Traverse {
