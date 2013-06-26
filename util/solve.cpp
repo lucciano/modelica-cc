@@ -27,6 +27,7 @@
 #include <sstream>
 #include <cassert>
 #include <util/ginac_interface.h>
+#include <causalize/debug.h>
 
 MMO_EquationList EquationSolver::solve(MMO_EquationList eqs, AST_ExpressionList crs) {
   ConvertToGiNaC tog(NULL); // No var symbol table needed for now
@@ -45,6 +46,7 @@ MMO_EquationList EquationSolver::solve(MMO_EquationList eqs, AST_ExpressionList 
       cerr << "SOLVE: Variable " << tog.getSymbol(cr) << " not found in equation"<<endl;
       return newAST_EquationList();
     }
+    DEBUG('c', "Solving for variable %s from equation %s\n",cr->print().c_str(),eq->print().c_str());
     GiNaC::ex rhs= lsolve(left==right, tog.getSymbol(cr));
     AST_Equation res=newAST_Equation_Equality(cr,toe.convert(rhs));
     return newAST_SimpleList(res);
@@ -54,6 +56,7 @@ MMO_EquationList EquationSolver::solve(MMO_EquationList eqs, AST_ExpressionList 
       cerr << "SOLVE: Derivative " << tog.getSymbol(der) << " not found in equation"<<endl;
       return newAST_EquationList();
     }
+    DEBUG('c', "Solving for derivative %s from equation %s\n",der->print().c_str(),eq->print().c_str());
     GiNaC::ex rhs= lsolve(left==right, tog.getSymbol(der));
     AST_Equation res=newAST_Equation_Equality(der,toe.convert(rhs));
     return newAST_SimpleList(res);

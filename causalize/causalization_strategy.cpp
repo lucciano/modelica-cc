@@ -20,9 +20,9 @@ CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations,
 		AST_ExpressionList unknowns) {
 
 	if (equations->size() != unknowns->size()) {
-	  ERROR ("The model being causalizing is not balanced."); // TODO No deberiamos lanzar una excepción acá?
+	  ERROR ("The model being causalizing is not balanced.\nThere are %d equations and %d variables\n",equations->size(),unknowns->size()); // TODO No deberiamos lanzar una excepción acá?
+    exit(-1);
 	}
-
   int index = 0;
 
   _acausalEqs = new list<Vertex>;
@@ -83,6 +83,7 @@ CausalizationStrategy::~CausalizationStrategy() {
 
 MMO_EquationList CausalizationStrategy::causalize() {
 
+
   if(_acausalEqs->empty()) {
     _causalEqs1->insert(_causalEqs1->end(), _causalEqsN->begin(), _causalEqsN->end());
     return _causalEqs1;
@@ -121,7 +122,7 @@ MMO_EquationList CausalizationStrategy::causalize() {
   }
 
   if (acausalEqsSize == _acausalEqs->size()) {
-    cerr << "Algebraic loop(s) detected." << endl;
+    ERROR("Algebraic loop(s) detected and no supported yet.\n");
     exit(-1);
   }
 
