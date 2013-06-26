@@ -84,9 +84,11 @@ int main(int argc, char ** argv)
   MMO_EquationList causalizedEquations = strategy->causalize();
 
   DEBUG('c', "Causalized Equations:\n");
+  c->getEquations()->clear();
   foreach(iter, causalizedEquations) {
     DEBUG('c', "%s", current_element(iter)->print().c_str());
+    AST_ListAppend(c->getEquations(),current_element(iter));
   }
-
+  cout << c;
   return 0;
 }
