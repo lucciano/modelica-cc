@@ -122,7 +122,7 @@ MMO_EquationList CausalizationStrategy::causalize() {
   }
 
   if (acausalEqsSize == _acausalEqs->size()) {
-    ERROR("Algebraic loop(s) detected and no supported yet.\n");
+    ERROR("Algebraic loop(s) detected and not supported yet.\n");
     exit(-1);
   }
 
