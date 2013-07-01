@@ -104,7 +104,10 @@ MMO_EquationList CausalizationStrategy::causalize() {
       makeCausal1(_graph[eq].eqs, _graph[unknown].unknowns);
       _acausalEqs->erase(iter);
       _unknowns->remove(unknown);
-    }
+    } else if (out_degree(eq, _graph) == 0) {
+      ERROR("Problem is singular.Not supported yet.\n");
+      exit(-1);
+    } 
   }
 
   auxiliaryIter = _unknowns->begin();
@@ -118,7 +121,10 @@ MMO_EquationList CausalizationStrategy::causalize() {
       makeCausalN(_graph[eq].eqs, _graph[unknown].unknowns);
       _acausalEqs->remove(eq);
       _unknowns->erase(iter);
-    }
+    } else if (out_degree(unknown, _graph) == 0) {
+      ERROR("Problem is singular.Not supported yet.\n");
+      exit(-1);
+    } 
   }
 
   if (acausalEqsSize == _acausalEqs->size()) {
