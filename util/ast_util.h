@@ -105,51 +105,98 @@ private:
 
 class IsConstant: public AST_Expression_Fold<bool> {
 public:
-  IsConstant(VarSymbolTable st): _st(st) {};
+	IsConstant(VarSymbolTable st): _st(st) {};
 private:
-  virtual bool foldTraverseElement(AST_Expression);
-  virtual bool foldTraverseElement(bool , bool , BinOpType);
-  virtual bool foldTraverseElementUMinus(AST_Expression);
-  VarSymbolTable _st;
+	virtual bool foldTraverseElement(AST_Expression);
+	virtual bool foldTraverseElement(bool , bool , BinOpType);
+	virtual bool foldTraverseElementUMinus(AST_Expression);
+	VarSymbolTable _st;
 };
 
+/*
 class ReplaceExp: public AST_Expression_Traverse  {
 public:
-  AST_Expression replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in);
+	AST_Expression replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in);
 private:
-  virtual AST_Expression mapTraverseElement(AST_Expression);
-  AST_Expression _rep, _for_exp, _in;
+	virtual AST_Expression mapTraverseElement(AST_Expression);
+	AST_Expression _rep, _for_exp, _in;
 };
+*/
 
+/*  ReplaceBoolean: Reemplaza constantes Booleanas 
+ *  Utilizado en las Modifications 
+ * 
+ */
 
 class ReplaceBoolean: public AST_Expression_Fold<AST_Expression> {
 public:
-  ReplaceBoolean();
+	ReplaceBoolean();
 private:
-  virtual AST_Expression foldTraverseElement(AST_Expression);
-  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
-  virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
+	virtual AST_Expression foldTraverseElement(AST_Expression);
+	virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+	virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
 };
 
+
+/* WhenEqualityTrasforms: Realiza los cambios necesarios a los 
+ * Equation_When antes de transformarlos a Statement 
+ * 
+ */
 
 
 class WhenEqualityTrasforms: public AST_Expression_Fold<AST_Expression> {
 public:
-  WhenEqualityTrasforms();
+	WhenEqualityTrasforms();
 private:
-  virtual AST_Expression foldTraverseElement(AST_Expression);
-  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
-  virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
+	virtual AST_Expression foldTraverseElement(AST_Expression);
+	virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+	virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
 };
+
+/* PreChange: Aplica la funcion Pre a la ComponentReference necesarias.
+ * segun un conjunto pasado como parametro
+ * 
+ */ 
 
 class PreChange: public AST_Expression_Fold<AST_Expression> {
 public:
-  PreChange(PreSet);
+	PreChange(PreSet);
 private:
-  PreSet _pre;
-  virtual AST_Expression foldTraverseElement(AST_Expression);
-  virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
-  virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
+	PreSet _pre;
+	virtual AST_Expression foldTraverseElement(AST_Expression);
+	virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+	virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
 };
+
+/* FindReference: Devuelve si hay referencia de una variable en una expresion
+ * 
+ */
+
+class FindReference: public AST_Expression_Fold<bool> {
+public:
+	FindReference(AST_String);
+private:
+	AST_String _var;
+	virtual bool foldTraverseElement(AST_Expression);
+	virtual bool foldTraverseElement(bool , bool , BinOpType);
+	virtual bool foldTraverseElementUMinus(AST_Expression);
+};
+
+/* ReplaceReference: Cambia las referencias de una variable por otra
+ * 
+ * 
+ */ 
+
+class ReplaceReference: public AST_Expression_Fold<AST_Expression> {
+public:
+	ReplaceReference(AST_String,AST_String);
+private:
+	AST_String _pre;
+	AST_String _post;
+	virtual AST_Expression foldTraverseElement(AST_Expression);
+	virtual AST_Expression foldTraverseElement(AST_Expression , AST_Expression , BinOpType);
+	virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
+};
+
 
 #endif

@@ -140,7 +140,7 @@ bool IsConstant::foldTraverseElement(AST_Expression e) {
 
 
 
-
+/*
 AST_Expression ReplaceExp::replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in) {
   _rep=rep;
   _for_exp=for_exp;
@@ -152,7 +152,7 @@ AST_Expression ReplaceExp::mapTraverseElement(AST_Expression e) {
     return _for_exp;
   return e;
 }
-
+*/
 
 ReplaceBoolean::ReplaceBoolean() {}
 
@@ -263,45 +263,156 @@ AST_Expression PreChange::foldTraverseElementUMinus(AST_Expression u) {
 
 AST_Expression PreChange::foldTraverseElement(AST_Expression e) {
   switch (e->expressionType()) {
-/*
-  case EXPUMINUS:
-  {
-    AST_Expression_UMinus u = e->getAsUMinus();
-    return newAST_Expression_UnaryMinus( foldTraverse(u->exp()) );
-  }
-*/
-  case EXPOUTPUT :
-  {
-    AST_Expression_Output b = e->getAsOutput();
-    return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
-  }
+	  case EXPOUTPUT :
+	  {
+		AST_Expression_Output b = e->getAsOutput();
+		return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
+	  }
 
-  case EXPCALL:
-  {
-    AST_Expression_Call call = e->getAsCall();
-    AST_ExpressionListIterator it;
-    foreach(it , call->arguments()) current_element(it) = foldTraverse(current_element(it));
-    return call;
-  }
+	  case EXPCALL:
+	  {
+		AST_Expression_Call call = e->getAsCall();
+		AST_ExpressionListIterator it;
+		foreach(it , call->arguments()) current_element(it) = foldTraverse(current_element(it));
+		return call;
+	  }
 
-  case EXPCOMPREF:
-  {
-    AST_Expression_ComponentReference cr = e->getAsComponentReference();
-    if (_pre->find(cr->name()) != _pre->end())
-      return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(static_cast<AST_Expression>(cr)));
-    return e;
-  }
+	  case EXPCOMPREF:
+	  {
+		AST_Expression_ComponentReference cr = e->getAsComponentReference();
+		if (_pre->find(cr->name()) != _pre->end())
+		  return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(static_cast<AST_Expression>(cr)));
+		return e;
+	  }
 
-  case EXPBOOLEANNOT:
-  {
-    AST_Expression_BooleanNot no = e->getAsBooleanNot();
-    return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
-  }
+	  case EXPBOOLEANNOT:
+	  {
+		AST_Expression_BooleanNot no = e->getAsBooleanNot();
+		return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
+	  }
 
-  default:
-  {
-    return e;
+	  default:
+	  {
+		return e;
+	  }
   }
+};
+
+
+
+FindReference::FindReference(AST_String var) {
+  _var = var;
+}
+
+bool FindReference::foldTraverseElement(bool b1, bool b2, BinOpType t ) {
+	return b1 || b2 ;
+}
+
+
+bool FindReference::foldTraverseElementUMinus(AST_Expression u) 
+{
+	return foldTraverse(u->getAsUMinus()->exp());
+}
+
+bool FindReference::foldTraverseElement(AST_Expression e) 
+{
+  switch (e->expressionType()) {
+	  case EXPOUTPUT :
+	  {
+		AST_Expression_Output b = e->getAsOutput();
+		return foldTraverse(b->expressionList()->front()) ;
+	  }
+
+	  case EXPCALL:
+	  {
+		AST_Expression_Call call = e->getAsCall();
+		AST_ExpressionListIterator it;
+		bool b = false;
+		foreach(it , call->arguments()) b |= foldTraverse(current_element(it));
+		return b;
+	  }
+
+	  case EXPCOMPREF:
+	  {
+		AST_Expression_ComponentReference cr = e->getAsComponentReference();
+		return cr->name() == toStr(_var);
+	  }
+
+	  case EXPBOOLEANNOT:
+	  {
+		AST_Expression_BooleanNot no = e->getAsBooleanNot();
+		return foldTraverse( no->exp()) ;
+	  }
+	  
+	  case EXPIF:
+	  {
+		AST_Expression_If i = e->getAsIf();
+		bool eq1 = foldTraverse(i->then());
+		bool eq2 = foldTraverse(i->else_exp());
+		bool cond = foldTraverse(i->condition());
+		return eq1 || eq2 || cond;
+	  }
+
+	  default:
+	  {
+		return false;
+	  }
+  }
+};
+
+
+ReplaceReference::ReplaceReference(AST_String pre , AST_String post) {
+  _pre = pre;
+  _post = post;
+}
+
+AST_Expression ReplaceReference::foldTraverseElement(AST_Expression b1, AST_Expression b2, BinOpType t ) 
+{
+	return newAST_Expression_BinOp(b1,b2,t);
+}
+
+
+AST_Expression ReplaceReference::foldTraverseElementUMinus(AST_Expression u) 
+{
+	return newAST_Expression_UnaryMinus( foldTraverse(u->getAsUMinus()->exp()) );
+}
+
+AST_Expression ReplaceReference::foldTraverseElement(AST_Expression e) 
+{
+  switch (e->expressionType()) {
+	  case EXPOUTPUT :
+	  {
+		AST_Expression_Output b = e->getAsOutput();
+		return newAST_Expression_OutputExpressions(newAST_SimpleList(foldTraverse(b->expressionList()->front())));
+	  }
+
+	  case EXPCALL:
+	  {
+		AST_Expression_Call call = e->getAsCall();
+		AST_ExpressionListIterator it;
+		foreach(it , call->arguments()) current_element(it) = foldTraverse(current_element(it));
+		return call;
+	  }
+
+	  case EXPCOMPREF:
+	  {
+		 
+		AST_Expression_ComponentReference cr = e->getAsComponentReference();
+		if (cr->name() ==  toStr(_pre))
+		  return newAST_Expression_ComponentReferenceExp (_post);;
+		return e;
+	  }
+
+	  case EXPBOOLEANNOT:
+	  {
+		AST_Expression_BooleanNot no = e->getAsBooleanNot();
+		return newAST_Expression_BooleanNot(foldTraverse( no->exp())) ;
+	  }
+
+	  default:
+	  {
+		return e;
+	  }
   }
 };
 

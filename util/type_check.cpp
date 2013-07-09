@@ -110,7 +110,9 @@ Type TypeCheck_::check_expression(AST_Expression e)
     // Añadir las funciones en la listaaaa de variables
     AST_Expression_Call c = e->getAsCall();
     if ( toStr(c->name()) == "sample" ) return  T("Boolean");
-
+    if ( toStr(c->name()) == "pre" ) 		
+		return  check_expression(c->arguments()->front());
+	return T("Real");
   }
 
   case EXPCOMPREF:

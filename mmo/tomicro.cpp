@@ -245,24 +245,45 @@ MMO_Statement MMO_ToMicroModelica_::make_whenSING(AST_Expression e , AST_Express
 
 
 MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq , AST_StatementList stList,IndexMap iMap)
-{
+{	
 	AST_Expression r = eq->right();
 	AST_Expression l = eq->left();
 	
-	/*if (IS_CREF(l) && IS_COMPARE(r)) {
-		disVarSet.insert(toStr(l->getAsComponentReference()->names()->front()));
-		AST_ListAppend(stList , make_when( r->getAsBinOp(), l->getAsComponentReference() ));
-		return NULL;
-	} 
 	
-	if (IS_CREF(r) && IS_COMPARE(l)) {
-		disVarSet.insert(toStr(r->getAsComponentReference()->names()->front()));
-		AST_ListAppend(stList , make_when( l->getAsBinOp(), r->getAsComponentReference() ));
-		return NULL;
-	} */
+	try {	
+		if (IS_CREF(l) &&  _c->getExpresionType(r)->getType() == TYBOOLEAN ) {		
+			AST_Expression_ComponentReference cr = l->getAsComponentReference();		
+			FindReference fr(_S(cr->name()));
+			if (fr.foldTraverse(r)){
+				AST_Expression_ComponentReference c2 = create_Variable()->getAsComponentReference();
+				ReplaceReference rr ( _S(cr->name()) , _S(c2->name()) );
+				AST_Expression _r = rr.foldTraverse(toMicro_exp(r,stList,iMap));	
+				AST_Expression cond = GREATER(_r , _R(0.5));
+				AST_ListAppend(stList, make_when( cond  ,  c2 ) );
+				AST_ListAppend(initialFrame.top(), make_if( cond , c2 ));
+				return newAST_Equation_Equality( l , _r );	
+			}	
+		}
+		
+		if (IS_CREF(r) &&  _c->getExpresionType(l)->getType() == TYBOOLEAN ) {		
+			AST_Expression_ComponentReference cr = r->getAsComponentReference();		
+			FindReference fr(_S(cr->name()));
+			if (fr.foldTraverse(l)){
+				AST_Expression_ComponentReference c2 = create_Variable()->getAsComponentReference();
+				ReplaceReference rr ( _S(cr->name()) , _S(c2->name()) );
+				AST_Expression _l = rr.foldTraverse(toMicro_exp(l,stList,iMap));	
+				AST_Expression cond = GREATER(_l , _R(0.5));
+				AST_ListAppend(stList, make_when( cond  ,  c2 ) );
+				AST_ListAppend(initialFrame.top(), make_if( cond, c2 ));
+				return newAST_Equation_Equality( _l , r );	
+			}	
+		}
+		
+	} catch (...) {} 
 	
 	AST_Expression _r = toMicro_exp(r,stList,iMap);
 	AST_Expression _l = toMicro_exp(l,stList,iMap);
+	
 	return newAST_Equation_Equality( _l , _r );
 }
 
@@ -384,14 +405,16 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 				AST_ListAppend(initialFrame.top(), make_ifMax( e1,e2, cr->getAsComponentReference() ));
 				return cr;
 			}
+			if (toStr(call->name())  == "noevent") 
+				return call;
+			
+			AST_ExpressionListIterator it;
+			foreach(it , call->arguments()) current_element(it) = toMicro_exp(current_element(it) , stList , iMap);	
 			return call;
 		}
 		
 		case EXPCOMPREF:
 		{
-			/*AST_Expression_ComponentReference cr = e->getAsComponentReference();
-			if (_c->getVariableType(cr->names()->front())->getType() == TYBOOLEAN)
-				return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(e));*/
 			return e;
 		}
 			
