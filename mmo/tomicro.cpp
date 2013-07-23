@@ -382,7 +382,7 @@ AST_Expression MMO_ToMicroModelica_::toMicro_exp(AST_Expression e , AST_Statemen
 				AST_ListAppend(initialFrame.top(), make_ifABS( e, cr->getAsComponentReference() ));
 				return cr;
 			}
-			if (toStr(call->name())  == "sing"){
+			if (toStr(call->name())  == "sign"){
 				AST_Expression cr = create_Variable();
 				AST_Expression e = toMicro_exp(call->arguments()->front() , stList , iMap);
 				AST_ListAppend(stList, make_whenSING(e, cr->getAsComponentReference()));	

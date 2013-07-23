@@ -140,7 +140,6 @@ bool IsConstant::foldTraverseElement(AST_Expression e) {
 
 
 
-/*
 AST_Expression ReplaceExp::replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in) {
   _rep=rep;
   _for_exp=for_exp;
@@ -152,7 +151,6 @@ AST_Expression ReplaceExp::mapTraverseElement(AST_Expression e) {
     return _for_exp;
   return e;
 }
-*/
 
 ReplaceBoolean::ReplaceBoolean() {}
 

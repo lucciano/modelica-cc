@@ -113,7 +113,6 @@ private:
 	VarSymbolTable _st;
 };
 
-/*
 class ReplaceExp: public AST_Expression_Traverse  {
 public:
 	AST_Expression replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in);
@@ -121,7 +120,6 @@ private:
 	virtual AST_Expression mapTraverseElement(AST_Expression);
 	AST_Expression _rep, _for_exp, _in;
 };
-*/
 
 /*  ReplaceBoolean: Reemplaza constantes Booleanas 
  *  Utilizado en las Modifications 
