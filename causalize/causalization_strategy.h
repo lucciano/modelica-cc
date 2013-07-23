@@ -5,24 +5,9 @@
  *      Author: fede
  */
 
-#include <ast/ast_builder.h>
-#include <mmo/mmo_class.h>
-
-#include <boost/config.hpp>
-#include <boost/graph/adjacency_list.hpp>
+#include <causalize/graph_definition.h>
 
 using namespace std;
-
-struct VertexProperties {
-  MMO_EquationList eqs;
-  AST_ExpressionList unknowns;
-  int index; // only for debugging purposes
-};
-
-typedef boost::adjacency_list<boost::listS,
-        boost::listS, boost::undirectedS, VertexProperties> CausalizationGraph;
-typedef CausalizationGraph::vertex_descriptor Vertex;
-typedef CausalizationGraph::edge_descriptor Edge;
 
 class CausalizationStrategy {
 public:
@@ -33,8 +18,7 @@ private:
 	bool occur(AST_Expression unknown, MMO_Equation equation);
 	void makeCausal1(MMO_EquationList eqs, AST_ExpressionList unknowns);
 	void makeCausalN(MMO_EquationList eqs, AST_ExpressionList unknowns);
-//	int processVertex(Vertex v, Edge *blackEdge);
-//	void colorAdjacentEdges(Vertex v, Edge blackEdge);
+	void processLoops();
 	CausalizationGraph _graph;
 	list<Vertex> *_acausalEqs;
 	list<Vertex> *_unknowns;

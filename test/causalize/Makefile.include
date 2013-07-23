@@ -1,0 +1,13 @@
+OBJS_CAUSALIZE_TEST := $(OBJS_COMMON) \
+            causalize/debug.o \
+            causalize/cycles_identification_strategy.o \
+            test/causalize/cycles_identification_strategy_test.o
+
+LIB_CAUSALIZE_TEST = /usr/lib/libboost_unit_test_framework.a
+
+test/causalize/cycles_identification_strategy_test: $(OBJS_CAUSALIZE_TEST)
+	$(CXX) $(CXXFLAGS) -o test/causalize/cycles_identification_strategy_test $(OBJS_CAUSALIZE_TEST) $(LIB_CAUSALIZE_TEST)
+
+
+
+	
