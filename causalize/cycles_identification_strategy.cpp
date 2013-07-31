@@ -19,19 +19,24 @@ typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::directedS> Direc
 typedef boost::graph_traits < DirectedGraph >::vertex_descriptor DGVertex;
 typedef boost::graph_traits < DirectedGraph >::edge_descriptor DGEdge;
 
-// FIXME only works with adjacency_list class with template parameter VertexList=vecS
-// because it uses integers for vertex descriptors. adjacency_list class with template parameter VertexList=listS
-// won't work because it doesn't uses integers for vertex descriptors.
-  std::vector<Vertex> _matching;
-  std::map<DGVertex, Vertex> _collapsed2original;
+map<Vertex, Vertex> _matching;
+map<DGVertex, Vertex> _collapsed2original;
 
 void buildCollapsedGraph(CausalizationGraph& graph, DirectedGraph& digraph);
-DGVertex original2collapsed(Vertex value);
 
-// TODO ver como hacer más genérico este parámetro.
-int cycles_identification_strategy(CausalizationGraph& graph, std::map<Vertex, int> *cycles) {
+void process_strong_components_result(map<DGVertex, int> *vertex2component, int *numComponents);
 
-  bool success = checked_edmonds_maximum_cardinality_matching(graph, &_matching[0]);
+int cycles_identification_strategy(CausalizationGraph& graph, map<Vertex, int> *cycles) {
+
+  boost::associative_property_map< map<Vertex, Vertex> >  matching_map(_matching);
+  map<Vertex, int> vertex2index;
+  CausalizationGraph::vertex_iterator i, iend;
+  int ic = 0;
+  for (boost::tie(i, iend) = vertices(graph); i != iend; ++i, ++ic) {
+    vertex2index[*i] = ic;
+  }
+  boost::associative_property_map< map<Vertex, int> >  index_map(vertex2index);
+  bool success = checked_edmonds_maximum_cardinality_matching(graph, matching_map, index_map);
   if (!success) {
     ERROR("Can't find a maximum cardinality matching.\n");
   }
@@ -39,12 +44,21 @@ int cycles_identification_strategy(CausalizationGraph& graph, std::map<Vertex, i
   DirectedGraph collapsedGraph;
   buildCollapsedGraph(graph, collapsedGraph);
 
-  std::map<DGVertex, int> vertex2component;
-  boost::associative_property_map< std::map<DGVertex, int> >  component_map(vertex2component);
-  int numCycles = strong_components(collapsedGraph, component_map);
+  map<DGVertex, int> vertex2component;
+  boost::associative_property_map< map<DGVertex, int> >  component_map(vertex2component);
+  map<DGVertex, int> dg_vertex2index;
+  DirectedGraph::vertex_iterator j, jend;
+  int jc = 0;
+  for (boost::tie(j, jend) = vertices(collapsedGraph); j != jend; ++j, ++jc) {
+    dg_vertex2index[*j] = jc;
+  }
+  boost::associative_property_map< map<DGVertex, int> >  dg_index_map(dg_vertex2index);
+  int numCycles = strong_components(collapsedGraph, component_map, boost::vertex_index_map(dg_index_map));
 
-  std::map<DGVertex, int>::iterator it;
-  for (it = vertex2component.begin(); it != vertex2component.end(); it++) { // FIXME ver el caso non-cycle
+  process_strong_components_result(&vertex2component, &numCycles);
+
+  map<DGVertex, int>::iterator it;
+  for (it = vertex2component.begin(); it != vertex2component.end(); it++) {
     DGVertex collapsedVertex = it->first;
     Vertex eOriginalVertex = _collapsed2original[collapsedVertex];
     Vertex uOriginalVertex = _matching[eOriginalVertex];
@@ -55,6 +69,8 @@ int cycles_identification_strategy(CausalizationGraph& graph, std::map<Vertex, i
 
   return numCycles;
 }
+
+DGVertex original2collapsed(Vertex value);
 
 void buildCollapsedGraph(CausalizationGraph& graph, DirectedGraph& digraph) {
   CausalizationGraph::vertex_iterator vi, vi_end;
@@ -81,11 +97,40 @@ void buildCollapsedGraph(CausalizationGraph& graph, DirectedGraph& digraph) {
 }
 
 DGVertex original2collapsed(Vertex value) {
-  std::map<DGVertex, Vertex>::iterator it;
+  map<DGVertex, Vertex>::iterator it;
   for (it = _collapsed2original.begin(); it != _collapsed2original.end(); it++){
     if ((*it).second == value) {
       return (*it).first;
     }
   }
   ERROR("Can't find collapsed vertex from original.");
+}
+
+void set_cycle_index(map<DGVertex, int> *vertex2component, int comp, int index);
+
+// filter strong components of size 1
+void process_strong_components_result(map<DGVertex, int> *vertex2component, int *numComponents) {
+  vector<int> compSize(*numComponents, 0);
+  map<DGVertex, int>::iterator it;
+  for (it = vertex2component->begin(); it != vertex2component->end(); ++it) {
+    compSize[(*it).second]++;
+  }
+  int cycleIndex = 0;
+  for (vector<int>::size_type i = 0; i < compSize.size(); ++i) {
+    if (compSize[i] == 1) {
+      (*numComponents)--;
+      set_cycle_index(vertex2component, i, NONE_CYCLE);
+    } else {
+      set_cycle_index(vertex2component, i, cycleIndex++);
+    }
+  }
+}
+
+void set_cycle_index(map<DGVertex, int> *vertex2component, int comp, int index) {
+  map<DGVertex, int>::iterator it;
+  for (it = vertex2component->begin(); it != vertex2component->end(); it++) {
+    if ((*it).second == comp) {
+      (*it).second = index;
+    }
+  }
 }

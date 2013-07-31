@@ -15,8 +15,8 @@ struct VertexProperties {
   int index; // only for debugging purposes
 };
 
-typedef boost::adjacency_list<boost::vecS,
-        boost::vecS, boost::undirectedS, VertexProperties> CausalizationGraph;
+typedef boost::adjacency_list<boost::listS,
+        boost::listS, boost::undirectedS, VertexProperties> CausalizationGraph;
 
 typedef CausalizationGraph::vertex_descriptor Vertex;
 
