@@ -81,12 +81,12 @@ int main(int argc, char ** argv)
   discreteVarFinder->findDiscreteVariables();
   UnknownsCollector *collector = new UnknownsCollector(c);
   AST_ExpressionList unknowns = collector->collectUnknowns();
-  CausalizationStrategy *strategy = new CausalizationStrategy(c->getEquations(), unknowns);
-  MMO_EquationList causalizedEquations = strategy->causalize();
+  MMO_EquationList causalEqs = newMMO_EquationList();
+  causalize(acausalEquations, unknowns, causalEqs);
 
   DEBUG('c', "Causalized Equations:\n");
   c->getEquations()->clear();
-  foreach(iter, causalizedEquations) {
+  foreach(iter, causalEqs) {
     DEBUG('c', "%s", current_element(iter)->print().c_str());
     AST_ListAppend(c->getEquations(),current_element(iter));
   }

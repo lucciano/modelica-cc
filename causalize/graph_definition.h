@@ -4,6 +4,9 @@
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
+#ifndef GRAPH_DEFINITION_
+#define GRAPH_DEFINITION_
+
 enum VertexType { E, // Equations
                   U  // Unknowns
 };
@@ -21,3 +24,5 @@ typedef boost::adjacency_list<boost::listS,
 typedef CausalizationGraph::vertex_descriptor Vertex;
 
 typedef CausalizationGraph::edge_descriptor Edge;
+
+#endif GRAPH_DEFINITION_

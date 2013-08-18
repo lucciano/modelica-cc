@@ -14,6 +14,7 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include <assert.h>
+#include <stdio.h>
 
 typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::directedS> DirectedGraph;
 typedef boost::graph_traits < DirectedGraph >::vertex_descriptor DGVertex;
@@ -22,55 +23,15 @@ typedef boost::graph_traits < DirectedGraph >::edge_descriptor DGEdge;
 map<Vertex, Vertex> _matching;
 map<DGVertex, Vertex> _collapsed2original;
 
-void buildCollapsedGraph(CausalizationGraph& graph, DirectedGraph& digraph);
-
-void process_strong_components_result(map<DGVertex, int> *vertex2component, int *numComponents);
-
-int cycles_identification_strategy(CausalizationGraph& graph, map<Vertex, int> *cycles) {
-
-  boost::associative_property_map< map<Vertex, Vertex> >  matching_map(_matching);
-  map<Vertex, int> vertex2index;
-  CausalizationGraph::vertex_iterator i, iend;
-  int ic = 0;
-  for (boost::tie(i, iend) = vertices(graph); i != iend; ++i, ++ic) {
-    vertex2index[*i] = ic;
+DGVertex original2collapsed(Vertex value) {
+  map<DGVertex, Vertex>::iterator it;
+  for (it = _collapsed2original.begin(); it != _collapsed2original.end(); it++){
+    if ((*it).second == value) {
+      return (*it).first;
+    }
   }
-  boost::associative_property_map< map<Vertex, int> >  index_map(vertex2index);
-  bool success = checked_edmonds_maximum_cardinality_matching(graph, matching_map, index_map);
-  if (!success) {
-    ERROR("Can't find a maximum cardinality matching.\n");
-  }
-
-  DirectedGraph collapsedGraph;
-  buildCollapsedGraph(graph, collapsedGraph);
-
-  map<DGVertex, int> vertex2component;
-  boost::associative_property_map< map<DGVertex, int> >  component_map(vertex2component);
-  map<DGVertex, int> dg_vertex2index;
-  DirectedGraph::vertex_iterator j, jend;
-  int jc = 0;
-  for (boost::tie(j, jend) = vertices(collapsedGraph); j != jend; ++j, ++jc) {
-    dg_vertex2index[*j] = jc;
-  }
-  boost::associative_property_map< map<DGVertex, int> >  dg_index_map(dg_vertex2index);
-  int numCycles = strong_components(collapsedGraph, component_map, boost::vertex_index_map(dg_index_map));
-
-  process_strong_components_result(&vertex2component, &numCycles);
-
-  map<DGVertex, int>::iterator it;
-  for (it = vertex2component.begin(); it != vertex2component.end(); it++) {
-    DGVertex collapsedVertex = it->first;
-    Vertex eOriginalVertex = _collapsed2original[collapsedVertex];
-    Vertex uOriginalVertex = _matching[eOriginalVertex];
-    int component = it->second;
-    (*cycles)[eOriginalVertex] = component;
-    (*cycles)[uOriginalVertex] = component;
-  }
-
-  return numCycles;
+  ERROR("Can't find collapsed vertex from original.");
 }
-
-DGVertex original2collapsed(Vertex value);
 
 void buildCollapsedGraph(CausalizationGraph& graph, DirectedGraph& digraph) {
   CausalizationGraph::vertex_iterator vi, vi_end;
@@ -96,17 +57,14 @@ void buildCollapsedGraph(CausalizationGraph& graph, DirectedGraph& digraph) {
   }
 }
 
-DGVertex original2collapsed(Vertex value) {
-  map<DGVertex, Vertex>::iterator it;
-  for (it = _collapsed2original.begin(); it != _collapsed2original.end(); it++){
-    if ((*it).second == value) {
-      return (*it).first;
+void set_cycle_index(map<DGVertex, int> *vertex2component, int comp, int index) {
+  map<DGVertex, int>::iterator it;
+  for (it = vertex2component->begin(); it != vertex2component->end(); it++) {
+    if ((*it).second == comp) {
+      (*it).second = index;
     }
   }
-  ERROR("Can't find collapsed vertex from original.");
 }
-
-void set_cycle_index(map<DGVertex, int> *vertex2component, int comp, int index);
 
 // filter strong components of size 1
 void process_strong_components_result(map<DGVertex, int> *vertex2component, int *numComponents) {
@@ -126,11 +84,87 @@ void process_strong_components_result(map<DGVertex, int> *vertex2component, int 
   }
 }
 
-void set_cycle_index(map<DGVertex, int> *vertex2component, int comp, int index) {
-  map<DGVertex, int>::iterator it;
-  for (it = vertex2component->begin(); it != vertex2component->end(); it++) {
-    if ((*it).second == comp) {
-      (*it).second = index;
-    }
+int cycles_identification_strategy(CausalizationGraph& graph, map<Vertex, int>& cycles) {
+
+  boost::associative_property_map< map<Vertex, Vertex> >  matching_map(_matching);
+
+  // Vertex Index Map required for checked_edmonds_maximum_cardinality_matching.
+  // This is to allow the causalization graph, which is an adjacency list, to
+  // use as VertexList either vecS or listS.
+  map<Vertex, int> vertex2index;
+  CausalizationGraph::vertex_iterator i, iend;
+  int ic = 0;
+  for (boost::tie(i, iend) = vertices(graph); i != iend; ++i, ++ic) {
+    vertex2index[*i] = ic;
   }
+  boost::associative_property_map< map<Vertex, int> >  index_map(vertex2index);
+
+  DEBUG('c', "Calculating maximum cardinality matching over causalization graph...\n");
+
+  bool success = checked_edmonds_maximum_cardinality_matching(graph, matching_map, index_map);
+  if (!success) {
+    ERROR("Can't find a maximum cardinality matching.\n");
+  }
+
+  for (map<Vertex, Vertex>::iterator it=_matching.begin(); it!=_matching.end(); ++it) {
+        char se[10];
+        Vertex v1 = it->first;
+        if(graph[v1].type == E) {
+          sprintf(se, "E%d", vertex2index[v1]);
+        } else {
+          sprintf(se, "U%d", vertex2index[v1]);
+        }
+        char su[10];
+        Vertex v2 = it->second;
+        if(graph[v2].type == E) {
+          sprintf(su, "E%d", vertex2index[v2]);
+        } else {
+          sprintf(su, "U%d", vertex2index[v2]);
+        }
+        DEBUG('c', "%s matches %s\n", se, su);
+    }
+
+  DirectedGraph collapsedGraph;
+
+  DEBUG('c', "Collapsing matching vertices...\n");
+
+  buildCollapsedGraph(graph, collapsedGraph);
+
+
+
+  map<DGVertex, int> vertex2component;
+  boost::associative_property_map< map<DGVertex, int> >  component_map(vertex2component);
+  map<DGVertex, int> dg_vertex2index;
+  DirectedGraph::vertex_iterator j, jend;
+  int jc = 0;
+  for (boost::tie(j, jend) = vertices(collapsedGraph); j != jend; ++j, ++jc) {
+    dg_vertex2index[*j] = jc;
+  }
+  boost::associative_property_map< map<DGVertex, int> >  dg_index_map(dg_vertex2index);
+
+
+  DEBUG('c', "Running tarjan algorithm over collapsed graph...\n");
+
+  int numComponents = strong_components(collapsedGraph, component_map, boost::vertex_index_map(dg_index_map));
+
+  DEBUG('c', "%d strong components identifed.\n", numComponents);
+  for (map<DGVertex,int>::iterator it=vertex2component.begin(); it!=vertex2component.end(); ++it) {
+      DGVertex v = it->first;
+      DEBUG('c', "Vertex: %d -- Component: %d\n", dg_vertex2index[v], it->second);
+  }
+
+  process_strong_components_result(&vertex2component, &numComponents);
+
+  map<DGVertex, int>::iterator it;
+  for (it = vertex2component.begin(); it != vertex2component.end(); it++) {
+    DGVertex collapsedVertex = it->first;
+    Vertex eOriginalVertex = _collapsed2original[collapsedVertex];
+    Vertex uOriginalVertex = _matching[eOriginalVertex];
+    int component = it->second;
+    cycles[eOriginalVertex] = component;
+    cycles[uOriginalVertex] = component;
+  }
+
+  return numComponents;
 }
+

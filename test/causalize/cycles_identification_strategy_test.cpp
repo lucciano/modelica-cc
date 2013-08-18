@@ -16,7 +16,7 @@ using namespace boost::unit_test;
 
 //____________________________________________________________________________//
 
-void cycles_num_test()
+void cycles_test()
 {
     CausalizationGraph graph;
 
@@ -65,16 +65,16 @@ void cycles_num_test()
     add_edge(e5, u5, graph);
 
 
-    std::map<Vertex, int> *cycles = new std::map<Vertex, int>;
+    std::map<Vertex, int> cycles;
 
     BOOST_CHECK(cycles_identification_strategy(graph, cycles) == 1);
 
     CausalizationGraph::vertex_iterator i, iend;
     for (boost::tie(i, iend) = vertices(graph); i != iend; i++) {
       if ( *i != e3 && *i != e5 && *i != u3 && *i != u5) {
-        BOOST_CHECK((*cycles)[*i] == NONE_CYCLE);
+        BOOST_CHECK(cycles[*i] == NONE_CYCLE);
       } else {
-        BOOST_CHECK((*cycles)[*i] == 0);
+        BOOST_CHECK(cycles[*i] == 0);
       }
     }
 }
@@ -86,7 +86,7 @@ test_suite*
 init_unit_test_suite( int, char* [] ) {
     framework::master_test_suite().p_name.value = "Cycles Identification Strategy";
 
-    framework::master_test_suite().add( BOOST_TEST_CASE( &cycles_num_test ));
+    framework::master_test_suite().add( BOOST_TEST_CASE( &cycles_test ));
 
     return 0;
 }

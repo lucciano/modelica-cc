@@ -32,9 +32,10 @@
 MMO_EquationList EquationSolver::solve(MMO_EquationList eqs, AST_ExpressionList crs) {
   ConvertToGiNaC tog(NULL); // No var symbol table needed for now
   ConvertToExpression toe;
-  assert(AST_Length(eqs)==1);
-  assert(AST_Length(crs)==1);
-  AST_Equation_Equality eq=AST_ListFirst(eqs)->getAsEquality();
+
+  if (AST_Length(eqs) > 1) { return eqs; }
+
+  AST_Equation_Equality eq = AST_ListFirst(eqs)->getAsEquality();
   assert(eq!=NULL);
 
   GiNaC::ex left=tog.convert(eq->left());
