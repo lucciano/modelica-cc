@@ -27,6 +27,6 @@
 
 class EquationSolver {
 public:
-  static MMO_EquationList solve(MMO_EquationList eqs, AST_ExpressionList crs);
+  static MMO_EquationList solve(MMO_EquationList eqs, AST_ExpressionList crs,  AST_ExpressionList all_unknowns);
 };
 #endif

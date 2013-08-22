@@ -168,13 +168,20 @@ ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
 }
 
 AST_Expression ConvertToExpression::convert(ex exp) {
-  stringstream s(ios_base::out);
+  stringstream s(ios_base::out),der_s(ios_base::out);
   int r;
   set_print_func<power,print_dflt>(my_print_power_dflt);
   //set_print_func<mul,print_dflt>(my_print_mul_dflt);
   //set_print_func<add,print_dflt>(my_print_add_dflt);
   s << exp;
-  AST_Expression e= parseExpression(s.str().c_str(),&r);
+  AST_Expression e;
+  if (s.str().find("__der_")==0) {
+    string ss=s.str().erase(0,6);
+    der_s << "der(" << ss << ")";
+    e= parseExpression(der_s.str().c_str(),&r);
+  } else {
+    e= parseExpression(s.str().c_str(),&r);
+  }
   assert(e!=NULL && r==0) ;
   return e;
 

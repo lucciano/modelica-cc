@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include <cstdlib>
+#include <stdio.h>
 #include <iostream>
 
 #include <parser/parse.h>
@@ -70,7 +71,6 @@ int main(int argc, char ** argv)
   MMO_EquationList acausalEquations = c->getEquations();
 
   DEBUG('c', "Acausal Equations:\n");
-  cout << c;
   foreach(iter, acausalEquations) {
     DEBUG('c', "%s", current_element(iter)->print().c_str());
   }
@@ -90,6 +90,29 @@ int main(int argc, char ** argv)
     DEBUG('c', "%s", current_element(iter)->print().c_str());
     AST_ListAppend(c->getEquations(),current_element(iter));
   }
+  /* Dump parameters file */ 
+  string file_name= toStr(c->name());
+  file_name.append("_parameters.h");
+  FILE *params=fopen(file_name.c_str(),"w");
+  VarSymbolTable varEnv = c->getVarSymbolTable();
+  for(int i=0;i<varEnv->count();i++) {
+    VarInfo var = varEnv->val(i);
+    if (var->isParameter()) {
+      fprintf(params,"#ifdef QSS_SOLVER\n");
+      fprintf(params,"extern double %s;\n",varEnv->key(i).c_str());
+      fprintf(params,"#else\n");
+      if (var->modification()!=NULL && var->modification()->modificationType()==MODEQUAL) {
+        AST_Modification_Equal me = var->modification()->getAsEqual();
+        /* TODO: This should evaluate instead of just printing the exp */
+        fprintf(params,"double %s=%s;\n",varEnv->key(i).c_str(),me->exp()->print().c_str());
+      } else {
+        fprintf(params,"double %s;\n",varEnv->key(i).c_str());
+      }
+      fprintf(params,"#endif\n");
+    }
+  }
+  fclose(params);
+  /* Dump parameters file */ 
   cout << c;
   return 0;
 }

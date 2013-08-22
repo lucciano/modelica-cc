@@ -35,17 +35,17 @@ bool occur(AST_Expression unknown, MMO_Equation equation) {
   return false;
 }
 
-void makeCausal1(MMO_EquationList eqs, AST_ExpressionList unknowns) {
+void makeCausal1(MMO_EquationList eqs, AST_ExpressionList unknowns, AST_ExpressionList all_unknowns) {
   MMO_EquationListIterator iter;
-  MMO_EquationList causalEqs = EquationSolver::solve(eqs, unknowns);
+  MMO_EquationList causalEqs = EquationSolver::solve(eqs, unknowns,all_unknowns);
   foreach(iter, causalEqs) {
     _causalEqs1->push_back(current_element(iter));
   }
 }
 
-void makeCausalN(MMO_EquationList eqs, AST_ExpressionList unknowns) {
+void makeCausalN(MMO_EquationList eqs, AST_ExpressionList unknowns,  AST_ExpressionList all_unknowns) {
   MMO_EquationListIterator iter;
-  MMO_EquationList causalEqs = EquationSolver::solve(eqs, unknowns);
+  MMO_EquationList causalEqs = EquationSolver::solve(eqs, unknowns,all_unknowns);
   foreach(iter, causalEqs) {
     _causalEqsN->push_front(current_element(iter));
   }
@@ -183,7 +183,7 @@ void processCycles() {
 
 }
 
-void doIt(MMO_EquationList causalEqs) {
+void doIt(MMO_EquationList causalEqs, AST_ExpressionList unknowns) {
 
   if(_acausalEqs->empty()) {
     causalEqs->insert(causalEqs->end(), _causalEqs1->begin(), _causalEqs1->end());
@@ -203,7 +203,7 @@ void doIt(MMO_EquationList causalEqs) {
       Edge e = *out_edges(eq, _graph).first;
       Vertex unknown = target(e, _graph);
       remove_out_edge_if(unknown, boost::lambda::_1 != e, _graph);
-      makeCausal1(_graph[eq].eqs, _graph[unknown].unknowns);
+      makeCausal1(_graph[eq].eqs, _graph[unknown].unknowns,unknowns);
       _acausalEqs->erase(iter);
       _unknowns->remove(unknown);
     } else if (out_degree(eq, _graph) == 0) {
@@ -219,7 +219,7 @@ void doIt(MMO_EquationList causalEqs) {
       Edge e = *out_edges(unknown, _graph).first;
       Vertex eq = target(e, _graph);
       remove_out_edge_if(eq, boost::lambda::_1 != e, _graph);
-      makeCausalN(_graph[eq].eqs, _graph[unknown].unknowns);
+      makeCausalN(_graph[eq].eqs, _graph[unknown].unknowns,unknowns);
       _acausalEqs->remove(eq);
       _unknowns->erase(iter);
     } else if (out_degree(unknown, _graph) == 0) {
@@ -232,8 +232,7 @@ void doIt(MMO_EquationList causalEqs) {
     processCycles();
   }
 
-  doIt(causalEqs);
-
+  doIt(causalEqs,unknowns);
 }
 
 void init(MMO_EquationList equations,	AST_ExpressionList unknowns) {
@@ -311,7 +310,7 @@ void destroyGlobalVariables() {
 
 void causalize(MMO_EquationList equations, AST_ExpressionList unknowns, MMO_EquationList causalEqs) {
   init(equations, unknowns);
-  doIt(causalEqs);
+  doIt(causalEqs,unknowns);
   destroyGlobalVariables();
   return;
 }

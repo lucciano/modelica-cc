@@ -25,4 +25,4 @@ typedef CausalizationGraph::vertex_descriptor Vertex;
 
 typedef CausalizationGraph::edge_descriptor Edge;
 
-#endif GRAPH_DEFINITION_
+#endif
