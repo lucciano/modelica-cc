@@ -18,21 +18,57 @@
 
 ******************************************************************************/
 
-#include <ast/ast_builder.h>
-#include <util/solve.h>
-#include <parser/parse.h>
-#include <ast/equation.h>
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
 #include <cassert>
 #include <fstream> 
-#include <util/ginac_interface.h>
-#include <causalize/debug.h>
+
+#include <ast/ast_builder.h>
+#include <parser/parse.h>
+#include <ast/equation.h>
 #include <causalize/causalization_strategy.h>
 #include <causalize/compref_occurrence_traverse.h>
+#include <util/ginac_interface.h>
+#include <util/solve.h>
+#include <util/debug.h>
 
-MMO_EquationList EquationSolver::solve(MMO_EquationList eqs, AST_ExpressionList crs, AST_ExpressionList all_unknowns) {
+AST_Class makeFsolve(AST_String name, int args_size, int size) {
+  AST_DeclarationList in=NULL,out=NULL;
+  AST_ElementList el = newAST_ElementList();
+  if (args_size) {
+    for (int i=0;i<args_size;i++) {
+      stringstream s(ios_base::out);
+      s << "i" << i;
+      AST_Declaration d=newAST_Declaration(newAST_String(s.str()),newAST_ExpressionList(),newAST_ModificationNull());
+      if (i==0) 
+        in = newAST_DeclarationList(d);
+      else
+        AST_ListAppend(in,d);
+    }
+    AST_Element_Component ec_in=newAST_Element_Component(in,newAST_String("Real"),newAST_TypePrefix(TP_INPUT),newAST_ExpressionList());
+    AST_ListAppend(el,AST_Element_ComponentToElement(ec_in));
+  }
+  for (int i=0;i<size;i++) {
+      stringstream s(ios_base::out);
+      s << "o" << i;
+      AST_Declaration d=newAST_Declaration(newAST_String(s.str()),newAST_ExpressionList(),newAST_ModificationNull());
+      if (i==0) 
+        out = newAST_DeclarationList(d);
+      else
+        AST_ListAppend(out,d);
+  }
+  AST_Element_Component ec_out=newAST_Element_Component(out,newAST_String("Real"),newAST_TypePrefix(TP_OUTPUT),newAST_ExpressionList());
+  AST_ListAppend(el,AST_Element_ComponentToElement(ec_out));
+
+  //AST_Element_Component ec_out=newAST_Element_Component(out,newAST_String("Real"),newAST_TypePrefix(TP_INPUT),newAST_ExpressionList());
+  AST_Composition c=newAST_Composition(el);
+  AST_Class r=AST_Class_SetPrefixEncapsulated(newAST_Class(name,c),AST_ClassPrefix_Function(0),false);
+  cout << r;
+  return r; 
+}
+
+MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AST_ExpressionList crs, AST_ExpressionList all_unknowns, AST_ClassList cl) {
   static int fsolve=1;
   ConvertToGiNaC tog(NULL); // No var symbol table needed for now
   ConvertToExpression toe;
@@ -113,8 +149,12 @@ MMO_EquationList EquationSolver::solve(MMO_EquationList eqs, AST_ExpressionList 
     int index=0;
     const int size=AST_Length(eqs);
     const int args_size=AST_Length(args);
-    std::fstream fs ("test.c", std::fstream::out);
-    fs << "#include <gsl/gsl_multiroots.h>"<< endl;
+    string file_name = toStr(name) + "_functions.c";
+    std::fstream fs (file_name.c_str(),(fsolve==1 ? std::fstream::out : std::fstream::out | std::fstream::app));
+    if (fsolve==1) {
+      fs << "#include <gsl/gsl_multiroots.h>"<< endl;
+      fs << "#include \"" << toStr(name) << "_parameters.h\""<< endl;
+    }
     fs << "int fsolve" << fsolve << "_eval(const gsl_vector * __x, void * __p, gsl_vector * __f) {" << endl;
     fs << "  double *args=(double*)__p;" << endl;
     foreach(it_cr,crs) {
@@ -178,7 +218,7 @@ MMO_EquationList EquationSolver::solve(MMO_EquationList eqs, AST_ExpressionList 
     fs << "  gsl_multiroot_fsolver_free (__s);"<< endl;
     fs << "  gsl_vector_free (__x);"<< endl;
     fs << "}" << endl;
-    fsolve++;
+    AST_ListAppend(cl,makeFsolve(newAST_String(s.str()),args_size,size));
     return newAST_SimpleList(e);
   }
 }

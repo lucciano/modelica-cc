@@ -26,6 +26,7 @@
 
 DECLARE_FUNCTION_2P(var)
 DECLARE_FUNCTION_1P(der)
+DECLARE_FUNCTION_1P(pre)
 
 class ConvertToGiNaC: public AST_Expression_Fold<GiNaC::ex> {
 public:

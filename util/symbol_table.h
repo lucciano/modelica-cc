@@ -99,6 +99,9 @@ public:
     _t=t;
   };
 
+  void setParameter() {
+    _tp = TP_PARAMETER;
+  }
   bool isParameter() const {
     return _tp & TP_PARAMETER;
   }
@@ -127,10 +130,14 @@ public:
 
   bool isState();
   void setState();
+  
+  bool isUnknown();
+  void setUnknown();
 
   friend ostream & operator<<(ostream &os , const VarInfo_ &e );
 private:
   bool _state;
+  bool _unknown;
   bool _discrete;
   Type _t;
   AST_TypePrefix _tp ;

@@ -80,3 +80,11 @@ TypeSymbolTable newTypeSymbolTable()
 {
   return new TypeSymbolTable_;
 }
+bool VarInfo_::isUnknown() {
+  return _unknown;
+};
+
+void VarInfo_::setUnknown() {
+  _unknown = true;
+};
+

@@ -31,6 +31,7 @@
 
 using namespace GiNaC;
 REGISTER_FUNCTION(der, dummy())
+REGISTER_FUNCTION(pre, dummy())
 void my_print_power_dflt(const power & p, const print_dflt & c, unsigned level) {
   // get the precedence of the 'power' class
   unsigned power_prec = p.precedence();
@@ -154,8 +155,10 @@ ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
   case EXPCALL:
   {
     AST_Expression_Call c=e->getAsCall();
-    if (*c->name()=="sin") {
+    if (toStr(c->name())=="sin") {
       return sin(convert(AST_ListFirst(c->arguments())));
+    } else if (toStr(c->name())=="pre") {
+      return pre(convert(AST_ListFirst(c->arguments())));
     } else {
       cerr << "Function call : " << c->name() << " not converted to GiNaC" << endl;
       return ex(0);
