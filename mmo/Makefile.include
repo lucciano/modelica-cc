@@ -9,8 +9,8 @@ OBJS_MMO := $(OBJS_COMMON) \
             causalize/state_variables_finder.o 
       
 
-mmo/mmo: $(OBJS_MMO)
-	$(CXX) $(CXXFLAGS) -o mmo/mmo $(OBJS_MMO)
+bin/mmo: $(OBJS_MMO)
+	$(CXX) $(CXXFLAGS) -o bin/mmo $(OBJS_MMO)
 
 
 
