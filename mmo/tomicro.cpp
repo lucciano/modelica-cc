@@ -45,7 +45,7 @@ void MMO_ToMicroModelica_::transform()
 	for(int i = 0; i < _c->getVarSymbolTable()->count();i++) {
 		VarInfo  v = _c->getVarSymbolTable()->varInfo(i);
 		string n   = _c->getVarSymbolTable()->varName(i);
-		v->setComment(NULL);
+		//v->setComment(NULL);
 		v->setModification( ChangeModifications(v->modification()));
 		if (_pre->find(n) != _pre->end())
 			v->setDiscrete();

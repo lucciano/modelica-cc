@@ -4,16 +4,16 @@
  *  Created on: 12/05/2013
  *      Author: fede
  */
+#include <boost/lambda/lambda.hpp>
 
 #include <ast/equation.h>
-#include <util/solve.h>
 
 #include <causalize/causalization_strategy.h>
 #include <causalize/compref_occurrence_traverse.h>
-#include <causalize/debug.h>
 #include <causalize/cycles_identification_strategy.h>
+#include <util/debug.h>
+#include <util/solve.h>
 
-#include <boost/lambda/lambda.hpp>
 
 CausalizationGraph _graph;
 list<Vertex> *_acausalEqs;
@@ -35,17 +35,17 @@ bool occur(AST_Expression unknown, MMO_Equation equation) {
   return false;
 }
 
-void makeCausal1(MMO_EquationList eqs, AST_ExpressionList unknowns, AST_ExpressionList all_unknowns) {
+void makeCausal1(AST_String name, MMO_EquationList eqs, AST_ExpressionList unknowns, AST_ExpressionList all_unknowns,AST_ClassList cl) {
   MMO_EquationListIterator iter;
-  MMO_EquationList causalEqs = EquationSolver::solve(eqs, unknowns,all_unknowns);
+  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns,all_unknowns,cl);
   foreach(iter, causalEqs) {
     _causalEqs1->push_back(current_element(iter));
   }
 }
 
-void makeCausalN(MMO_EquationList eqs, AST_ExpressionList unknowns,  AST_ExpressionList all_unknowns) {
+void makeCausalN(AST_String name, MMO_EquationList eqs, AST_ExpressionList unknowns,  AST_ExpressionList all_unknowns,AST_ClassList cl) {
   MMO_EquationListIterator iter;
-  MMO_EquationList causalEqs = EquationSolver::solve(eqs, unknowns,all_unknowns);
+  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns,all_unknowns,cl);
   foreach(iter, causalEqs) {
     _causalEqsN->push_front(current_element(iter));
   }
@@ -183,7 +183,7 @@ void processCycles() {
 
 }
 
-void doIt(MMO_EquationList causalEqs, AST_ExpressionList unknowns) {
+void doIt(AST_String name, MMO_EquationList causalEqs, AST_ExpressionList unknowns, AST_ClassList cl) {
 
   if(_acausalEqs->empty()) {
     causalEqs->insert(causalEqs->end(), _causalEqs1->begin(), _causalEqs1->end());
@@ -203,7 +203,7 @@ void doIt(MMO_EquationList causalEqs, AST_ExpressionList unknowns) {
       Edge e = *out_edges(eq, _graph).first;
       Vertex unknown = target(e, _graph);
       remove_out_edge_if(unknown, boost::lambda::_1 != e, _graph);
-      makeCausal1(_graph[eq].eqs, _graph[unknown].unknowns,unknowns);
+      makeCausal1(name,_graph[eq].eqs, _graph[unknown].unknowns,unknowns,cl);
       _acausalEqs->erase(iter);
       _unknowns->remove(unknown);
     } else if (out_degree(eq, _graph) == 0) {
@@ -219,7 +219,7 @@ void doIt(MMO_EquationList causalEqs, AST_ExpressionList unknowns) {
       Edge e = *out_edges(unknown, _graph).first;
       Vertex eq = target(e, _graph);
       remove_out_edge_if(eq, boost::lambda::_1 != e, _graph);
-      makeCausalN(_graph[eq].eqs, _graph[unknown].unknowns,unknowns);
+      makeCausalN(name,_graph[eq].eqs, _graph[unknown].unknowns,unknowns,cl);
       _acausalEqs->remove(eq);
       _unknowns->erase(iter);
     } else if (out_degree(unknown, _graph) == 0) {
@@ -232,7 +232,7 @@ void doIt(MMO_EquationList causalEqs, AST_ExpressionList unknowns) {
     processCycles();
   }
 
-  doIt(causalEqs,unknowns);
+  doIt(name,causalEqs,unknowns,cl);
 }
 
 void init(MMO_EquationList equations,	AST_ExpressionList unknowns) {
@@ -308,9 +308,10 @@ void destroyGlobalVariables() {
   delete _causalEqsN;
 }
 
-void causalize(MMO_EquationList equations, AST_ExpressionList unknowns, MMO_EquationList causalEqs) {
+AST_ClassList causalize(AST_String name, MMO_EquationList equations, AST_ExpressionList unknowns, MMO_EquationList causalEqs) {
   init(equations, unknowns);
-  doIt(causalEqs,unknowns);
+  AST_ClassList cl = newAST_ClassList();
+  doIt(name,causalEqs,unknowns,cl);
   destroyGlobalVariables();
-  return;
+  return cl;
 }

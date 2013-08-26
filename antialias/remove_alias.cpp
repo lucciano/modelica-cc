@@ -6,6 +6,7 @@
 #include <ast/expression.h>
 #include <util/symbol_table.h>
 #include <util/ast_util.h>
+#include <util/debug.h>
 #include <causalize/state_variables_finder.h>
 
 void RemoveAlias::addAlias(AST_Expression var, AST_Expression alias) {
@@ -169,11 +170,11 @@ void RemoveAlias::removeAliasEquations(MMO_Class c) {
         */
         if (IS_VAR(left) && IS_VAR(right)) {
           if (!IS_STATE(left)) {
-            cerr << "ADDING ALIAS " << left << " FOR " << right << " FROM ALIAS EQ: " << eqeq;
+            DEBUG('a' ,"ADDING ALIAS %s FOR %s from eq %s",left->print().c_str(), right->print().c_str(),eqeq->print().c_str());
             addAlias(right,left);
             AST_ListAppend(remove,static_cast<AST_Equation>(eqeq));
           } else if (!IS_STATE(right)) {
-            cerr << "ADDING ALIAS " << right << " FOR " << left << " FROM ALIAS EQ: " << eqeq;
+            DEBUG('a' ,"ADDING ALIAS %s FOR %s from eq %s",left->print().c_str(), right->print().c_str(),eqeq->print().c_str());
             addAlias(left,right);
             AST_ListAppend(remove,static_cast<AST_Equation>(eqeq));
           }

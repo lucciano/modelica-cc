@@ -14,7 +14,7 @@ OBJS_COMMON := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
-all:mmo/mmo causalize/causalize antialias/antialias test/causalize/cycles_identification_strategy_test
+all:bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test
 
 include mmo/Makefile.include
 include causalize/Makefile.include

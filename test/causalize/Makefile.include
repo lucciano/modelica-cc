@@ -1,5 +1,5 @@
 OBJS_CAUSALIZE_TEST := $(OBJS_COMMON) \
-            causalize/debug.o \
+            util/debug.o \
             causalize/cycles_identification_strategy.o \
             test/causalize/cycles_identification_strategy_test.o
 

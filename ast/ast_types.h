@@ -94,6 +94,7 @@ DEFINE_TYPE(AST_Expression_Range);
 DEFINE_TYPE(AST_Expression_Real);
 DEFINE_TYPE(AST_Expression_String);
 DEFINE_TYPE(AST_Expression_UMinus);
+DEFINE_TYPE(AST_External_Function_Call);
 DEFINE_TYPE(AST_Element_ExtendsClause);
 DEFINE_TYPE(AST_Element_ImportClause);
 DEFINE_TYPE(AST_ForIndex);

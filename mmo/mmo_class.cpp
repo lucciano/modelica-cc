@@ -242,8 +242,8 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   AST_ListPrint(ElemList,ret,"","","","",true);	
   
   AST_ListPrint(Inieqs,ret,"initial equation\n","","","",true);	
-  AST_ListPrint(eqs,ret,"equation\n","","","",true);
   AST_ListPrint(Inistm,ret,"initial algorithm\n","","","",true);
+  AST_ListPrint(eqs,ret,"equation\n","","","",true);
   AST_ListPrint(stm,ret,"algorithm\n","","","",true);
   ret  << "end " << c.name() << ";" << endl;
   return ret;
@@ -262,4 +262,41 @@ MMO_Class newMMO_Class(AST_Class c, TypeSymbolTable t)
 
 MMO_EquationList newMMO_EquationList() {
   return new list<MMO_Equation>;
+}
+
+void MMO_Class_::cleanComments() {
+  int i; int symbolTableSize = getVarSymbolTable()->count();
+  BEGIN_BLOCK;
+  for (i = 0; i<symbolTableSize; i++) {
+	  VarInfo var = getVarSymbolTable()->varInfo(i);
+    var->setComment(NULL);
+    if (var->isConstant()) 
+      var->setParameter();
+    if ((var->isUnknown() && !var->isState())) {
+      var->setModification(NULL);
+      continue;
+    }
+    if (var->isParameter() && var->modification()!=NULL && var->modification()->modificationType()==MODCLASS) {
+      AST_Modification_Class mc = var->modification()->getAsClass();
+      if (mc->exp()!=NULL) {
+        mc->arguments()->clear(); 
+      }
+    }
+    if (var->modification()) {
+      if (var->modification()->modificationType()==MODCLASS) {
+        AST_ArgumentList al_new = newAST_ArgumentList();
+        AST_ArgumentList al = var->modification()->getAsClass()->arguments();  
+        AST_ArgumentListIterator al_it;
+        foreach(al_it,al) 
+          if (current_element(al_it)->getAsModification()!=NULL) {
+            AST_Argument_Modification am = current_element(al_it)->getAsModification();
+            if (toStr(am->name())=="start") {
+              AST_ListAppend(al_new,static_cast<AST_Argument>(am));
+            }
+          };
+        var->modification()->getAsClass()->setArguments(al_new); 
+      }
+    }
+  } 
+
 }

@@ -122,3 +122,13 @@ AST_StatementList AST_CompositionEqsAlgs_::getAlgorithms() {
 bool AST_CompositionEqsAlgs_:: isInitial() {
   return _initial;
 }
+
+AST_String AST_External_Function_Call_::language() {
+  return _lang;
+}
+
+AST_ArgumentList AST_External_Function_Call_::annotation() {
+  return _annot;
+}
+
+AST_External_Function_Call_::AST_External_Function_Call_(AST_String lang, AST_ArgumentList annot): _lang(lang), _annot(annot) {};

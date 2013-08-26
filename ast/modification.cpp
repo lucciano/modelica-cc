@@ -136,3 +136,7 @@ bool AST_Argument_::isFinal() const {
 }
 AST_Argument_::AST_Argument_(): _final(false), _each(false) {
 }
+
+void AST_Modification_Class_::setArguments(AST_ArgumentList al) {
+  _al=al;
+}

@@ -34,6 +34,7 @@ AST_ExpressionList UnknownsCollector::collectUnknowns() {
 				  _unknowns->push_back(newAST_Expression_Derivative(expList));
 				} else {
 				  _unknowns->push_back(compRef);
+          varInfo->setUnknown();
 				}
 		}
 	}

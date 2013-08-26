@@ -96,6 +96,7 @@ public:
   AST_Expression exp() const;
   AST_ArgumentList arguments() const;
   string print() const;
+  void setArguments(AST_ArgumentList al);
   virtual ModificationType modificationType();
 
 private:

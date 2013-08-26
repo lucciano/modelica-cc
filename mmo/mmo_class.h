@@ -83,6 +83,8 @@ public:
 	AST_String name() const { return _class->name(); }
   
 	friend ostream & operator<<(ostream &os , const MMO_Class_ &c );
+  
+  void cleanComments();
 
 private:
 	/* Agrega una variables desde una Componet (solo para inicializar la clase) */

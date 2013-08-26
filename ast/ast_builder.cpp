@@ -676,3 +676,12 @@ AST_Comment newAST_Comment(AST_String st, AST_ArgumentList al) {
     return new AST_Comment_(st,al);
   return NULL;
 }
+
+
+AST_External_Function_Call newAST_ExternalCall() {
+  return NULL;
+}
+
+AST_External_Function_Call newAST_ExternalCall(AST_String lang, AST_ArgumentList annot) {
+  return new AST_External_Function_Call_(lang,annot);
+}

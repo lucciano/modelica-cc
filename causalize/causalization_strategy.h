@@ -9,5 +9,5 @@
 
 using namespace std;
 
-void causalize(MMO_EquationList equations, AST_ExpressionList unknowns, MMO_EquationList causalEqs);
+AST_ClassList causalize(AST_String name, MMO_EquationList equations, AST_ExpressionList unknowns, MMO_EquationList causalEqs);
 bool occur(AST_Expression unknown, MMO_Equation equation);

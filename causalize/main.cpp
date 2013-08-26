@@ -26,13 +26,13 @@
 #include <ast/stored_definition.h>
 #include <ast/class.h>
 #include <ast/ast_types.h>
-#include <util/symbol_table.h>
-#include <mmo/mmo_class.h>
 #include <causalize/state_variables_finder.h>
 #include <causalize/discrete_variables_finder.h>
 #include <causalize/unknowns_collector.h>
 #include <causalize/causalization_strategy.h>
-#include <causalize/debug.h>
+#include <mmo/mmo_class.h>
+#include <util/debug.h>
+#include <util/symbol_table.h>
 
 
 using namespace std;
@@ -42,13 +42,14 @@ int main(int argc, char ** argv)
 
   int r;
   int opt;
+  bool for_qss;
 
-  if (argc<2) {
+  /*if (argc<2) {
     cerr << "Usage:\ncausalize [-d] file.mo\n";
     return -1;
-  }
+  }*/
 
-  while ((opt = getopt(argc, argv, "d:")) != -1) {
+  while ((opt = getopt(argc, argv, "d:q")) != -1) {
     switch (opt) {
      case 'd':
        if (optarg != NULL && isDebugParam(optarg)) {
@@ -57,15 +58,23 @@ int main(int argc, char ** argv)
          ERROR("command-line option d has no arguments\n");
        }
        break;
+     case 'q':
+       for_qss=true;
+       break;
     }
   }
 
-  AST_StoredDefinition sd = parseFile(argv[optind],&r);
+  AST_Class ast_c;
+  if (argv[optind]!=NULL) 
+    ast_c=parseClass(argv[optind],&r);
+  else
+    ast_c=parseClass("",&r);
+ 
   if (r!=0) 
     return -1;
 
   TypeSymbolTable tyEnv = newTypeSymbolTable();
-  MMO_Class c = newMMO_Class(sd->models()->front(), tyEnv);
+  MMO_Class c = newMMO_Class(ast_c, tyEnv);
 
   MMO_EquationListIterator iter;
   MMO_EquationList acausalEquations = c->getEquations();
@@ -82,7 +91,7 @@ int main(int argc, char ** argv)
   UnknownsCollector *collector = new UnknownsCollector(c);
   AST_ExpressionList unknowns = collector->collectUnknowns();
   MMO_EquationList causalEqs = newMMO_EquationList();
-  causalize(acausalEquations, unknowns, causalEqs);
+  AST_ClassList cl=causalize(c->name(),acausalEquations, unknowns, causalEqs);
 
   DEBUG('c', "Causalized Equations:\n");
   c->getEquations()->clear();
@@ -112,7 +121,9 @@ int main(int argc, char ** argv)
     }
   }
   fclose(params);
-  /* Dump parameters file */ 
+  if (for_qss) {
+    c->cleanComments();
+  }
   cout << c;
   return 0;
 }

@@ -6,7 +6,7 @@
  */
 
 #include <causalize/cycles_identification_strategy.h>
-#include <causalize/debug.h>
+#include <util/debug.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/max_cardinality_matching.hpp>

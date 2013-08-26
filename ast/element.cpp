@@ -107,6 +107,7 @@ string AST_Declaration_::print() const {
     ret << "]";
   }
   if (modification()!=NULL) {
+    /*
     if (modification()->modificationType()==MODEQUAL) {
       ret << " = " << modification()->getAsEqual()->exp();
     } else if (modification()->modificationType()==MODCLASS) {
@@ -114,7 +115,11 @@ string AST_Declaration_::print() const {
       if (e!=NULL && e->expressionType()!=EXPNULL)
         ret << " = " << e;
     }
+    */
+    ret << modification();
   }
+  if (comment()!=NULL)
+    ret << comment();
   return ret.str();
 }
 

@@ -107,9 +107,22 @@ AST_CompositionElementList newAST_CompositionElementList();
 AST_Declaration newAST_Declaration(AST_String,AST_ExpressionList, AST_Modification);
 AST_Declaration AST_Declaration_AddCondComment(AST_Declaration, AST_Expression, AST_Comment);
 AST_DeclarationList newAST_DeclarationList(AST_Declaration);
-
 AST_CompositionElement newAST_CompositionElement(AST_CompositionEqsAlgs);
 AST_CompositionElement newAST_CompositionElement(AST_ElementList);
+
+/* Equations */
+AST_EquationList newAST_EquationList();
+AST_Equation newAST_Equation_Equality(AST_Expression, AST_Expression);
+AST_Equation newAST_Equation_Connect(AST_Expression_ComponentReference, AST_Expression_ComponentReference);
+AST_Equation newAST_Equation_If(AST_Expression e, AST_EquationList eql, AST_Equation_ElseList, AST_EquationList);
+AST_Equation newAST_Equation_For(AST_ForIndexList, AST_EquationList eql);
+AST_Equation newAST_Equation_When(AST_Expression,AST_EquationList, AST_Equation_ElseList);
+AST_Equation newAST_Equation_Call(AST_Expression);
+AST_ForIndex newAST_ForIndex(AST_String, AST_Expression);
+AST_ForIndexList newAST_ForIndexList();
+AST_Equation_ElseList newAST_Equation_ElseList();
+AST_Equation_Else newAST_Equation_Else(AST_Expression, AST_EquationList);
+
 
 /* Expressions */
 AST_ExpressionList newAST_ExpressionList(AST_Expression);
@@ -146,18 +159,9 @@ AST_Expression newAST_Expression_Range(AST_Expression, AST_Expression);
 AST_Expression newAST_Expression_Brace(AST_ExpressionList);
 AST_Expression newAST_BracketExpList(AST_ExpressionListList);
 
-/* Equations */
-AST_EquationList newAST_EquationList();
-AST_Equation newAST_Equation_Equality(AST_Expression, AST_Expression);
-AST_Equation newAST_Equation_Connect(AST_Expression_ComponentReference, AST_Expression_ComponentReference);
-AST_Equation newAST_Equation_If(AST_Expression e, AST_EquationList eql, AST_Equation_ElseList, AST_EquationList);
-AST_Equation newAST_Equation_For(AST_ForIndexList, AST_EquationList eql);
-AST_Equation newAST_Equation_When(AST_Expression,AST_EquationList, AST_Equation_ElseList);
-AST_Equation newAST_Equation_Call(AST_Expression);
-AST_ForIndex newAST_ForIndex(AST_String, AST_Expression);
-AST_ForIndexList newAST_ForIndexList();
-AST_Equation_ElseList newAST_Equation_ElseList();
-AST_Equation_Else newAST_Equation_Else(AST_Expression, AST_EquationList);
+/* External funciton call */
+AST_External_Function_Call newAST_ExternalCall();
+AST_External_Function_Call newAST_ExternalCall(AST_String lang, AST_ArgumentList annot);
 
 /* Modification */
 AST_Modification newAST_Modification_Class(AST_ArgumentList,AST_Expression);

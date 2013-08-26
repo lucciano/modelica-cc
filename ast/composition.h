@@ -69,4 +69,14 @@ private:
   AST_EquationList _eq;
   AST_StatementList _st;
 };
+
+class AST_External_Function_Call_: public AST_Node_ {
+public:
+  AST_External_Function_Call_(AST_String, AST_ArgumentList);
+  AST_String language();
+  AST_ArgumentList annotation();
+private:
+  AST_String _lang;
+  AST_ArgumentList _annot;
+};
 #endif
