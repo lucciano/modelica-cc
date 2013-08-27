@@ -19,8 +19,10 @@
 ******************************************************************************/
 
 #include <iostream>
+#include <cstdlib>
 
 #include <parser/parse.h>
+#include <util/debug.h>
 #include <antialias/remove_alias.h>
 
 using namespace std;
@@ -28,14 +30,31 @@ using namespace std;
 int main(int argc, char ** argv)
 {
   RemoveAlias ra;
-  TypeSymbolTable tyEnv = newTypeSymbolTable();
-  int r;
 
-  if (argc<2) {
-    cerr << "Usage:\nantialias file.mo\n";
-    return -1;
+  TypeSymbolTable tyEnv = newTypeSymbolTable();
+  int r; int opt;
+
+  while ((opt = getopt(argc, argv, "d:")) != -1) {
+    switch (opt) {
+     case 'd':
+       if (optarg != NULL && isDebugParam(optarg)) {
+         debugInit(optarg);
+       } else {
+         ERROR("command-line option d has no arguments\n");
+       }
+       break;
+    }
   }
-  AST_Class c = parseClass(argv[1],&r);
+  AST_Class c;
+  if (argv[optind]!=NULL) 
+    c=parseClass(argv[optind],&r);
+  else
+    c=parseClass("",&r);
+ 
+  if (r!=0) 
+    return -1;
+
+
   if (r!=0)
     return -1;
 

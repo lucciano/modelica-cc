@@ -86,6 +86,7 @@ AST_Composition newAST_Composition();
 AST_Composition newAST_Composition(AST_ElementList );
 AST_Composition newAST_Composition(AST_ElementList el, AST_CompositionElementList cl);
 AST_Composition newAST_Composition(AST_CompositionElementList cl);
+AST_Composition AST_Composition_SetExternalAnnotation(AST_Composition c,AST_External_Function_Call ext, AST_ArgumentList annot);
 AST_CompositionEqsAlgs newAST_NullCompositionEquations();
 AST_CompositionEqsAlgs newAST_CompositionInitialEquations(AST_EquationList);
 AST_CompositionEqsAlgs newAST_CompositionEquations(AST_EquationList);

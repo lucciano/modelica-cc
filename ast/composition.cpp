@@ -87,15 +87,25 @@ ostream & operator<<(ostream &ret , const AST_CompositionElement_ &ce )
 }
 
 
-ostream & operator<<(ostream &os , const AST_Composition_ &cm )  {
+ostream & operator<<(ostream &ret , const AST_Composition_ &cm )  {
   AST_CompositionElementListIterator  it;
   AST_ElementListIterator             el_it;
   foreach(el_it,cm.elementList())
-  os << current_element(el_it) << endl;
+  ret  << current_element(el_it) << endl;
   foreach (it,cm.compositionList()) {
-    os << current_element(it);
+    ret << current_element(it);
   }
-  return os;
+  if (cm.externalCall()!=NULL) {
+    ret << "    external ";
+    if (cm.externalCall()->language()!=NULL) {
+      ret << "\"" << cm.externalCall()->language() << "\"";
+    }
+    if (cm.externalCall()->annotation()->size()) {
+      AST_ListPrint(cm.externalCall()->annotation(),ret,"annotation(",",","",")",true);
+    }
+   ret << ";" << endl;
+  }
+  return ret;
 }
 
 
@@ -132,3 +142,16 @@ AST_ArgumentList AST_External_Function_Call_::annotation() {
 }
 
 AST_External_Function_Call_::AST_External_Function_Call_(AST_String lang, AST_ArgumentList annot): _lang(lang), _annot(annot) {};
+
+
+void AST_Composition_::setExternalFunctionCall(AST_External_Function_Call ext) {
+  _ext=ext;
+}
+
+
+AST_External_Function_Call AST_Composition_::externalCall() const {
+  return _ext;
+}
+void AST_Composition_::setAnnotation(AST_ArgumentList al) {
+  _annot=al;
+}

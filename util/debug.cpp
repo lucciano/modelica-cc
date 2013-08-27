@@ -52,6 +52,12 @@ bool isDebugParam(char *param) {
   if (strcmp(param, "c") == 0) {
     return true;
   }
+  if (strcmp(param, "a") == 0) {
+    return true;
+  }
+  if (strcmp(param, "s") == 0) {
+    return true;
+  }
   return false;
 }
 

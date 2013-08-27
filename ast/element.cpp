@@ -89,7 +89,7 @@ AST_Element_ImportClause_::AST_Element_ImportClause_(string name):_name(name) {
 AST_Element_ExtendsClause_ ::AST_Element_ExtendsClause_ (string name):_name(name) {
 }
 
-AST_Declaration_::AST_Declaration_(string name, AST_ExpressionList indexes, AST_Modification m):_name(name), _indexes(indexes), _mod(m) {
+AST_Declaration_::AST_Declaration_(string name, AST_ExpressionList indexes, AST_Modification m):_name(name), _indexes(indexes), _mod(m), _comm(NULL) {
 }
 ;
 string AST_Declaration_::print() const {

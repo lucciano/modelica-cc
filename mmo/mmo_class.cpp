@@ -23,7 +23,7 @@
 #include <iostream>
 using namespace std;
 
-MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c) {
+MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c),_fsolve(NULL) {
 	_eqs = 		new list<MMO_Equation>();
 	_elems = 	new list<MMO_Element>();
 	_stms = 	new list<MMO_Statement>();
@@ -229,15 +229,33 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
   VarSymbolTable symbolTable = c.getVarSymbolTable();
   int i; int symbolTableSize = symbolTable->count();
   BEGIN_BLOCK;
+  AST_ClassListIterator cl_it;
+  if (c.fsolve()!=NULL) 
+    foreach(cl_it,c.fsolve()) {
+      ret << current_element(cl_it);
+    }
+  /* Print parameters first */
   for (i = 0; i<symbolTableSize; i++) {
 	  VarInfo var = symbolTable->varInfo(i);
-    if (var->builtIn()) continue;
+    if (var->builtIn() || !var->isParameter()) continue;
     MAKE_SPACE;
 	  ret << *var  << " "  << symbolTable->varName(i);
   	if (var->modification()) ret <<  var-> modification() ;
   	if (var->comment()) ret <<  var-> comment() ;
 	  ret  << ";" << endl;  
   }
+  ret << endl;
+  /* Then variables */
+  for (i = 0; i<symbolTableSize; i++) {
+	  VarInfo var = symbolTable->varInfo(i);
+    if (var->builtIn() || var->isParameter()) continue;
+    MAKE_SPACE;
+	  ret << *var  << " "  << symbolTable->varName(i);
+  	if (var->modification()) ret <<  var-> modification() ;
+  	if (var->comment()) ret <<  var-> comment() ;
+	  ret  << ";" << endl;  
+  }
+ 
   END_BLOCK;
   AST_ListPrint(ElemList,ret,"","","","",true);	
   
@@ -272,7 +290,7 @@ void MMO_Class_::cleanComments() {
     var->setComment(NULL);
     if (var->isConstant()) 
       var->setParameter();
-    if ((var->isUnknown() && !var->isState())) {
+    if (var->isUnknown() && !var->isState() && !var->isParameter()) {
       var->setModification(NULL);
       continue;
     }
@@ -298,5 +316,14 @@ void MMO_Class_::cleanComments() {
       }
     }
   } 
+  getIniEquations()->clear();
 
+}
+
+void MMO_Class_::setfsolve(AST_ClassList cl) {
+  _fsolve=cl;  
+}
+
+AST_ClassList MMO_Class_::fsolve() const {
+ return _fsolve;  
 }

@@ -76,6 +76,7 @@ private:
   AST_Equation                          equation;
   AST_Expression                        expression;
   AST_Expression_ComponentReference     component_ref;
+  AST_External_Function_Call            external_funciton_call;
   AST_Element                           element;
   AST_Element_ExtendsClause             extends_clause;
   AST_ForIndex                          for_index;
@@ -130,6 +131,7 @@ private:
 %type <expression_list> subscript_list opt_array_subscripts array_subscripts expression_list function_call_args opt_function_args function_arguments opt_function_arguments output_expression_list output_expression_list_more opt_elseif_exp named_arguments opt_named_arguments opt_more_args expression_list_more
 %type <expression_list_list> primary_exp_list 
 %type <extends_clause> extends_clause
+%type <external_funciton_call> opt_external_composition 
 %type <for_index> for_index 
 %type <for_index_list> for_indices opt_more_indexes 
 %type <import_clause> import_clause
@@ -281,12 +283,12 @@ more_ids:
 ;
 
 composition: 
-  composition_aux_1 opt_external_composition opt_annotation_composition { $$ = $1; }
+  composition_aux_1 opt_external_composition opt_annotation_composition { $$ = AST_Composition_SetExternalAnnotation($1,$2,$3); }
 ;
 
 opt_external_composition:
-    /* empty */
-  | TOKEXTERNAL opt_language_specification opt_external_function_call opt_annotation TOKSEMICOLON
+    /* empty */                                                                                   { $$ = newAST_ExternalCall(); }
+  | TOKEXTERNAL opt_language_specification opt_external_function_call opt_annotation TOKSEMICOLON { $$ = newAST_ExternalCall($2,$4); } 
 ;
 
 opt_language_specification:
@@ -301,7 +303,7 @@ opt_external_function_call:
 ;
 
 opt_annotation_composition:
-    /* empty */         { $$ = newAST_ArgumentList(); }
+    /* empty */             { $$ = newAST_ArgumentList(); }
   | annotation TOKSEMICOLON { $$ = $1; } 
 ;
 

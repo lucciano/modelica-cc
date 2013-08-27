@@ -60,11 +60,12 @@ AST_Class makeFsolve(AST_String name, int args_size, int size) {
   }
   AST_Element_Component ec_out=newAST_Element_Component(out,newAST_String("Real"),newAST_TypePrefix(TP_OUTPUT),newAST_ExpressionList());
   AST_ListAppend(el,AST_Element_ComponentToElement(ec_out));
-
-  //AST_Element_Component ec_out=newAST_Element_Component(out,newAST_String("Real"),newAST_TypePrefix(TP_INPUT),newAST_ExpressionList());
   AST_Composition c=newAST_Composition(el);
+  AST_ArgumentList al=newAST_ArgumentList();
+  AST_ListAppend(al,newAST_ElementModification(newAST_String("Library"),newAST_Modification_Equal(newAST_Expression_String(newAST_String("gsl")))));
+  AST_ListAppend(al,newAST_ElementModification(newAST_String("Include"),newAST_Modification_Equal(newAST_Expression_String(newAST_String("#include \\\"buck_external_functions.c\\\"")))));
+  c=AST_Composition_SetExternalAnnotation(c,newAST_ExternalCall(newAST_String("C"),al),NULL);
   AST_Class r=AST_Class_SetPrefixEncapsulated(newAST_Class(name,c),AST_ClassPrefix_Function(0),false);
-  cout << r;
   return r; 
 }
 
@@ -73,24 +74,25 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
   ConvertToGiNaC tog(NULL); // No var symbol table needed for now
   ConvertToExpression toe;
 
+  const int size=AST_Length(eqs);
   GiNaC::lst eqns, vars;
   AST_ExpressionListIterator it_cr,it2_cr;
   AST_EquationListIterator it_eq;
   foreach(it_cr,crs) {
     if (current_element(it_cr)->expressionType()==EXPCOMPREF) {
       AST_Expression_ComponentReference cr=current_element(it_cr)->getAsComponentReference();
-      DEBUG('c', "Solving for variable %s ",cr->print().c_str());
+      DEBUG('s', "Solving for variable %s\n",cr->print().c_str());
       vars.append(tog.getSymbol(cr));
     } else if (current_element(it_cr)->expressionType()==EXPDERIVATIVE) {
       AST_Expression_Derivative der=current_element(it_cr)->getAsDerivative();
       vars.append(tog.getSymbol(der));
-      DEBUG('c', "Solving for derivative %s ",der->print().c_str());
+      DEBUG('s', "Solving for derivative %s\n",der->print().c_str());
     }
   }
   foreach(it_eq,eqs) {
     AST_Equation_Equality eq = current_element(it_eq)->getAsEquality();
   
-    DEBUG('c', "Using equaiton %s",eq->print().c_str());
+    DEBUG('s', "Using equaiton %s",eq->print().c_str());
     GiNaC::ex left=tog.convert(eq->left());
     GiNaC::ex right=tog.convert(eq->right());
     eqns.append(left==right);
@@ -98,13 +100,14 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
 
   try {
     /* System is linear */
-    GiNaC::ex solved= lsolve(eqns, vars);
+    if (size>1) throw std::logic_error("");
+    GiNaC::ex solved= lsolve(eqns, vars,GiNaC::solve_algo::gauss);
     AST_EquationList ret=newAST_EquationList();
     if (solved.nops()==0) {
       cerr << "EquationSolver: cannot solve equation" << eqns<< endl;
       abort();
     }
-    for(int i=0; i<solved.nops();i++) 
+    for(unsigned int i=0; i<solved.nops();i++) 
       AST_ListAppend(ret,newAST_Equation_Equality(toe.convert(solved.op(i).op(0)),toe.convert(solved.op(i).op(1))));
     return ret;
   } catch (std::logic_error) {
@@ -128,8 +131,10 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
               break;
             }
           }     
-          if (already_arg)
+          if (already_arg) {
+            delete occurrenceTraverse;
             continue;
+          }
           bool found=false;
           foreach(it2_cr,crs) { 
             // If is not one of the output variables and it is used, it is an input argument for the fsolve function
@@ -141,15 +146,43 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
           if (!found)
               AST_ListAppend(args,current_element(it_cr));
           delete occurrenceTraverse;
+       } else if (current_element(it_cr)->expressionType()==EXPDERIVATIVE) {
+          /* If unknown is a derivative check if the arg is an argument for the loop */
+          AST_Expression der_arg=AST_ListFirst(current_element(it_cr)->getAsDerivative()->arguments());
+          if (occur(der_arg,eq)) {
+            CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(der_arg);
+            bool already_arg=false;
+            foreach(it2_cr,args) {
+              // If it is already an argument do not add it twice
+              if (occurrenceTraverse->foldTraverse(current_element(it2_cr))) {
+                already_arg=true;
+                break;
+              }
+            }     
+            if (already_arg) {
+              delete occurrenceTraverse;
+              continue;
+            }
+            bool found=false;
+            foreach(it2_cr,crs) { 
+              // If is not one of the output variables and it is used, it is an input argument for the fsolve function
+              if (occurrenceTraverse->foldTraverse(current_element(it2_cr))) {
+                found=true;
+                break;
+              }
+            }
+            if (!found)
+              AST_ListAppend(args,der_arg);
+            delete occurrenceTraverse;
+          }
         }
       }
     }
     AST_Expression call= newAST_Expression_Call(_S(s.str()),NULL,args);
     AST_Equation e= newAST_Equation_Equality(newAST_Expression_OutputExpressions(crs),call);
-    int index=0;
-    const int size=AST_Length(eqs);
     const int args_size=AST_Length(args);
-    string file_name = toStr(name) + "_functions.c";
+    int index=0;
+    string file_name = toStr(name) + "_external_functions.c";
     std::fstream fs (file_name.c_str(),(fsolve==1 ? std::fstream::out : std::fstream::out | std::fstream::app));
     if (fsolve==1) {
       fs << "#include <gsl/gsl_multiroots.h>"<< endl;
@@ -170,6 +203,7 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
       AST_Expression e = newAST_Expression_BinOp(eq->right(),eq->left(),BINOPSUB);
       fs  << "  gsl_vector_set (__f, " << index++ << "," << e << ");" << endl;
     }
+    fs << "   return GSL_SUCCESS;"<< endl;
     fs << "}"<< endl;
     fs << "void fsolve" << fsolve << "(";
 
@@ -189,7 +223,14 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
     fs << "  const gsl_multiroot_fsolver_type *__T = gsl_multiroot_fsolver_hybrid;" << endl;
     fs << "  gsl_multiroot_fsolver *__s = gsl_multiroot_fsolver_alloc (__T, " << size << ");" << endl;
     fs << "  gsl_multiroot_function __F;" << endl;
-    fs << "  gsl_vector *__x = gsl_vector_alloc (" << size << ");" << endl;
+    fs << "  static gsl_vector *__x = NULL; " << endl;
+    fs << "  if (__x==NULL) { " << endl;
+    fs << "    __x=gsl_vector_alloc (" << size << ");" << endl;
+    index=0;
+    foreach(it_cr,crs) {
+      fs << "    gsl_vector_set (__x, " << index++ << ",0);" << endl;
+    }
+    fs << "  }" << endl;
     fs << "  __F.n = " << size <<";"<<endl;
     fs << "  __F.f = fsolve" << fsolve <<"_eval;" << endl;
     fs << "  double __args[" << args_size << "];"<< endl; 
@@ -199,9 +240,6 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
     }
     fs << "  __F.params  = __args;" << endl;
     index=0;
-    foreach(it_cr,crs) {
-      fs << "  //gsl_vector_set (__x, 0, "<< current_element(it_cr) << ");" << endl;
-    }
     fs << "  gsl_multiroot_fsolver_set (__s, &__F,__x);" << endl;
     fs << "  do"<< endl;
     fs << "  {" << endl;
@@ -216,7 +254,11 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
       fs << "  " << current_element(it_cr) << "[0] = gsl_vector_get(__s->x," << index++ << ");" << endl;
     }
     fs << "  gsl_multiroot_fsolver_free (__s);"<< endl;
-    fs << "  gsl_vector_free (__x);"<< endl;
+    index=0;
+    foreach(it_cr,crs) {
+      fs << "  gsl_vector_set (__x, " << index << ", gsl_vector_get(__s->x," << index << "));" << endl;
+      index++;
+    }
     fs << "}" << endl;
     AST_ListAppend(cl,makeFsolve(newAST_String(s.str()),args_size,size));
     return newAST_SimpleList(e);

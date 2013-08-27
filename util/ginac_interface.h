@@ -23,6 +23,7 @@
 #include <ast/ast_builder.h>
 #include <util/ast_util.h>
 #include <ginac/ginac.h>
+#include <ginac/flags.h>
 
 DECLARE_FUNCTION_2P(var)
 DECLARE_FUNCTION_1P(der)

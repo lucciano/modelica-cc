@@ -685,3 +685,9 @@ AST_External_Function_Call newAST_ExternalCall() {
 AST_External_Function_Call newAST_ExternalCall(AST_String lang, AST_ArgumentList annot) {
   return new AST_External_Function_Call_(lang,annot);
 }
+
+AST_Composition AST_Composition_SetExternalAnnotation(AST_Composition c,AST_External_Function_Call ext, AST_ArgumentList annot) {
+  c->setExternalFunctionCall(ext);
+  c->setAnnotation(annot);
+  return c;
+}

@@ -80,6 +80,8 @@ public:
 /* Agrega una array con sus dimensiones y tipo */ 
 	void addVariable(AST_String name,AST_String tys,AST_TypePrefix tp, AST_ExpressionList); 
   
+  void setfsolve(AST_ClassList c);
+  AST_ClassList fsolve() const;
 	AST_String name() const { return _class->name(); }
   
 	friend ostream & operator<<(ostream &os , const MMO_Class_ &c );
@@ -97,6 +99,7 @@ private:
 	MMO_StatementList _Inistms;
   
 	AST_Class _class;
+  AST_ClassList _fsolve;
 	VarSymbolTable  varEnv;
 	TypeSymbolTable tyEnv;
 	TypeCheck_ * _ct;	

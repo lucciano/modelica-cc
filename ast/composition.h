@@ -33,10 +33,15 @@ public:
   DEFINE_CLASS_PRINTER(AST_Composition);
   AST_CompositionElementList compositionList() const;
   AST_ElementList elementList() const;
+  void setExternalFunctionCall(AST_External_Function_Call);
+  void setAnnotation(AST_ArgumentList);
+  AST_External_Function_Call externalCall() const;
 
 private:
   AST_CompositionElementList _composition_list;
   AST_ElementList _element_list;
+  AST_ArgumentList _annot;
+  AST_External_Function_Call _ext;
 };
 
 class AST_CompositionElement_: public AST_Node_

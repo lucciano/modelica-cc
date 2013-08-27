@@ -99,6 +99,7 @@ int main(int argc, char ** argv)
     DEBUG('c', "%s", current_element(iter)->print().c_str());
     AST_ListAppend(c->getEquations(),current_element(iter));
   }
+  c->setfsolve(cl);
   /* Dump parameters file */ 
   string file_name= toStr(c->name());
   file_name.append("_parameters.h");
@@ -114,6 +115,10 @@ int main(int argc, char ** argv)
         AST_Modification_Equal me = var->modification()->getAsEqual();
         /* TODO: This should evaluate instead of just printing the exp */
         fprintf(params,"double %s=%s;\n",varEnv->key(i).c_str(),me->exp()->print().c_str());
+      } else if (var->modification()!=NULL && var->modification()->modificationType()==MODCLASS) {
+        AST_Modification_Class mc = var->modification()->getAsClass();
+        /* TODO: This should evaluate instead of just printing the exp */
+        fprintf(params,"double %s=%s;\n",varEnv->key(i).c_str(),mc->exp()->print().c_str());
       } else {
         fprintf(params,"double %s;\n",varEnv->key(i).c_str());
       }
