@@ -6,7 +6,9 @@ OBJS_MMO := $(OBJS_COMMON) \
             util/symbol_table.o \
             util/type_check.o \
             mmo/tomicro.o \
-            causalize/state_variables_finder.o 
+            causalize/state_variables_finder.o \
+            causalize/compref_occurrence_traverse.o
+
       
 
 bin/mmo: $(OBJS_MMO)

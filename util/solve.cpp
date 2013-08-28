@@ -100,7 +100,7 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
 
   try {
     /* System is linear */
-    if (size>1) throw std::logic_error("");
+    //if (size>1) throw std::logic_error("");
     GiNaC::ex solved= lsolve(eqns, vars,GiNaC::solve_algo::gauss);
     AST_EquationList ret=newAST_EquationList();
     if (solved.nops()==0) {

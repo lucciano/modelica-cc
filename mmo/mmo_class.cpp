@@ -18,9 +18,14 @@
 
 ******************************************************************************/
 
-#include <mmo/mmo_class.h>
-
 #include <iostream>
+#include <boost/graph/topological_sort.hpp>
+#include <boost/graph/adjacency_list.hpp>
+
+#include <mmo/mmo_class.h>
+#include <causalize/compref_occurrence_traverse.h>
+
+
 using namespace std;
 
 MMO_Class_::MMO_Class_(AST_Class c, TypeSymbolTable ty):_class(c),_fsolve(NULL) {
@@ -235,15 +240,61 @@ ostream & operator<<(ostream &ret  , const MMO_Class_ &c ) {
       ret << current_element(cl_it);
     }
   /* Print parameters first */
+  AST_ExpressionList params=newAST_ExpressionList();
+  AST_ExpressionListIterator params_it;
+  AST_ExpressionListIterator params_it_u;
+
   for (i = 0; i<symbolTableSize; i++) {
 	  VarInfo var = symbolTable->varInfo(i);
     if (var->builtIn() || !var->isParameter()) continue;
-    MAKE_SPACE;
+    /*MAKE_SPACE;
 	  ret << *var  << " "  << symbolTable->varName(i);
+  	if (var->modification()) ret <<  var-> modification() ;
+  	if (var->comment()) ret <<  var-> comment() ;
+	  ret  << ";" << endl;  */
+    AST_ListAppend(params,newAST_Expression_ComponentReferenceExp(newAST_String(symbolTable->key(i))));
+  }
+  int p=0;
+  typedef boost::adjacency_list<boost::vecS, boost::vecS> Graph; // VertexList=vecS
+  Graph G(params->size());
+  foreach(params_it,params) {
+    //cout << p << ":" << current_element(params_it) << endl; 
+    CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(current_element(params_it));
+    int u=0;
+    foreach(params_it_u,params) {
+      VarInfo var = symbolTable->lookup(current_element(params_it_u)->getAsComponentReference()->name());    
+      bool uses=false;
+      if (var->modification() && var->modification()->modificationType()==MODEQUAL) 
+        uses|=occurrenceTraverse->foldTraverse(var->modification()->getAsEqual()->exp());
+      if (var->modification() && var->modification()->modificationType()==MODCLASS) 
+        if (var->modification()->getAsClass()->exp()!=NULL)
+          uses|=occurrenceTraverse->foldTraverse(var->modification()->getAsClass()->exp());
+      if (uses) {
+        add_edge(p,u,G);
+      }
+    }
+    delete occurrenceTraverse;
+    p++;
+  }
+  typedef std::vector< unsigned long > container;
+  container con;
+  topological_sort(G, std::back_inserter(con));
+  for ( container::reverse_iterator ii=con.rbegin(); ii!=con.rend(); ++ii) {
+    AST_ExpressionListIterator it=params->begin();
+    for(int i=0;i<*ii;i++)
+      it++;
+	  
+    if (current_element(it)->expressionType()!=EXPCOMPREF)
+      continue;
+	  VarInfo var = symbolTable->lookup(current_element(it)->getAsComponentReference()->name());
+    if (var->builtIn() || !var->isParameter()) continue;
+    MAKE_SPACE;
+	  ret << *var  << " "  << current_element(it)->getAsComponentReference()->name();
   	if (var->modification()) ret <<  var-> modification() ;
   	if (var->comment()) ret <<  var-> comment() ;
 	  ret  << ";" << endl;  
   }
+  delete params;
   ret << endl;
   /* Then variables */
   for (i = 0; i<symbolTableSize; i++) {
@@ -317,6 +368,7 @@ void MMO_Class_::cleanComments() {
     }
   } 
   getIniEquations()->clear();
+  getIniStatements()->clear();
 
 }
 
