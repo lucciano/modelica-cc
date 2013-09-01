@@ -9,49 +9,156 @@
 #include <ast/equation.h>
 
 #include <causalize/causalization_strategy.h>
-#include <causalize/compref_occurrence_traverse.h>
+#include <causalize/compref_occurrence.h>
 #include <causalize/cycles_identification_strategy.h>
 #include <util/debug.h>
 #include <util/solve.h>
 
+CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations, AST_ExpressionList unknowns) {
 
-CausalizationGraph _graph;
-list<Vertex> *_acausalEqs;
-list<Vertex> *_unknowns;
-MMO_EquationList _causalEqs1; // equations numbered starting from 1
-MMO_EquationList _causalEqsN; // equations numbered starting from n
-
-bool occur(AST_Expression unknown, MMO_Equation equation) {
-  CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(unknown);
-  switch (equation->equationType()) {
-    case EQEQUALITY:
-    {
-      AST_Equation_Equality eqEquality = equation->getAsEquality();
-      return occurrenceTraverse->foldTraverse(eqEquality->left()) || occurrenceTraverse->foldTraverse(eqEquality->right());
-    }
-    default:
-      ;// TODO [MOYA]
+  if (equations->size() != unknowns->size()) {
+    ERROR ("The model being causalized is not balanced.\n"
+           "There are %d equations and %d variables\n",
+           equations->size(), unknowns->size());
   }
-  return false;
+
+  int index = 0;
+
+  _all_unknowns = unknowns;
+
+  _eqVertices = new list<Vertex>;
+  _unknownVertices = new list<Vertex>;
+
+  _causalEqs1 = newMMO_EquationList();
+  _causalEqsN = newMMO_EquationList();
+
+  MMO_EquationListIterator eqIter;
+  AST_ExpressionListIterator expIter;
+
+  DEBUG('c', "Building causalization graph...\n");
+
+  DEBUG('c', "Equation indexes:\n");
+
+  foreach(eqIter, equations) {
+    VertexProperties *vp = new VertexProperties;
+    vp->eqs = newMMO_EquationList();
+    vp->eqs->push_back(current_element(eqIter));
+    vp->type = E;
+    vp->index = index++;
+    Vertex v = add_vertex(*vp, _graph);
+    _eqVertices->push_back(v);
+    DEBUG('c', "%d: %s", vp->index, vp->eqs->front()->print().c_str());
+  }
+
+  DEBUG('c', "Unknown indexes:\n");
+
+  index = 0;
+  foreach(expIter, unknowns) {
+    VertexProperties *vp = new VertexProperties;
+    vp->unknowns = newAST_ExpressionList();
+    vp->unknowns->push_back(current_element(expIter));
+    vp->type = U;
+    vp->index = index++;
+    Vertex v = add_vertex(*vp, _graph);
+    _unknownVertices->push_back(v);
+    DEBUG('c', "%d: %s\n", vp->index, vp->unknowns->front()->print().c_str());
+   }
+
+  DEBUG('c', "Graph edges:\n");
+
+  list<Vertex>::iterator acausalEqsIter, unknownsIter;
+  foreach(acausalEqsIter, _eqVertices) {
+    foreach(unknownsIter, _unknownVertices) {
+      Vertex eqVertex = current_element(acausalEqsIter);
+      Vertex unknownVertex = current_element(unknownsIter);
+      if(occur(_graph[unknownVertex].unknowns->front(), _graph[eqVertex].eqs->front())) {
+        add_edge(eqVertex, unknownVertex, _graph);
+        DEBUG('c', "(%d, %d) ", _graph[eqVertex].index, _graph[unknownVertex].index);
+      }
+    }
+  }
+
+  DEBUG('c', "\n");
+
 }
 
-void makeCausal1(AST_String name, MMO_EquationList eqs, AST_ExpressionList unknowns, AST_ExpressionList all_unknowns,AST_ClassList cl) {
+CausalizationStrategy::~CausalizationStrategy() {
+  delete _eqVertices;
+  delete _unknownVertices;
+  delete _causalEqs1;
+  delete _causalEqsN;
+}
+
+void CausalizationStrategy::causalize(AST_String name, MMO_EquationList causalEqs, AST_ClassList cl) {
+
+  if(_eqVertices->empty()) {
+      causalEqs->insert(causalEqs->end(), _causalEqs1->begin(), _causalEqs1->end());
+      causalEqs->insert(causalEqs->end(), _causalEqsN->begin(), _causalEqsN->end());
+      return;
+    }
+
+    int acausalEqsSize = _eqVertices->size();
+
+    list<Vertex>::iterator iter, auxiliaryIter;
+
+    auxiliaryIter = _eqVertices->begin();
+    for(iter = auxiliaryIter; iter != _eqVertices->end(); iter = auxiliaryIter) {
+      ++auxiliaryIter;
+      Vertex eq = current_element(iter);
+      if (out_degree(eq, _graph) == 1) {
+        Edge e = *out_edges(eq, _graph).first;
+        Vertex unknown = target(e, _graph);
+        remove_out_edge_if(unknown, boost::lambda::_1 != e, _graph);
+        makeCausal1(name,_graph[eq].eqs, _graph[unknown].unknowns,cl);
+        _eqVertices->erase(iter);
+        _unknownVertices->remove(unknown);
+      } else if (out_degree(eq, _graph) == 0) {
+        ERROR("Problem is singular. Not supported yet.\n");
+      }
+    }
+
+    auxiliaryIter = _unknownVertices->begin();
+    for(iter = auxiliaryIter; iter != _unknownVertices->end(); iter = auxiliaryIter) {
+      ++auxiliaryIter;
+      Vertex unknown = current_element(iter);
+      if(out_degree(unknown, _graph) == 1) {
+        Edge e = *out_edges(unknown, _graph).first;
+        Vertex eq = target(e, _graph);
+        remove_out_edge_if(eq, boost::lambda::_1 != e, _graph);
+        makeCausalN(name,_graph[eq].eqs, _graph[unknown].unknowns,cl);
+        _eqVertices->remove(eq);
+        _unknownVertices->erase(iter);
+      } else if (out_degree(unknown, _graph) == 0) {
+        ERROR("Problem is singular. Not supported yet.\n");
+      }
+    }
+
+    if (acausalEqsSize == _eqVertices->size()) {
+      DEBUG('c', "Algebraic loop(s) detected.\n");
+      processCycles();
+    }
+
+  causalize(name, causalEqs, cl);
+
+}
+
+void CausalizationStrategy::makeCausal1(AST_String name, MMO_EquationList eqs, AST_ExpressionList unknowns, AST_ClassList cl) {
   MMO_EquationListIterator iter;
-  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns,all_unknowns,cl);
+  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns, _all_unknowns,cl);
   foreach(iter, causalEqs) {
     _causalEqs1->push_back(current_element(iter));
   }
 }
 
-void makeCausalN(AST_String name, MMO_EquationList eqs, AST_ExpressionList unknowns,  AST_ExpressionList all_unknowns,AST_ClassList cl) {
+void CausalizationStrategy::makeCausalN(AST_String name, MMO_EquationList eqs, AST_ExpressionList unknowns, AST_ClassList cl) {
   MMO_EquationListIterator iter;
-  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns,all_unknowns,cl);
+  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns, _all_unknowns,cl);
   foreach(iter, causalEqs) {
     _causalEqsN->push_front(current_element(iter));
   }
 }
 
-void processCycles() {
+void CausalizationStrategy::processCycles() {
 
   // 1) Identificamos los ciclos
   map<Vertex, int> vertex2loop;
@@ -87,8 +194,8 @@ void processCycles() {
   }
 
   // 3) Populamos los vertices creados en el punto anterior.
-  list<Vertex>::iterator iter = _acausalEqs->begin();
-  foreach(iter, _acausalEqs) {
+  list<Vertex>::iterator iter = _eqVertices->begin();
+  foreach(iter, _eqVertices) {
     Vertex oldEVertex = current_element(iter);
     int cycle = vertex2loop[oldEVertex];
     if (cycle != NONE_CYCLE) {
@@ -98,8 +205,8 @@ void processCycles() {
       newEqs->insert(newEqs->end(), oldEqs->begin(), oldEqs->end());
     }
   }
-  iter = _unknowns->begin();
-  foreach(iter, _unknowns) {
+  iter = _unknownVertices->begin();
+  foreach(iter, _unknownVertices) {
     Vertex oldUVertex = current_element(iter);
     int cycle = vertex2loop[oldUVertex];
     if (cycle != NONE_CYCLE) {
@@ -116,8 +223,8 @@ void processCycles() {
     add_edge(newEVertexVector[i], newUVertexVector[i], _graph);
   }
 
-  iter = _acausalEqs->begin();
-  foreach(iter, _acausalEqs) {
+  iter = _eqVertices->begin();
+  foreach(iter, _eqVertices) {
     Vertex eVertex = current_element(iter);
     if (vertex2loop[eVertex] == NONE_CYCLE) {
       CausalizationGraph::out_edge_iterator ei, eiend, next;
@@ -129,23 +236,23 @@ void processCycles() {
         if (uLoop != NONE_CYCLE) {
           add_edge(eVertex, newUVertexVector[uLoop], _graph);
           remove_edge(ei, _graph);
-          _unknowns->remove(uVertex);
+          _unknownVertices->remove(uVertex);
         }
       }
     }
   }
 
-  list<Vertex>::iterator auxiliaryIter = _unknowns->begin();
-  for(iter = auxiliaryIter; iter != _unknowns->end(); iter = auxiliaryIter) {
+  list<Vertex>::iterator auxiliaryIter = _unknownVertices->begin();
+  for(iter = auxiliaryIter; iter != _unknownVertices->end(); iter = auxiliaryIter) {
     ++auxiliaryIter;
     Vertex uVertex = current_element(iter);
     if (vertex2loop[uVertex] != NONE_CYCLE) {
-      _unknowns->erase(iter);
+      _unknownVertices->erase(iter);
     }
   }
 
-  iter = _unknowns->begin();
-  foreach(iter, _unknowns) {
+  iter = _unknownVertices->begin();
+  foreach(iter, _unknownVertices) {
     Vertex uVertex = current_element(iter);
     if (vertex2loop[uVertex] == NONE_CYCLE) {
       CausalizationGraph::out_edge_iterator vi, viend, next;
@@ -157,161 +264,28 @@ void processCycles() {
         if (eCycle != NONE_CYCLE) {
           add_edge(uVertex, newEVertexVector[eCycle], _graph);
           remove_edge(vi, _graph);
-          _acausalEqs->remove(eVertex);
+          _eqVertices->remove(eVertex);
         }
       }
     }
   }
 
-  auxiliaryIter = _acausalEqs->begin();
-  for(iter = auxiliaryIter; iter != _acausalEqs->end(); iter = auxiliaryIter) {
+  auxiliaryIter = _eqVertices->begin();
+  for(iter = auxiliaryIter; iter != _eqVertices->end(); iter = auxiliaryIter) {
     ++auxiliaryIter;
     Vertex eVertex = current_element(iter);
     if (vertex2loop[eVertex] != NONE_CYCLE) {
-      _acausalEqs->erase(iter);
+      _eqVertices->erase(iter);
     }
   }
 
   // 5) Agregamos los macro-vertices a la lista de ecuaciones por causalizar.
   for (int i = 0; i < num_cycles; i++) {
-    _acausalEqs->push_back(newEVertexVector[i]);
+    _eqVertices->push_back(newEVertexVector[i]);
   }
 
   for (int i = 0; i < num_cycles; i++) {
-    _unknowns->push_back(newUVertexVector[i]);
+    _unknownVertices->push_back(newUVertexVector[i]);
   }
 
-}
-
-void doIt(AST_String name, MMO_EquationList causalEqs, AST_ExpressionList unknowns, AST_ClassList cl) {
-
-  if(_acausalEqs->empty()) {
-    causalEqs->insert(causalEqs->end(), _causalEqs1->begin(), _causalEqs1->end());
-    causalEqs->insert(causalEqs->end(), _causalEqsN->begin(), _causalEqsN->end());
-    return;
-  }
-
-  int acausalEqsSize = _acausalEqs->size();
-
-  list<Vertex>::iterator iter, auxiliaryIter;
-
-  auxiliaryIter = _acausalEqs->begin();
-  for(iter = auxiliaryIter; iter != _acausalEqs->end(); iter = auxiliaryIter) {
-    ++auxiliaryIter;
-    Vertex eq = current_element(iter);
-    if (out_degree(eq, _graph) == 1) {
-      Edge e = *out_edges(eq, _graph).first;
-      Vertex unknown = target(e, _graph);
-      remove_out_edge_if(unknown, boost::lambda::_1 != e, _graph);
-      makeCausal1(name,_graph[eq].eqs, _graph[unknown].unknowns,unknowns,cl);
-      _acausalEqs->erase(iter);
-      _unknowns->remove(unknown);
-    } else if (out_degree(eq, _graph) == 0) {
-      ERROR("Problem is singular. Not supported yet.\n");
-    }
-  }
-
-  auxiliaryIter = _unknowns->begin();
-  for(iter = auxiliaryIter; iter != _unknowns->end(); iter = auxiliaryIter) {
-    ++auxiliaryIter;
-    Vertex unknown = current_element(iter);
-    if(out_degree(unknown, _graph) == 1) {
-      Edge e = *out_edges(unknown, _graph).first;
-      Vertex eq = target(e, _graph);
-      remove_out_edge_if(eq, boost::lambda::_1 != e, _graph);
-      makeCausalN(name,_graph[eq].eqs, _graph[unknown].unknowns,unknowns,cl);
-      _acausalEqs->remove(eq);
-      _unknowns->erase(iter);
-    } else if (out_degree(unknown, _graph) == 0) {
-      ERROR("Problem is singular. Not supported yet.\n");
-    }
-  }
-
-  if (acausalEqsSize == _acausalEqs->size()) {
-    DEBUG('c', "Algebraic loop(s) detected.\n");
-    processCycles();
-  }
-
-  doIt(name,causalEqs,unknowns,cl);
-}
-
-void init(MMO_EquationList equations,	AST_ExpressionList unknowns) {
-
-	if (equations->size() != unknowns->size()) {
-	  ERROR ("The model being causalized is not balanced.\n"
-	         "There are %d equations and %d variables\n",
-	         equations->size(), unknowns->size());
-	}
-
-  int index = 0;
-
-  _acausalEqs = new list<Vertex>;
-  _unknowns = new list<Vertex>;
-
-  _causalEqs1 = newMMO_EquationList();
-  _causalEqsN = newMMO_EquationList();
-
-  MMO_EquationListIterator eqIter;
-  AST_ExpressionListIterator expIter;
-
-  DEBUG('c', "Building causalization graph...\n");
-
-  DEBUG('c', "Equation indexes:\n");
-
-  foreach(eqIter, equations) {
-    VertexProperties *vp = new VertexProperties;
-    vp->eqs = newMMO_EquationList();
-    vp->eqs->push_back(current_element(eqIter));
-    vp->type = E;
-    vp->index = index++;
-    Vertex v = add_vertex(*vp, _graph);
-    _acausalEqs->push_back(v);
-    DEBUG('c', "%d: %s", vp->index, vp->eqs->front()->print().c_str());
-  }
-
-  DEBUG('c', "Unknown indexes:\n");
-
-  index = 0;
-  foreach(expIter, unknowns) {
-    VertexProperties *vp = new VertexProperties;
-    vp->unknowns = newAST_ExpressionList();
-    vp->unknowns->push_back(current_element(expIter));
-    vp->type = U;
-    vp->index = index++;
-    Vertex v = add_vertex(*vp, _graph);
-    _unknowns->push_back(v);
-    DEBUG('c', "%d: %s\n", vp->index, vp->unknowns->front()->print().c_str());
-   }
-
-  DEBUG('c', "Graph edges:\n");
-
-  list<Vertex>::iterator acausalEqsIter, unknownsIter;
-  foreach(acausalEqsIter, _acausalEqs) {
-    foreach(unknownsIter, _unknowns) {
-      Vertex eqVertex = current_element(acausalEqsIter);
-      Vertex unknownVertex = current_element(unknownsIter);
-      if(occur(_graph[unknownVertex].unknowns->front(), _graph[eqVertex].eqs->front())) {
-        add_edge(eqVertex, unknownVertex, _graph);
-        DEBUG('c', "(%d, %d) ", _graph[eqVertex].index, _graph[unknownVertex].index);
-      }
-    }
-  }
-
-  DEBUG('c', "\n");
-
-}
-
-void destroyGlobalVariables() {
-  delete _acausalEqs;
-  delete _unknowns;
-  delete _causalEqs1;
-  delete _causalEqsN;
-}
-
-AST_ClassList causalize(AST_String name, MMO_EquationList equations, AST_ExpressionList unknowns, MMO_EquationList causalEqs) {
-  init(equations, unknowns);
-  AST_ClassList cl = newAST_ClassList();
-  doIt(name,causalEqs,unknowns,cl);
-  destroyGlobalVariables();
-  return cl;
 }

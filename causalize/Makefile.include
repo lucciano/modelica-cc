@@ -11,7 +11,7 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             causalize/state_variables_finder.o \
             causalize/discrete_variables_finder.o \
             causalize/unknowns_collector.o \
-            causalize/compref_occurrence_traverse.o \
+            causalize/compref_occurrence.o \
             causalize/causalization_strategy.o \
             causalize/cycles_identification_strategy.o
 

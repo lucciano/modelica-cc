@@ -28,7 +28,7 @@
 #include <parser/parse.h>
 #include <ast/equation.h>
 #include <causalize/causalization_strategy.h>
-#include <causalize/compref_occurrence_traverse.h>
+#include <causalize/compref_occurrence.h>
 #include <util/ginac_interface.h>
 #include <util/solve.h>
 #include <util/debug.h>

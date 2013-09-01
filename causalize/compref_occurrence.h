@@ -6,8 +6,11 @@
  */
 
 #include <util/ast_util.h>
+#include <mmo/mmo_class.h>
 
 using namespace std;
+
+bool occur(AST_Expression unknown, MMO_Equation equation);
 
 class CompRefOccurrenceTraverse: public AST_Expression_Fold<bool>  {
 public:

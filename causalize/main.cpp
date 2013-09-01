@@ -91,7 +91,9 @@ int main(int argc, char ** argv)
   UnknownsCollector *collector = new UnknownsCollector(c);
   AST_ExpressionList unknowns = collector->collectUnknowns();
   MMO_EquationList causalEqs = newMMO_EquationList();
-  AST_ClassList cl=causalize(c->name(),acausalEquations, unknowns, causalEqs);
+  CausalizationStrategy *cStrategy = new CausalizationStrategy(acausalEquations, unknowns);
+  AST_ClassList cl = newAST_ClassList();
+  cStrategy->causalize(c->name(), causalEqs, cl);
 
   DEBUG('c', "Causalized Equations:\n");
   c->getEquations()->clear();

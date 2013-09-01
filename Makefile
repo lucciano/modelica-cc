@@ -35,7 +35,7 @@ parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
 	flex++ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
 clean:
-	rm -rf $(OBJS_ANTIALIAS) $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) $(OBJS_CAUSALIZE_TEST) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h mmo/mmo casusalize/causalize test/causalize/cycles_identification_strategy_test 
+	rm -rf $(OBJS_ANTIALIAS) $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) $(OBJS_CAUSALIZE_TEST) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test 
 
 
 
