@@ -100,7 +100,7 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
 
   try {
     /* System is linear */
-    //if (size>1) throw std::logic_error("");
+    if (size>5) throw std::logic_error("");
     GiNaC::ex solved= lsolve(eqns, vars,GiNaC::solve_algo::gauss);
     AST_EquationList ret=newAST_EquationList();
     if (solved.nops()==0) {
@@ -253,12 +253,12 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
     foreach(it_cr,crs) {
       fs << "  " << current_element(it_cr) << "[0] = gsl_vector_get(__s->x," << index++ << ");" << endl;
     }
-    fs << "  gsl_multiroot_fsolver_free (__s);"<< endl;
     index=0;
     foreach(it_cr,crs) {
       fs << "  gsl_vector_set (__x, " << index << ", gsl_vector_get(__s->x," << index << "));" << endl;
       index++;
     }
+    fs << "  gsl_multiroot_fsolver_free (__s);"<< endl;
     fs << "}" << endl;
     AST_ListAppend(cl,makeFsolve(newAST_String(s.str()),args_size,size));
     return newAST_SimpleList(e);

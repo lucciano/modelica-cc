@@ -7,7 +7,7 @@ OBJS_ANTIALIAS := $(OBJS_COMMON) \
             util/symbol_table.o \
             antialias/remove_alias.o \
             causalize/state_variables_finder.o \
-            causalize/compref_occurrence_traverse.o \
+            causalize/compref_occurrence.o \
             antialias/main.o 
 
 bin/antialias: $(OBJS_ANTIALIAS)

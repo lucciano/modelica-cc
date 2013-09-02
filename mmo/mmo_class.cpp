@@ -23,7 +23,7 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include <mmo/mmo_class.h>
-#include <causalize/compref_occurrence_traverse.h>
+#include <causalize/compref_occurrence.h>
 
 
 using namespace std;

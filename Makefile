@@ -1,4 +1,4 @@
-CXXFLAGS = -DYY_MCC_Parser_DEBUG -I. -g -Wno-write-strings -Wall
+CXXFLAGS = -DYY_MCC_Parser_DEBUG -I. -O3 -Wno-write-strings -Wall
 
 OBJS_COMMON := parser/mocc_parser.o \
         parser/mocc_scanner.o \
