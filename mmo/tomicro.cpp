@@ -50,7 +50,7 @@ void MMO_ToMicroModelica_::transform()
 		if (_pre->find(n) != _pre->end())
 			v->setDiscrete();
 		
-		if ( ( !v->isConstant() && !v->isParameter() ) || v->type()->getType() == TYBOOLEAN) v->setType(ChangeToReal(v->type()));
+		if ( ( !v->isConstant() ) || v->type()->getType() == TYBOOLEAN) v->setType(ChangeToReal(v->type()));
 	}
 	ChangePre(_c->getIniEquations());
 	ChangePre(_c->getEquations());
@@ -248,7 +248,6 @@ MMO_Equation MMO_ToMicroModelica_::toMicro_eq_equality(AST_Equation_Equality eq 
 {	
 	AST_Expression r = eq->right();
 	AST_Expression l = eq->left();
-	
 	
 	try {	
 		if (IS_CREF(l) &&  _c->getExpresionType(r)->getType() == TYBOOLEAN ) {		
@@ -558,43 +557,94 @@ AST_EquationList MMO_ToMicroModelica_::toMicro_eq_if(AST_Equation_If iff , MMO_S
 	for(k= 0;k < nro;k++) AST_ListAppend(eqList,makeEquation(ls[k],condList,stList,iMap));
 	return eqList;
 }
- 
+
 AST_Expression MMO_ToMicroModelica_::whenCondition(AST_Expression e, AST_StatementList ls )
+{
+	if (IS_BNOT(e)) {
+		AST_Expression ex = e->getAsBooleanNot()->exp();
+		if (IS_RELOP(ex)) return negar_cond(ex);
+	}
+	if (IS_RELOP(e)) return e;
+	return  GREATER( whenConditionTransform(e,ls) , _R(0.5)  ); 
+}
+ 
+AST_Expression MMO_ToMicroModelica_::whenConditionTransform(AST_Expression e, AST_StatementList ls )
 {
 	switch (e->expressionType())
 	{
 		case EXPBINOP:
 		{
 			AST_Expression_BinOp b = e->getAsBinOp();
-			return newAST_Expression_BinOp(whenCondition(b->left(),ls),whenCondition(b->right(),ls) , b->binopType());
+			switch(b->binopType()) {
+				case BINOPLOWER: 
+				case BINOPLOWEREQ: 
+				case BINOPGREATER: 
+				case BINOPGREATEREQ: 
+				case BINOPCOMPNE: 
+				case BINOPCOMPEQ:
+				{
+					AST_Expression e1 =  b->left();
+					AST_Expression e2 =  b->right();
+					
+					AST_String name = new_label();
+					_c->addVariable( name , _S("Real"),  newAST_TypePrefix(TP_DISCRETE));	
+					AST_Expression cr = newAST_Expression_ComponentReferenceExp (name)->getAsComponentReference();
+					AST_Expression _b = newAST_Expression_BinOp( e1 , e2 ,b->binopType()  );
+					AST_ListAppend(_c->getStatements(), make_when( _b, cr->getAsComponentReference() ));
+					AST_ListAppend(initialFrame.top(), make_if( _b, cr->getAsComponentReference() ));
+					return newAST_Expression_Call(_S("pre"), NULL , newAST_SimpleList(cr));
+					
+				}
+				
+				case BINOPAND:
+				{
+					return MULT( whenConditionTransform(b->left(),ls) , whenConditionTransform(b->right(),ls) );
+				}
+				
+				case BINOPOR:
+				{
+					return SUB(I(1) , MULT( SUB(I(1) , whenConditionTransform(b->left(),ls)) , SUB(I(1) ,whenConditionTransform(b->right(),ls) ) ) ) ;
+				}	
+								
+				default:
+				{
+					return newAST_Expression_BinOp( whenConditionTransform(b->left(),ls) , whenConditionTransform(b->right(),ls) ,b->binopType()  );
+				}
+				
+			}
+			//AST_Expression_BinOp b = e->getAsBinOp();
+			//return newAST_Expression_BinOp(whenCondition(b->left(),ls),whenCondition(b->right(),ls) , b->binopType());
 		}
 		
 		case EXPUMINUS:
 		{
 			AST_Expression_UMinus u = e->getAsUMinus();
-			return newAST_Expression_UnaryMinus( whenCondition(u->exp(),ls));
+			return newAST_Expression_UnaryMinus( whenConditionTransform(u->exp(),ls));
 		}
 		
 		case EXPBOOLEANNOT:
 		{
 			AST_Expression_BooleanNot no = e->getAsBooleanNot();
-			return newAST_Expression_BooleanNot( whenCondition( no->exp() ,ls) );
+			AST_Expression e = whenConditionTransform( no->exp() ,ls);
+			return UMENOS(e) ;
 		}
 		
 		case EXPOUTPUT:
 		{
 			AST_Expression_Output b = e->getAsOutput();
-			return newAST_Expression_OutputExpressions(newAST_SimpleList(whenCondition(b->expressionList()->front() , ls )));
+			return newAST_Expression_OutputExpressions(newAST_SimpleList(whenConditionTransform(b->expressionList()->front() , ls )));
 		}
 		
 		case EXPCOMPREF:
 		{
 			AST_Expression_ComponentReference cf = e->getAsComponentReference();
-			Type t = _c->getVariableType(cf->names()->front());
+			return cf;
+			/*Type t = _c->getVariableType(cf->names()->front());
 			if (t != NULL && t->getType() == TYBOOLEAN) {
 				return GREATER( cf , _R(0.5)  );
 			} else 
 				return cf;
+			*/
 		}
 		
 		case EXPCALL:

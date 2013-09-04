@@ -83,6 +83,7 @@ private:
 	 
 	/* Procesa la condicion del When */
 	AST_Expression 		whenCondition(AST_Expression , AST_StatementList  );
+	AST_Expression 		whenConditionTransform(AST_Expression , AST_StatementList  );
 	
 	 /*  Transforma las equaciones WHEN */ 
 	void				toMicro_eq_when (AST_Equation,MMO_StatementList );

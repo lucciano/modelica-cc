@@ -159,7 +159,7 @@ AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression b1, AST_Expres
 }
 
 AST_Expression ReplaceBoolean::foldTraverseElementUMinus(AST_Expression u) {
-  return foldTraverse(u->getAsUMinus()->exp());
+  return newAST_Expression_UnaryMinus(foldTraverse(u->getAsUMinus()->exp()));
 }
 
 AST_Expression ReplaceBoolean::foldTraverseElement(AST_Expression e) {

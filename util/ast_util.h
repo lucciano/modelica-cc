@@ -41,7 +41,9 @@
 #define IS_SUM_OF_VARS(X) (IS_SUM_(X) && (IS_VAR((X)->getAsBinOp()->left()) && IS_VAR((X)->getAsBinOp()->right())))
 #define IS_STATE(X) (_varSymbolTable->lookup(CREF_NAME(X))!=NULL && _varSymbolTable->lookup(CREF_NAME(X))->isState())
 #define IS_PARAMETER(X) (IS_UMINUS(X) ? _varSymbolTable->lookup(CREF_NAME(UMINUS_EXP(X)))!=NULL && _varSymbolTable->lookup(CREF_NAME(UMINUS_EXP(X)))->isParameter() :  _varSymbolTable->lookup(CREF_NAME(X))!=NULL && _varSymbolTable->lookup(CREF_NAME(X))->isParameter())
-
+#define IS_RELOP(X) ((X)->expressionType()==EXPBINOP && (X)->getAsBinOp()->binopType() >= BINOPLOWER && (X)->getAsBinOp()->binopType() <= BINOPGREATEREQ)
+#define IS_BNOT(X) ((X)->expressionType()==EXPBOOLEANNOT)
+ 
 #define _VAR(v)			newAST_Expression_ComponentReferenceExp(v)
 #define GREATER(l,r) 	newAST_Expression_BinOp(l, r, BINOPGREATER )
 #define LOWER(l,r) 		newAST_Expression_BinOp(l, r, BINOPLOWER )
