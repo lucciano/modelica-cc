@@ -37,6 +37,46 @@
 
 using namespace std;
 
+void printParameter(FILE *params, VarName name, VarInfo var) {
+  if (var->isParameter()) {
+    fprintf(params,"#ifdef QSS_SOLVER\n");
+    fprintf(params,"extern double %s;\n",name.c_str());
+    fprintf(params,"#else\n");
+    if (var->modification()!=NULL && var->modification()->modificationType()==MODEQUAL) {
+      AST_Modification_Equal me = var->modification()->getAsEqual();
+      /* TODO: This should evaluate instead of just printing the exp */
+      fprintf(params,"double %s=%s;\n",name.c_str(),me->exp()->print().c_str());
+    } else if (var->modification()!=NULL && var->modification()->modificationType()==MODCLASS) {
+      AST_Modification_Class mc = var->modification()->getAsClass();
+      /* TODO: This should evaluate instead of just printing the exp */
+      fprintf(params,"double %s=%s;\n",name.c_str(),mc->exp()->print().c_str());
+    } else {
+      fprintf(params,"double %s;\n",name.c_str());
+    }
+    fprintf(params,"#endif\n");
+  }
+}
+void printParameters(MMO_Class c) {
+  string file_name= toStr(c->name());
+  VarSymbolTable varEnv = c->getVarSymbolTable();
+  file_name.append("_parameters.h");
+  FILE *params=fopen(file_name.c_str(),"w");
+  if (c->parameters()==NULL) {
+    for(int i=0;i<varEnv->count();i++) {
+      VarInfo var = varEnv->val(i);
+      printParameter(params,varEnv->key(i),var);
+   }
+  } else {
+    AST_StringListIterator it;
+    foreach(it,c->parameters()) {
+      VarInfo var = varEnv->lookup(toStr(current_element(it)));
+      printParameter(params,toStr(current_element(it)),var);
+   }
+  }
+  fclose(params);
+ 
+
+}
 int main(int argc, char ** argv)
 {
 
@@ -102,35 +142,13 @@ int main(int argc, char ** argv)
     AST_ListAppend(c->getEquations(),current_element(iter));
   }
   c->setfsolve(cl);
-  /* Dump parameters file */ 
-  string file_name= toStr(c->name());
-  file_name.append("_parameters.h");
-  FILE *params=fopen(file_name.c_str(),"w");
-  VarSymbolTable varEnv = c->getVarSymbolTable();
-  for(int i=0;i<varEnv->count();i++) {
-    VarInfo var = varEnv->val(i);
-    if (var->isParameter()) {
-      fprintf(params,"#ifdef QSS_SOLVER\n");
-      fprintf(params,"extern double %s;\n",varEnv->key(i).c_str());
-      fprintf(params,"#else\n");
-      if (var->modification()!=NULL && var->modification()->modificationType()==MODEQUAL) {
-        AST_Modification_Equal me = var->modification()->getAsEqual();
-        /* TODO: This should evaluate instead of just printing the exp */
-        fprintf(params,"double %s=%s;\n",varEnv->key(i).c_str(),me->exp()->print().c_str());
-      } else if (var->modification()!=NULL && var->modification()->modificationType()==MODCLASS) {
-        AST_Modification_Class mc = var->modification()->getAsClass();
-        /* TODO: This should evaluate instead of just printing the exp */
-        fprintf(params,"double %s=%s;\n",varEnv->key(i).c_str(),mc->exp()->print().c_str());
-      } else {
-        fprintf(params,"double %s;\n",varEnv->key(i).c_str());
-      }
-      fprintf(params,"#endif\n");
-    }
-  }
-  fclose(params);
+
   if (for_qss) {
     c->cleanComments();
+    c->sortParameters();
   }
+  /* Dump parameters file */ 
   cout << c;
+  printParameters(c);
   return 0;
 }

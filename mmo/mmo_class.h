@@ -37,6 +37,7 @@ typedef list<MMO_Statement> 	*MMO_StatementList;
 typedef list<MMO_Component>	*MMO_ComponentList;
 typedef list<MMO_Element>		*MMO_ElementList;
 
+
 typedef list<MMO_Equation>::iterator MMO_EquationListIterator;
 
 #ifndef MMOCLASS_H
@@ -87,6 +88,8 @@ public:
 	friend ostream & operator<<(ostream &os , const MMO_Class_ &c );
   
   void cleanComments();
+  void sortParameters();
+  AST_StringList parameters() const { return _parameters; }
 
 private:
 	/* Agrega una variables desde una Componet (solo para inicializar la clase) */
@@ -103,6 +106,7 @@ private:
 	VarSymbolTable  varEnv;
 	TypeSymbolTable tyEnv;
 	TypeCheck_ * _ct;	
+  AST_StringList _parameters;
 };
 
 ostream & operator<<(ostream &os , const MMO_Class &c );
