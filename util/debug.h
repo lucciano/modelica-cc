@@ -45,4 +45,8 @@ bool isDebugParam(char *param);
  */
 void ERROR(const char *format, ...);
 
-
+/**
+ * Print an ERROR message if condition is false.
+ * Then exits with EXIT_FAILURE status.
+ */
+void ERROR_UNLESS(bool condition, const char *format, ...);

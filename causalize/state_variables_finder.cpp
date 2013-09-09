@@ -11,6 +11,7 @@
 #include <ast/ast_builder.h>
 #include <ast/expression.h>
 #include <util/symbol_table.h>
+#include <util/debug.h>
 
 StateVariablesFinder::StateVariablesFinder(MMO_Class c) {
 	_c = c;
@@ -18,7 +19,6 @@ StateVariablesFinder::StateVariablesFinder(MMO_Class c) {
 }
 
 StateVariablesFinder::~StateVariablesFinder() {
-	// TODO [Moya] Auto-generated destructor stub
 }
 
 void StateVariablesFinder::findStateVariables() {
@@ -51,26 +51,9 @@ void StateVariablesFinder::findStateVariablesInEquations(MMO_EquationList eqs) {
           }
         }
           break;
-        case EQCALL:
-          // TODO [Moya] Este caso no hay que considerarlo, cierto?
-          break;
-        case EQCONNECT:
-          // TODO [Moya]
-          break;
-        case EQFOR:
-          // TODO [Moya]
-          break;
-        case EQIF:
-          // TODO Es correcto considerar toda la lista de ecuaciones? Porque de este if sale una sola ecuacion, o no?
-//          AST_Equation_If eqIf = eq->getAsIf();
-//          AST_EquationList innerEqs = eqIf->equationList();
-//          findStateVariablesInEquations(innerEqs);
-          break;
-        case EQNONE:
-          // TODO [Moya] ver como es el manejo de errores y/o excepciones.
-          break;
         default:
-        ;// TODO [Moya] ver como es el manejo de errores y/o excepciones.
+          ERROR("StateVariablesFinder::findStateVariablesInEquations:\n"
+              "Equation type not supported.\n");
       }
     }
   }
@@ -81,21 +64,20 @@ AST_Expression StateVariablesFinder::mapTraverseElement(AST_Expression e) {
 		case EXPDERIVATIVE:
 			AST_Expression_Derivative der = e->getAsDerivative();
 			AST_ExpressionList arguments = der->arguments();
-			AST_Expression argument = arguments->front(); // FIXME [Moya] Por ahora nos quedamos con el 1er elemento. En un futuro habra que iterar sobre todos los elementos de la lista.
+			ERROR_UNLESS(arguments->size() == 1, "StateVariablesFinder::mapTraverseElement:\n"
+			    "AST_Expression_Derivative with more than one argument are not supported yet.\n");
+			AST_Expression argument = arguments->front();
 			switch(argument->expressionType()) {
 				case EXPCOMPREF:
 				{
 					AST_Expression_ComponentReference compref = argument->getAsComponentReference();
 					VarInfo varInfo = _varSymbolTable->lookup(compref->name());
-					if (varInfo != NULL) {
 						varInfo->setState();
-						//cout << compref->name() << endl;
-					} else {
-						// TODO [Moya]
-					}
 				}
 					break;
-					// TODO [Moya] Puede haber otro tipo de expresión como argumento de la función der?
+				default:
+				  ERROR("StateVariablesFinder::mapTraverseElement:\n"
+				      "Incorrect expression type of AST_Expression_Derivative argument\n.");
 			}
 
 	}

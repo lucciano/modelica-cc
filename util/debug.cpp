@@ -69,3 +69,12 @@ void ERROR(const char *format, ...) {
   va_end(ap);
   exit(EXIT_FAILURE);
 }
+
+void ERROR_UNLESS(bool condition, const char *format, ...) {
+  if(!condition) {
+    va_list ap;
+    va_start(ap, format);
+    ERROR(format, ap);
+    va_end(ap);
+  }
+}

@@ -28,7 +28,6 @@ CompRefOccurrenceTraverse::CompRefOccurrenceTraverse(AST_Expression unknown) {
 }
 
 CompRefOccurrenceTraverse::~CompRefOccurrenceTraverse() {
-	// TODO Auto-generated destructor stub
 }
 
 bool CompRefOccurrenceTraverse::foldTraverseElement(AST_Expression e) {
