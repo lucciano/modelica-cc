@@ -13,7 +13,10 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             causalize/unknowns_collector.o \
             causalize/compref_occurrence.o \
             causalize/causalization_strategy.o \
-            causalize/cycles_identification_strategy.o
+            causalize/cycles_identification_strategy.o \
+            causalize/for_equations/equation_instantiation_traverse.o \
+            causalize/for_equations/for_index_iterator.o \
+            causalize/for_equations/process_for_equations.h
 
 LIB_CAUSALIZE = -lginac
 

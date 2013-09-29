@@ -47,6 +47,7 @@ public:
   GET_AS(Expression,Range);
   GET_AS(Expression,Real);
   GET_AS(Expression,UMinus);
+  GET_AS(Expression,String);
   AST_Expression_If_ElseIf getAsElseIf();
 };
 

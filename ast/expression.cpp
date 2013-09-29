@@ -42,6 +42,7 @@ GET_AS_IMP(Expression,Output);
 GET_AS_IMP(Expression,Range);
 GET_AS_IMP(Expression,Real);
 GET_AS_IMP(Expression,UMinus);
+GET_AS_IMP(Expression,String);
 
 ExpressionType AST_Expression_::expressionType()              {
   return EXPNONE;
