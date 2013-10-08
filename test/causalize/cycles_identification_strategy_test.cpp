@@ -1,17 +1,10 @@
-//  (C) Copyright Gennadiy Rozental 2002-2006.
-//  (C) Copyright Gennadiy Rozental & Ullrich Koethe 2001.
-//  Distributed under the Boost Software License, Version 1.0.
-//  (See accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-
-//  See http://www.boost.org/libs/test for the library home page.
-
 #include <iostream>
+
+#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 #include <causalize/cycles_identification_strategy.h>
 
-#include <boost/test/unit_test.hpp>
-#include <boost/test/included/unit_test.hpp> 
 using namespace boost::unit_test;
 
 //____________________________________________________________________________//

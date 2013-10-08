@@ -14,12 +14,13 @@ OBJS_COMMON := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
-all:bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test
+all:bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test test/causalize/for_unrolling/process_for_equations_test
 
 include mmo/Makefile.include
 include causalize/Makefile.include
 include antialias/Makefile.include
 include test/causalize/Makefile.include
+include test/causalize/for_unrolling/Makefile.include
 
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o

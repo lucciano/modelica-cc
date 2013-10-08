@@ -18,9 +18,43 @@
 ******************************************************************************/
 
 #include <math.h>
-#include <causalize/for_equations/process_for_equations.h>
-#include <causalize/for_equations/equation_instantiation_traverse.h>
-#include <causalize/for_equations/for_index_iterator.h>
+
+#include <util/debug.h>
+
+#include <causalize/for_unrolling/process_for_equations.h>
+#include <causalize/for_unrolling/instantiation_traverse.h>
+#include <causalize/for_unrolling/for_index_iterator.h>
+
+ForIndexIterator *processInExp(AST_Expression inExp){
+  ForIndexIterator *iterator;
+  switch (inExp->expressionType()) {
+  case EXPRANGE:
+    iterator = new RangeIterator(inExp->getAsRange());
+    return iterator;
+    break;
+  case EXPBRACE:
+    iterator = new BraceIterator(inExp->getAsBrace());
+    return iterator;
+    break;
+  default:
+    ERROR("process_for_equations:\n"
+        "Equation type not supported in forIndex inExp\n");
+  }
+}
+
+MMO_Equation instantiate_equation(AST_Equation innerEq, AST_String variable, AST_Integer index) {
+  InstantiationTraverse traverse;
+  switch (innerEq->equationType()) {
+    case EQEQUALITY: {
+      AST_Equation_Equality eqEq = innerEq->getAsEquality();
+      AST_Expression left = traverse.instantiate(variable, index, eqEq->left());
+      AST_Expression right = traverse.instantiate(variable, index, eqEq->right());
+      return newAST_Equation_Equality(left, right);
+    } default:
+      ERROR("process_for_equations - instantiate_equation:\n"
+            "Incorrect equation type or not supported yet.\n");
+    }
+}
 
 void process_for_equations(MMO_Class mmo_class) {
 
@@ -44,19 +78,15 @@ void process_for_equations(MMO_Class mmo_class) {
       AST_String variable = forIndex->variable();
       AST_Expression inExp = forIndex->in_exp();
       if (inExp != NULL) {
-        ForIndexIterator rangeIter = processInExp(inExp);
+        ForIndexIterator *rangeIter = processInExp(inExp);
         while (rangeIter->hasNext()) {
           AST_Integer index = rangeIter->next();
           AST_EquationList innerEqs = forEq->equationList();
-          AST_EquationListIterator innerEqsiter;
+          AST_EquationListIterator innerEqsIter;
           foreach(innerEqsIter, innerEqs) {
             AST_Equation innerEq = current_element(innerEqsIter);
-            // TODO [Moya] Ver si esta bien trabajar directamente
-            // con el objeto innerEq que "pertencecia" a la
-            // for-equation. O si tendriamos que crear un objeto
-            // MMO_Equation nuevo.
-            instantiate_equation(innerEq, variable, index);
-            mmo_class->addEquation(innerEq);
+            MMO_Equation newEq = instantiate_equation(innerEq, variable, index);
+            mmo_class->addEquation(newEq);
           }
         }
       } else {
@@ -69,34 +99,7 @@ void process_for_equations(MMO_Class mmo_class) {
 
 }
 
-ForIndexIterator processInExp(AST_Expression inExp){
-  switch (inExp->expressionType()) {
-  case EXPRANGE:
-    ForIndexIterator iterator = new RangeIterator(inExp->getAsRange());
-    return iterator;
-    break;
-  case EXPBRACE:
-    ForIndexIterator iterator = new BraceIterator(inExp->getAsBrace());
-    return iterator;
-    break;
-  default:
-    ERROR("process_for_equations:\n"
-        "Equation type not supported in forIndex inExp\n");
-  }
-}
 
-void instantiate_equation(AST_Equation innerEq, AST_String variable, AST_Integer index) {
-    switch (innerEq->equationType()) {
-    case EQEQUALITY:
-      AST_Equation_Equality eqEq = innerEq->getAsEquality();
-      EqInstantiationTraverse traverse = new EqInstantiationTraverse(variable, index);
-      mapTraverse(eqEq->left());
-      mapTraverse(eqEq->right());
-      delete traverse;
-      break;
-    default:
-      ERROR("process_for_equations - instantiate_equation:\n"
-            "Incorrect equation type or not supported yet.\n");
-    }
-}
+
+
 

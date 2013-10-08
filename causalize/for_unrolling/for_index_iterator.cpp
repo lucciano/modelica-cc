@@ -17,9 +17,12 @@
 
 ******************************************************************************/
 
-#include <causalize/for_equations/for_index_iterator.h>
+#include <causalize/for_unrolling/for_index_iterator.h>
 #include <ast/expression.h>
 #include <util/debug.h>
+
+
+// TODO [Moya] falta el caso 1:n donde n es parámetro.
 
 RangeIterator::RangeIterator(AST_Expression_Range range) {
   _rangeElements = range->expressionList();
@@ -50,10 +53,15 @@ void RangeIterator::initReal(AST_ExpressionListIterator iter){
 void RangeIterator::initInteger(AST_ExpressionListIterator iter){
   _rangeBegin = (*iter)->getAsInteger()->val();
   iter++;
+  ERROR_UNLESS(iter != _rangeElements->end(), "for_index_iterator - getIndexList:\n"
+         "Incorrect AST_Expression_Range\n");
+  int temp = (*iter)->getAsInteger()->val();
+  iter++;
   if (iter == _rangeElements->end()) {
-   _rangeEnd = (*iter)->getAsInteger()->val();
+   _rangeStep = 1;
+    _rangeEnd = temp;
   } else {
-   _rangeStep = (*iter)->getAsInteger()->val();
+   _rangeStep = temp;
    iter++;
    ERROR_UNLESS(iter == _rangeElements->end(), "for_index_iterator - getIndexList:\n"
        "Incorrect AST_Expression_Range\n");
@@ -62,7 +70,7 @@ void RangeIterator::initInteger(AST_ExpressionListIterator iter){
 }
 
 bool RangeIterator::hasNext() {
-  return _current <= _rangeEnd - _rangeStep;
+  return _current <= _rangeEnd;
 }
 
 AST_Integer RangeIterator::next() {

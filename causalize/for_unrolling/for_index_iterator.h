@@ -18,18 +18,34 @@
 ******************************************************************************/
 
 #include <ast/ast_types.h>
-#include <util/ast_util.h>
 
-class EqInstantiationTraverse: public AST_Expression_Traverse  {
+class ForIndexIterator {
 public:
-  EqInstantiationTraverse(AST_String variable, AST_Integer index);
-private:
-  virtual AST_Expression mapTraverseElement(AST_Expression) = 0;
-  void instantiateCompRef(AST_Expression exp);
-  AST_Real getNumericExpressionVal(AST_Expression exp);
-  AST_Expression evalExp(AST_Expression exp);
-  AST_Expression evalBinOp(AST_Expression_BinOp binOpExp);
-  AST_String _forIndex_variable;
-  AST_Integer _forIndex;
+  virtual bool hasNext() = 0;
+  virtual AST_Integer next() = 0;
 };
 
+class RangeIterator : public ForIndexIterator {
+public:
+  RangeIterator(AST_Expression_Range range);
+  bool hasNext();
+  AST_Integer next();
+private:
+  void initReal(AST_ExpressionListIterator iter);
+  void initInteger(AST_ExpressionListIterator iter);
+  AST_ExpressionList _rangeElements;
+  AST_Real _rangeBegin;
+  AST_Real _rangeStep;
+  AST_Real _rangeEnd;
+  AST_Real _current;
+};
+
+class BraceIterator : public ForIndexIterator {
+public:
+  BraceIterator(AST_Expression_Brace braceExp);
+  bool hasNext();
+  AST_Integer next();
+private:
+  AST_ExpressionList _braceExpElements;
+  AST_ExpressionListIterator _braceExpElementsIter;
+};

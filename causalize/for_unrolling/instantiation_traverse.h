@@ -18,34 +18,19 @@
 ******************************************************************************/
 
 #include <ast/ast_types.h>
+#include <util/ast_util.h>
 
-class ForIndexIterator {
+class InstantiationTraverse : public AST_Expression_Traverse  {
 public:
-  virtual bool hasNext() = 0;
-  virtual AST_Integer next() = 0;
-};
-
-class RangeIterator : ForIndexIterator {
-public:
-  RangeIterator(AST_Expression_Range range);
-  bool hasNext();
-  AST_Integer next();
+  AST_Expression instantiate(AST_String variable, AST_Integer index, AST_Expression exp);
 private:
-  void initReal(AST_ExpressionListIterator iter);
-  void initInteger(AST_ExpressionListIterator iter);
-  AST_ExpressionList _rangeElements;
-  AST_Real _rangeBegin;
-  AST_Real _rangeStep;
-  AST_Real _rangeEnd;
-  AST_Real _current;
+  virtual AST_Expression mapTraverseElement(AST_Expression);
+  AST_Expression instantiateCompRef(AST_Expression_ComponentReference compRef);
+  AST_Expression instantiateArray(AST_Expression_ComponentReference exp);
+  AST_Real getNumericExpressionVal(AST_Expression exp);
+  AST_Expression evalExp(AST_Expression exp);
+  AST_Expression evalBinOp(AST_Expression_BinOp binOpExp);
+  AST_String _forIndex_variable;
+  AST_Integer _forIndex;
 };
 
-class BraceIterator : ForIndexIterator {
-public:
-  BraceIterator(AST_Expression_Brace braceExp);
-  bool hasNext();
-  AST_Integer next();
-private:
-  AST_ExpressionList _braceExpElements;
-  AST_ExpressionListIterator _braceExpElementsIter;
-};

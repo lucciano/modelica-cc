@@ -14,9 +14,9 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             causalize/compref_occurrence.o \
             causalize/causalization_strategy.o \
             causalize/cycles_identification_strategy.o \
-            causalize/for_equations/equation_instantiation_traverse.o \
-            causalize/for_equations/for_index_iterator.o \
-            causalize/for_equations/process_for_equations.h
+            causalize/for_unrolling/for_index_iterator.o \
+            causalize/for_unrolling/instantiation_traverse.o \
+            causalize/for_unrolling/process_for_equations.o
 
 LIB_CAUSALIZE = -lginac
 
