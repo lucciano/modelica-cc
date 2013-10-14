@@ -22,7 +22,7 @@
 #include <util/debug.h>
 
 #include <causalize/for_unrolling/process_for_equations.h>
-#include <causalize/for_unrolling/instantiation_traverse.h>
+#include <causalize/for_unrolling/instantiation_fold.h>
 #include <causalize/for_unrolling/for_index_iterator.h>
 
 ForIndexIterator *processInExp(AST_Expression inExp){
@@ -43,7 +43,7 @@ ForIndexIterator *processInExp(AST_Expression inExp){
 }
 
 MMO_Equation instantiate_equation(AST_Equation innerEq, AST_String variable, AST_Integer index) {
-  InstantiationTraverse traverse;
+  InstantiationFold traverse;
   switch (innerEq->equationType()) {
     case EQEQUALITY: {
       AST_Equation_Equality eqEq = innerEq->getAsEquality();

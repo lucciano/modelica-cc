@@ -7,7 +7,7 @@ OBJS_CAUSALIZE_FOR_UNROLLING_TEST := $(OBJS_COMMON) \
             util/symbol_table.o \
             util/debug.o \
             causalize/for_unrolling/for_index_iterator.o \
-            causalize/for_unrolling/instantiation_traverse.o \
+            causalize/for_unrolling/instantiation_fold.o \
             causalize/for_unrolling/process_for_equations.o \
             test/causalize/for_unrolling/process_for_equations_test.o
 

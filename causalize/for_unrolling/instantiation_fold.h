@@ -20,16 +20,18 @@
 #include <ast/ast_types.h>
 #include <util/ast_util.h>
 
-class InstantiationTraverse : public AST_Expression_Traverse  {
+class InstantiationFold : public AST_Expression_Fold<AST_Expression>  {
 public:
   AST_Expression instantiate(AST_String variable, AST_Integer index, AST_Expression exp);
 private:
-  virtual AST_Expression mapTraverseElement(AST_Expression);
+  AST_Expression foldTraverseElement(AST_Expression);
+  AST_Expression foldTraverseElementUMinus(AST_Expression);
+  AST_Expression foldTraverseElement(AST_Expression, AST_Expression, BinOpType);
   AST_Expression instantiateCompRef(AST_Expression_ComponentReference compRef);
   AST_Expression instantiateArray(AST_Expression_ComponentReference exp);
   AST_Real getNumericExpressionVal(AST_Expression exp);
   AST_Expression evalExp(AST_Expression exp);
-  AST_Expression evalBinOp(AST_Expression_BinOp binOpExp);
+  AST_Expression evalBinOp(AST_Expression left, AST_Expression right, BinOpType binOpType);
   AST_String _forIndex_variable;
   AST_Integer _forIndex;
 };
