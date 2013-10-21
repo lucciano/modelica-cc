@@ -18,6 +18,7 @@
 ******************************************************************************/
 
 #include <ast/ast_types.h>
+#include <util/symbol_table.h>
 
 class ForIndexIterator {
 public:
@@ -27,12 +28,12 @@ public:
 
 class RangeIterator : public ForIndexIterator {
 public:
-  RangeIterator(AST_Expression_Range range);
+  RangeIterator(AST_Expression_Range range, VarSymbolTable symbolTable);
   bool hasNext();
   AST_Integer next();
 private:
-  void initReal(AST_ExpressionListIterator iter);
-  void initInteger(AST_ExpressionListIterator iter);
+  AST_Real getVal(AST_ExpressionListIterator iter, VarSymbolTable symbolTable);
+  AST_Real getCompRefVal(AST_Expression_ComponentReference compRef, VarSymbolTable symbolTable);
   AST_ExpressionList _rangeElements;
   AST_Real _rangeBegin;
   AST_Real _rangeStep;

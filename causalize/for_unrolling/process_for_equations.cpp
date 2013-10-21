@@ -20,16 +20,17 @@
 #include <math.h>
 
 #include <util/debug.h>
+#include <util/symbol_table.h>
 
 #include <causalize/for_unrolling/process_for_equations.h>
 #include <causalize/for_unrolling/instantiation_fold.h>
 #include <causalize/for_unrolling/for_index_iterator.h>
 
-ForIndexIterator *processInExp(AST_Expression inExp){
+ForIndexIterator *processInExp(AST_Expression inExp, VarSymbolTable symbolTable){
   ForIndexIterator *iterator;
   switch (inExp->expressionType()) {
   case EXPRANGE:
-    iterator = new RangeIterator(inExp->getAsRange());
+    iterator = new RangeIterator(inExp->getAsRange(), symbolTable);
     return iterator;
     break;
   case EXPBRACE:
@@ -78,7 +79,7 @@ void process_for_equations(MMO_Class mmo_class) {
       AST_String variable = forIndex->variable();
       AST_Expression inExp = forIndex->in_exp();
       if (inExp != NULL) {
-        ForIndexIterator *rangeIter = processInExp(inExp);
+        ForIndexIterator *rangeIter = processInExp(inExp, mmo_class->getVarSymbolTable());
         while (rangeIter->hasNext()) {
           AST_Integer index = rangeIter->next();
           AST_EquationList innerEqs = forEq->equationList();

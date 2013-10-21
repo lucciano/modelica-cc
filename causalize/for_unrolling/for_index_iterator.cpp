@@ -19,53 +19,66 @@
 
 #include <causalize/for_unrolling/for_index_iterator.h>
 #include <ast/expression.h>
+#include <ast/modification.h>
 #include <util/debug.h>
 
 
-// TODO [Moya] falta el caso 1:n donde n es parámetro.
-
-RangeIterator::RangeIterator(AST_Expression_Range range) {
+RangeIterator::RangeIterator(AST_Expression_Range range, VarSymbolTable symbolTable) {
   _rangeElements = range->expressionList();
   AST_ExpressionListIterator iter = _rangeElements->begin();
-  if((*iter)->expressionType() == EXPREAL) {
-    initReal(iter);
-  } else {
-    initInteger(iter);
-  }
-  _current = _rangeBegin;
-}
-
-void RangeIterator::initReal(AST_ExpressionListIterator iter){
-  _rangeBegin = (*iter)->getAsReal()->val();
+  _rangeBegin = getVal(iter, symbolTable);
   iter++;
-  if (iter == _rangeElements->end()) {
-    _rangeStep = 1.0;
-   _rangeEnd = (*iter)->getAsReal()->val();
-  } else {
-   _rangeStep = (*iter)->getAsReal()->val();
-   iter++;
-   ERROR_UNLESS(iter == _rangeElements->end(), "for_index_iterator - getIndexList:\n"
-       "Incorrect AST_Expression_Range\n");
-   _rangeEnd = (*iter)->getAsReal()->val();
-  }
-}
-
-void RangeIterator::initInteger(AST_ExpressionListIterator iter){
-  _rangeBegin = (*iter)->getAsInteger()->val();
-  iter++;
-  ERROR_UNLESS(iter != _rangeElements->end(), "for_index_iterator - getIndexList:\n"
-         "Incorrect AST_Expression_Range\n");
-  int temp = (*iter)->getAsInteger()->val();
+  int temp = getVal(iter, symbolTable);
   iter++;
   if (iter == _rangeElements->end()) {
    _rangeStep = 1;
     _rangeEnd = temp;
   } else {
    _rangeStep = temp;
-   iter++;
-   ERROR_UNLESS(iter == _rangeElements->end(), "for_index_iterator - getIndexList:\n"
-       "Incorrect AST_Expression_Range\n");
-   _rangeEnd = (*iter)->getAsInteger()->val();
+   _rangeEnd = getVal(iter, symbolTable);
+  }
+  _current = _rangeBegin;
+}
+
+AST_Real RangeIterator::getVal(AST_ExpressionListIterator iter, VarSymbolTable symbolTable) {
+  AST_Expression exp = current_element(iter);
+  switch(exp->expressionType()) {
+  case EXPINTEGER:
+    return exp->getAsInteger()->val();
+  case EXPREAL:
+    return exp->getAsReal()->val();
+  case EXPCOMPREF:
+    return getCompRefVal(exp->getAsComponentReference(), symbolTable);
+  default:
+    ERROR("RangeIterator::getVal:\n"
+        "Incorrect colon expression element's type");
+  }
+}
+
+AST_Real RangeIterator::getCompRefVal(AST_Expression_ComponentReference compRef, VarSymbolTable symbolTable) {
+  VarInfo vInfo = symbolTable->lookup(compRef->name());
+  ERROR_UNLESS(vInfo->isConstant() || vInfo->isParameter(),
+      "RangeIterator::getCompRefVal\n"
+      "AST_Component_Reference in AST_Expression_Range must be constant or parameter.\n");
+  AST_Modification mod = vInfo->modification();
+  switch(mod->modificationType()) {
+  case MODEQUAL:{
+    AST_Modification_Equal equal = mod->getAsEqual();
+    AST_Expression exp = equal->exp();
+    switch (exp->expressionType()) {
+    case EXPINTEGER:
+      return exp->getAsInteger()->val();
+    case EXPREAL:
+      return exp->getAsReal()->val();
+    default:
+      // TODO [Moya]
+      ERROR("RangeIterator::getCompRefVal\n"
+          "For now only literals are supported as AST_Modification_Equal expression\n");
+    }
+    break;
+  } default:
+    ERROR("RangeIterator::getVal\n"
+        "Incorrect AST_Modification type or not supported yet.\n");
   }
 }
 

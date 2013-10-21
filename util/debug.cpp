@@ -64,7 +64,11 @@ bool isDebugParam(char *param) {
 void ERROR(const char *format, ...) {
   va_list ap;
   va_start(ap, format);
-  vfprintf(stderr, format, ap);
+  char *error_string = "Error: ";
+  char *new_format = (char *) malloc(sizeof(char) * strlen(error_string) + (strlen(format)));
+  strcpy(new_format, error_string);
+  strcat(new_format, format);
+  vfprintf(stderr, new_format, ap);
   fflush(stderr);
   va_end(ap);
   exit(EXIT_FAILURE);
