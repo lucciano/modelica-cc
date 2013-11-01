@@ -101,6 +101,12 @@ ex ConvertToGiNaC::foldTraverseElement(ex l, ex r, BinOpType b) {
     return l*r;
   case BINOPDIV:
     return l/r;
+  case BINOPEXP:
+    return pow(l,r);
+  default:
+      cerr << "BinOp not converted to GiNaC" << endl;
+      return ex(0);
+  
   }
 }
 
@@ -138,9 +144,9 @@ ex ConvertToGiNaC::foldTraverseElement(AST_Expression e) {
   case EXPINTEGER:
     return ex(e->getAsInteger()->val());
   case EXPCOMPREF: {
-    if (!_forDerivation)
+    if (!_forDerivation) {
       return getSymbol(e->getAsComponentReference());
-    else {
+    } else {
       VarInfo v = _varEnv->lookup(e->getAsComponentReference()->name());
       if (v->isParameter() || v->isDiscrete() || v->isConstant())
         return getSymbol(e->getAsComponentReference());
