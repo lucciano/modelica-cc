@@ -124,22 +124,15 @@ int main(int argc, char ** argv)
     DEBUG('c', "%s", current_element(iter)->print().c_str());
   }
 
-  StateVariablesFinder *stateFinder = new StateVariablesFinder(c);
-  stateFinder->findStateVariables();
-  DiscreteVariablesFinder *discreteVarFinder = new DiscreteVariablesFinder(c);
-  discreteVarFinder->findDiscreteVariables();
-  UnknownsCollector *collector = new UnknownsCollector(c);
-  AST_ExpressionList unknowns = collector->collectUnknowns();
-  MMO_EquationList causalEqs = newMMO_EquationList();
-  CausalizationStrategy *cStrategy = new CausalizationStrategy(acausalEquations, unknowns);
+  CausalizationStrategy *cStrategy = new CausalizationStrategy(c);
   AST_ClassList cl = newAST_ClassList();
-  cStrategy->causalize(c->name(), causalEqs, cl);
+  cStrategy->causalize(c->name(), cl);
 
   DEBUG('c', "Causalized Equations:\n");
-  c->getEquations()->clear();
-  foreach(iter, causalEqs) {
-    DEBUG('c', "%s", current_element(iter)->print().c_str());
-    AST_ListAppend(c->getEquations(),current_element(iter));
+  MMO_EquationList causalEqs = c->getEquations();
+  MMO_EquationListIterator causalEqsIter;
+  foreach(causalEqsIter, causalEqs) {
+    DEBUG('c', "%s", current_element(causalEqsIter)->print().c_str());
   }
   c->setfsolve(cl);
 

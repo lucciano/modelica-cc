@@ -367,7 +367,8 @@ void MMO_Class_::sortParameters() {
   typedef boost::adjacency_list<boost::vecS, boost::vecS> Graph; // VertexList=vecS
   Graph G(params->size());
   foreach(params_it,params) {
-    //cout << p << ":" << current_element(params_it) << endl; 
+    //cout << p << ":" << current_element(params_it) << endl;
+    // TODO [Moya] Sustituir CompRefOccurrenceTraverse por FindReference.
     CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(current_element(params_it));
     int u=0;
     foreach(params_it_u,params) {

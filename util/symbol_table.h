@@ -131,6 +131,8 @@ public:
   bool isState();
   void setState();
   
+  // TODO [Moya] Tiene sentido que esto?
+  // Las derivadas son incognitas y no estan en la tabla de símbolos.
   bool isUnknown();
   void setUnknown();
 

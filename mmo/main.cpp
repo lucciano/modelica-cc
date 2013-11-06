@@ -69,7 +69,7 @@ int main(int argc, char ** argv)
     
 		MMO_Class  d = newMMO_Class(c, tyEnv);
 		MMO_ToMicroModelica re = newMMO_ToMicroModelica(d);  
-		StateVariablesFinder * finder = new StateVariablesFinder(d); 
+		StateVariablesFinder * finder = new StateVariablesFinder(d);
 		finder->findStateVariables(); 
 	
 

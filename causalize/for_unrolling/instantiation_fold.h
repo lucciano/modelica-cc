@@ -29,9 +29,10 @@ private:
   AST_Expression foldTraverseElement(AST_Expression, AST_Expression, BinOpType);
   AST_Expression instantiateCompRef(AST_Expression_ComponentReference compRef);
   AST_Expression instantiateArray(AST_Expression_ComponentReference exp);
-  AST_Real getNumericExpressionVal(AST_Expression exp);
   AST_Expression evalExp(AST_Expression exp);
   AST_Expression evalBinOp(AST_Expression left, AST_Expression right, BinOpType binOpType);
+  bool isNumericExpression(AST_Expression exp);
+  AST_Real getNumericExpressionVal(AST_Expression exp);
   AST_String _forIndex_variable;
   AST_Integer _forIndex;
 };

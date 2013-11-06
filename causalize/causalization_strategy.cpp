@@ -6,15 +6,29 @@
  */
 #include <boost/lambda/lambda.hpp>
 
-#include <ast/equation.h>
-
-#include <causalize/causalization_strategy.h>
+#include <causalize/for_unrolling/process_for_equations.h>
+#include <causalize/unknowns_collector_v2.h>
 #include <causalize/compref_occurrence.h>
+#include <causalize/causalization_strategy.h>
 #include <causalize/cycles_identification_strategy.h>
+#include <ast/equation.h>
+#include <mmo/mmo_class.h>
+#include <util/ast_util.h>
 #include <util/debug.h>
 #include <util/solve.h>
 
-CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations, AST_ExpressionList unknowns) {
+// TODO [Moya] Ver que hacemos con las ecuaciones When.
+
+CausalizationStrategy::CausalizationStrategy(MMO_Class mmo_class) {
+
+  _mmo_class = mmo_class;
+
+  process_for_equations(mmo_class);
+
+  MMO_EquationList equations = mmo_class->getEquations();
+
+  UnknownsCollectorV2 *collector = new UnknownsCollectorV2(mmo_class);
+  AST_ExpressionList unknowns = collector->collectUnknowns();
 
   if (equations->size() != unknowns->size()) {
     ERROR ("The model being causalized is not balanced.\n"
@@ -82,6 +96,18 @@ CausalizationStrategy::CausalizationStrategy(MMO_EquationList equations, AST_Exp
 
 }
 
+//bool CausalizationStrategy::findReferenceInEquation(AST_Expression unknown, MMO_Equation equation) {
+//  string name = unknown->getAsComponentReference()->name();
+//  FindReference *fReference = new FindReference(&name);
+//  if (equation->equationType() == EQEQUALITY) {
+//      AST_Equation_Equality eqEq = equation->getAsEquality();
+//      return (fReference->foldTraverse(eqEq->left()) || fReference->foldTraverse(eqEq->right()));
+//  } else {
+//      ERROR("CausalizationStrategy::CausalizationStrategy(MMO_Class mmo_class): \n"
+//          "Only Equality Equations are supported here.\n");
+//  }
+//}
+
 CausalizationStrategy::~CausalizationStrategy() {
   delete _eqVertices;
   delete _unknownVertices;
@@ -89,56 +115,55 @@ CausalizationStrategy::~CausalizationStrategy() {
   delete _causalEqsN;
 }
 
-void CausalizationStrategy::causalize(AST_String name, MMO_EquationList causalEqs, AST_ClassList cl) {
+void CausalizationStrategy::causalize(AST_String name, AST_ClassList cl) {
 
   if(_eqVertices->empty()) {
-      causalEqs->insert(causalEqs->end(), _causalEqs1->begin(), _causalEqs1->end());
-      causalEqs->insert(causalEqs->end(), _causalEqsN->begin(), _causalEqsN->end());
-      return;
+    replaceMMOClassEquations();
+    return;
+  }
+
+  list<Vertex>::size_type acausalEqsSize = _eqVertices->size();
+
+  list<Vertex>::iterator iter, auxiliaryIter;
+
+  auxiliaryIter = _eqVertices->begin();
+  for(iter = auxiliaryIter; iter != _eqVertices->end(); iter = auxiliaryIter) {
+    ++auxiliaryIter;
+    Vertex eq = current_element(iter);
+    if (out_degree(eq, _graph) == 1) {
+      Edge e = *out_edges(eq, _graph).first;
+      Vertex unknown = target(e, _graph);
+      remove_out_edge_if(unknown, boost::lambda::_1 != e, _graph);
+      makeCausal1(name,_graph[eq].eqs, _graph[unknown].unknowns,cl);
+      _eqVertices->erase(iter);
+      _unknownVertices->remove(unknown);
+    } else if (out_degree(eq, _graph) == 0) {
+      ERROR("Problem is singular. Not supported yet.\n");
     }
+  }
 
-    int acausalEqsSize = _eqVertices->size();
-
-    list<Vertex>::iterator iter, auxiliaryIter;
-
-    auxiliaryIter = _eqVertices->begin();
-    for(iter = auxiliaryIter; iter != _eqVertices->end(); iter = auxiliaryIter) {
-      ++auxiliaryIter;
-      Vertex eq = current_element(iter);
-      if (out_degree(eq, _graph) == 1) {
-        Edge e = *out_edges(eq, _graph).first;
-        Vertex unknown = target(e, _graph);
-        remove_out_edge_if(unknown, boost::lambda::_1 != e, _graph);
-        makeCausal1(name,_graph[eq].eqs, _graph[unknown].unknowns,cl);
-        _eqVertices->erase(iter);
-        _unknownVertices->remove(unknown);
-      } else if (out_degree(eq, _graph) == 0) {
-        ERROR("Problem is singular. Not supported yet.\n");
-      }
+  auxiliaryIter = _unknownVertices->begin();
+  for(iter = auxiliaryIter; iter != _unknownVertices->end(); iter = auxiliaryIter) {
+    ++auxiliaryIter;
+    Vertex unknown = current_element(iter);
+    if(out_degree(unknown, _graph) == 1) {
+      Edge e = *out_edges(unknown, _graph).first;
+      Vertex eq = target(e, _graph);
+      remove_out_edge_if(eq, boost::lambda::_1 != e, _graph);
+      makeCausalN(name,_graph[eq].eqs, _graph[unknown].unknowns,cl);
+      _eqVertices->remove(eq);
+      _unknownVertices->erase(iter);
+    } else if (out_degree(unknown, _graph) == 0) {
+      ERROR("Problem is singular. Not supported yet.\n");
     }
+  }
 
-    auxiliaryIter = _unknownVertices->begin();
-    for(iter = auxiliaryIter; iter != _unknownVertices->end(); iter = auxiliaryIter) {
-      ++auxiliaryIter;
-      Vertex unknown = current_element(iter);
-      if(out_degree(unknown, _graph) == 1) {
-        Edge e = *out_edges(unknown, _graph).first;
-        Vertex eq = target(e, _graph);
-        remove_out_edge_if(eq, boost::lambda::_1 != e, _graph);
-        makeCausalN(name,_graph[eq].eqs, _graph[unknown].unknowns,cl);
-        _eqVertices->remove(eq);
-        _unknownVertices->erase(iter);
-      } else if (out_degree(unknown, _graph) == 0) {
-        ERROR("Problem is singular. Not supported yet.\n");
-      }
-    }
+  if (acausalEqsSize == _eqVertices->size()) {
+    DEBUG('c', "Algebraic loop(s) detected.\n");
+    processCycles();
+  }
 
-    if (acausalEqsSize == _eqVertices->size()) {
-      DEBUG('c', "Algebraic loop(s) detected.\n");
-      processCycles();
-    }
-
-  causalize(name, causalEqs, cl);
+  causalize(name, cl);
 
 }
 
@@ -288,4 +313,20 @@ void CausalizationStrategy::processCycles() {
     _unknownVertices->push_back(newUVertexVector[i]);
   }
 
+}
+
+void CausalizationStrategy::replaceMMOClassEquations() {
+  MMO_EquationList causalEqs = newMMO_EquationList();
+  causalEqs->insert(causalEqs->end(), _causalEqs1->begin(), _causalEqs1->end());
+  causalEqs->insert(causalEqs->end(), _causalEqsN->begin(), _causalEqsN->end());
+  MMO_EquationList oldEquations = _mmo_class->getEquations();
+  MMO_EquationListIterator iter, auxiliaryIter;
+  auxiliaryIter = oldEquations->begin();
+  for(iter = auxiliaryIter; iter != oldEquations->end(); iter = auxiliaryIter) {
+    ++auxiliaryIter;
+    _mmo_class->removeEquation(current_element(iter));
+  }
+  foreach(iter, causalEqs) {
+    _mmo_class->addEquation(current_element(iter));
+  }
 }

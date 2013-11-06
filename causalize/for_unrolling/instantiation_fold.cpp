@@ -62,55 +62,43 @@ AST_Expression InstantiationFold::foldTraverseElementUMinus(AST_Expression exp) 
 }
 
 AST_Expression InstantiationFold::foldTraverseElement(AST_Expression left, AST_Expression right, BinOpType binOpType) {
-  AST_Expression leftResult;
-  AST_Expression rightResult;
   switch(binOpType){
   case BINOPADD: {
-    leftResult = foldTraverse(left);
-    rightResult = foldTraverse(right);
-    if (leftResult->expressionType() != EXPCOMPREF &&
-        rightResult->expressionType() != EXPCOMPREF) {
-      return newAST_Expression_Integer(getNumericExpressionVal(leftResult) + getNumericExpressionVal(rightResult));
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Integer(getNumericExpressionVal(left) + getNumericExpressionVal(right));
     } else {
-      return newAST_Expression_BinOp(leftResult, rightResult, BINOPADD);
+      return newAST_Expression_BinOp(left, right, BINOPADD);
     }
   } case BINOPSUB: {
-    leftResult = foldTraverse(left);
-    rightResult = foldTraverse(right);
-    if (leftResult->expressionType() != EXPCOMPREF &&
-        rightResult->expressionType() != EXPCOMPREF) {
-      return newAST_Expression_Integer(getNumericExpressionVal(leftResult) - getNumericExpressionVal(rightResult));
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Integer(getNumericExpressionVal(left) - getNumericExpressionVal(right));
     } else {
-      return newAST_Expression_BinOp(leftResult, rightResult, BINOPSUB);
+      return newAST_Expression_BinOp(left, right, BINOPSUB);
     }
   } case BINOPMULT: {
-    leftResult = foldTraverse(left);
-    rightResult = foldTraverse(right);
-    if (leftResult->expressionType() != EXPCOMPREF &&
-        rightResult->expressionType() != EXPCOMPREF) {
-      return newAST_Expression_Integer(getNumericExpressionVal(leftResult) * getNumericExpressionVal(rightResult));
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Integer(getNumericExpressionVal(left) * getNumericExpressionVal(right));
     } else {
-      return newAST_Expression_BinOp(leftResult, rightResult, BINOPMULT);
+      return newAST_Expression_BinOp(left, right, BINOPMULT);
     }
   } case BINOPDIV: {
-    leftResult = foldTraverse(left);
-    rightResult = foldTraverse(right);
-    ERROR_UNLESS(rightResult != 0, "process_for_equations - evalExp:\n"
+    ERROR_UNLESS(right != 0, "process_for_equations - evalExp:\n"
             "Division by zero.\n");
-    if (leftResult->expressionType() != EXPCOMPREF &&
-        rightResult->expressionType() != EXPCOMPREF) {
-      return newAST_Expression_Integer((int)(getNumericExpressionVal(leftResult) / getNumericExpressionVal(rightResult)));
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Integer((int)(getNumericExpressionVal(left) / getNumericExpressionVal(right)));
     } else {
-      return newAST_Expression_BinOp(leftResult, rightResult, BINOPDIV);
+      return newAST_Expression_BinOp(left, right, BINOPDIV);
     }
   } case BINOPEXP: {
-    leftResult = foldTraverse(left);
-    rightResult = foldTraverse(right);
-    if (leftResult->expressionType() != EXPCOMPREF &&
-        rightResult->expressionType() != EXPCOMPREF) {
-      return newAST_Expression_Integer((int) pow(getNumericExpressionVal(leftResult), getNumericExpressionVal(rightResult)));
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Integer((int) pow(getNumericExpressionVal(left), getNumericExpressionVal(right)));
     } else {
-      return newAST_Expression_BinOp(leftResult, rightResult, BINOPEXP);
+      return newAST_Expression_BinOp(left, right, BINOPEXP);
     }
   } default:
     ERROR("process_for_equations.cpp - evalBinOp:\n"
@@ -140,30 +128,8 @@ AST_Expression InstantiationFold::instantiateArray(AST_Expression_ComponentRefer
     AST_ExpressionList newIndexes = newAST_ExpressionList();
     foreach (listIter, indexes) {
       AST_Expression arrayIndex = current_element(listIter);
-      switch (arrayIndex->expressionType()) {
-      case EXPBINOP:
-      {
-        AST_Expression_BinOp binOp = arrayIndex->getAsBinOp();
-        AST_Expression newArrayIndex = foldTraverseElement(binOp->left(), binOp->right(), binOp->binopType());
-        newIndexes->push_back(newArrayIndex);
-      }
-        break;
-      case EXPCOMPREF:
-      {
-        AST_Expression_ComponentReference compRefIndex = arrayIndex->getAsComponentReference();
-        newIndexes->push_back(instantiateCompRef(compRefIndex));
-      }
-        break;
-      case EXPINTEGER:
-        newIndexes->push_back(arrayIndex);
-        break;
-      case EXPREAL:
-        newIndexes->push_back(arrayIndex);
-        break;
-      default:
-        ERROR("InstantiationTraverse::instantiateCompRef: \n"
-            "Incorrect array index type %d.\n", arrayIndex->expressionType());
-      }
+      AST_Expression newArrayIndex = foldTraverse(arrayIndex);
+      newIndexes->push_back(newArrayIndex);
     }
     newArray->append((AST_String)current_element(namesIter), newIndexes);
     namesIter++;
@@ -171,12 +137,20 @@ AST_Expression InstantiationFold::instantiateArray(AST_Expression_ComponentRefer
   return newArray;
 }
 
+bool InstantiationFold::isNumericExpression(AST_Expression exp) {
+  return exp->expressionType() == EXPINTEGER || exp->expressionType() == EXPREAL;
+}
+
 AST_Real InstantiationFold::getNumericExpressionVal(AST_Expression exp) {
-  if(exp->expressionType() == EXPINTEGER) {
+  switch (exp->expressionType()) {
+  case EXPINTEGER: {
     AST_Expression_Integer integer = exp->getAsInteger();
     return integer->val();
-  } else {
+  } case EXPREAL: {
     AST_Expression_Real real = exp->getAsReal();
     return real->val();
+  } default:
+      ERROR("InstantiationFold::getNumericExpressionVal: \n"
+            "Incorrect type %d.\n", exp->expressionType());
   }
 }
