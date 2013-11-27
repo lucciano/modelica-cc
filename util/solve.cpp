@@ -69,7 +69,12 @@ AST_Class makeFsolve(AST_String name, int args_size, int size) {
   return r; 
 }
 
-MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AST_ExpressionList crs, AST_ExpressionList all_unknowns, AST_ClassList cl) {
+MMO_EquationList EquationSolver::solve(AST_String name,
+                                       MMO_EquationList eqs,
+                                       AST_ExpressionList crs,
+                                       AST_ExpressionList all_unknowns,
+                                       AST_ClassList cl,
+                                       VarSymbolTable symbolTable) {
   static int fsolve=1;
   ConvertToGiNaC tog(NULL); // No var symbol table needed for now
   ConvertToExpression toe;
@@ -120,9 +125,9 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
       // For each equation
       AST_Equation_Equality eq = current_element(it_eq)->getAsEquality();
       foreach(it_cr,all_unknowns) {
-        if (occur(current_element(it_cr),eq)) {
+        if (occur(current_element(it_cr),eq, symbolTable)) {
           // Check which unknown they use
-          CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(current_element(it_cr));
+          CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(current_element(it_cr), symbolTable);
           bool already_arg=false;
           foreach(it2_cr,args) {
             // If it is already an argument do not add it twice
@@ -149,8 +154,8 @@ MMO_EquationList EquationSolver::solve(AST_String name, MMO_EquationList eqs, AS
        } else if (current_element(it_cr)->expressionType()==EXPDERIVATIVE) {
           /* If unknown is a derivative check if the arg is an argument for the loop */
           AST_Expression der_arg=AST_ListFirst(current_element(it_cr)->getAsDerivative()->arguments());
-          if (occur(der_arg,eq)) {
-            CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(der_arg);
+          if (occur(der_arg,eq, symbolTable)) {
+            CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(der_arg, symbolTable);
             bool already_arg=false;
             foreach(it2_cr,args) {
               // If it is already an argument do not add it twice

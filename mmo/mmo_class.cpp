@@ -369,7 +369,7 @@ void MMO_Class_::sortParameters() {
   foreach(params_it,params) {
     //cout << p << ":" << current_element(params_it) << endl;
     // TODO [Moya] Sustituir CompRefOccurrenceTraverse por FindReference.
-    CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(current_element(params_it));
+    CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(current_element(params_it), getVarSymbolTable());
     int u=0;
     foreach(params_it_u,params) {
       VarInfo var = getVarSymbolTable()->lookup(current_element(params_it_u)->getAsComponentReference()->name());    

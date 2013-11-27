@@ -6,10 +6,11 @@
  */
 
 #include <causalize/compref_occurrence.h>
+#include <util/symbol_table.h>
 #include <util/debug.h>
 
-bool occur(AST_Expression unknown, MMO_Equation equation) {
-  CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(unknown);
+bool occur(AST_Expression unknown, MMO_Equation equation, VarSymbolTable symbolTable) {
+  CompRefOccurrenceTraverse *occurrenceTraverse = new CompRefOccurrenceTraverse(unknown, symbolTable);
   switch (equation->equationType()) {
     case EQEQUALITY:
     {
@@ -23,15 +24,16 @@ bool occur(AST_Expression unknown, MMO_Equation equation) {
   return false;
 }
 
-CompRefOccurrenceTraverse::CompRefOccurrenceTraverse(AST_Expression unknown) {
+CompRefOccurrenceTraverse::CompRefOccurrenceTraverse(AST_Expression unknown, VarSymbolTable symbolTable) {
   _unknown = unknown;
+  _equalExp = new EqualExp(symbolTable);
 }
 
 CompRefOccurrenceTraverse::~CompRefOccurrenceTraverse() {
 }
 
 bool CompRefOccurrenceTraverse::foldTraverseElement(AST_Expression e) {
-	return EqualExp::equalTraverse(e, _unknown);
+	return _equalExp->equalTraverse(e, _unknown);
 }
 
 

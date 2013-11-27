@@ -28,7 +28,7 @@
 #define IS_UMINUS(X) ((X)->expressionType()==EXPUMINUS)
 #define IS_UMINUS_VAR(X) (IS_UMINUS(X) && IS_CREF((X)->getAsUMinus()->exp()))
 #define UMINUS_EXP(X) ((X)->getAsUMinus()->exp())
-#define CREF_NAME(X) ( IS_UMINUS(X) ?  UMINUS_EXP(X)->getAsComponentReference()->name() : (X)->getAsComponentReference()->name() )
+#define CREF_NAME(X) ( IS_UMINUS(X) ?  *(UMINUS_EXP(X)->getAsComponentReference()->names()->front()) : *((X)->getAsComponentReference()->names()->front()) )
 #define IS_VAR(X) ((IS_CREF(X) || IS_UMINUS_VAR(X)) && (!IS_PARAMETER(X)))
 #define IS_ZERO_REAL(X) ((X)->expressionType()==EXPREAL && (X)->getAsReal()->val()==0.0)
 #define IS_ZERO_INT(X) ((X)->expressionType()==EXPINTEGER && (X)->getAsInteger()->val()==0)
@@ -100,9 +100,13 @@ private:
 
 class EqualExp {
 public:
-  static bool equalTraverse(AST_Expression a, AST_Expression b);
+  EqualExp(VarSymbolTable symbolTable);
+  bool equalTraverse(AST_Expression a, AST_Expression b);
 private:
-  static bool equalTraverseElement(AST_Expression a, AST_Expression b);
+  bool equalTraverseElement(AST_Expression a, AST_Expression b);
+  VarInfo getVarInfo(AST_Expression_ComponentReference compRef);
+  bool compareArrays(AST_Expression_ComponentReference arrayA, AST_Expression_ComponentReference arrayB);
+  VarSymbolTable _symbolTable;
 };
 
 class IsConstant: public AST_Expression_Fold<bool> {
@@ -117,10 +121,11 @@ private:
 
 class ReplaceExp: public AST_Expression_Traverse  {
 public:
-	AST_Expression replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in);
+	AST_Expression replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in, VarSymbolTable symbol_table);
 private:
 	virtual AST_Expression mapTraverseElement(AST_Expression);
 	AST_Expression _rep, _for_exp, _in;
+	VarSymbolTable _symbol_table;
 };
 
 /*  ReplaceBoolean: Reemplaza constantes Booleanas 

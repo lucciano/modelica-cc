@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include <util/ast_util.h>
+#include <util/debug.h>
 #include <ast/ast_builder.h>
 #include <ast/expression.h>
 
@@ -72,6 +73,10 @@ AST_Expression AST_Expression_Traverse::mapTraverse(AST_Expression e) {
   return e2;
 }
 
+EqualExp::EqualExp(VarSymbolTable symbolTable) {
+  _symbolTable = symbolTable;
+}
+
 bool EqualExp::equalTraverse(AST_Expression a, AST_Expression b) {
   if (a->expressionType()!=b->expressionType()) return false;
   switch (a->expressionType()) {
@@ -79,7 +84,7 @@ bool EqualExp::equalTraverse(AST_Expression a, AST_Expression b) {
   {
     AST_Expression_BinOp binOpA = a->getAsBinOp();
     AST_Expression_BinOp binOpB = b->getAsBinOp();
-    equalTraverse(binOpA->left(), binOpB->left()) && equalTraverse(binOpA->right(), binOpB->right());
+    return equalTraverse(binOpA->left(), binOpB->left()) && equalTraverse(binOpA->right(), binOpB->right());
   }
   break;
   default:
@@ -93,21 +98,78 @@ bool EqualExp::equalTraverseElement(AST_Expression a, AST_Expression b) {
   switch (a->expressionType()) {
   case EXPCOMPREF:
   {
-    return CREF_NAME(a)==CREF_NAME(b);
-    break;
+    AST_Expression_ComponentReference compRefA = a->getAsComponentReference();
+    AST_Expression_ComponentReference compRefB = b->getAsComponentReference();
+    VarInfo varInfoA = getVarInfo(compRefA);
+    VarInfo varInfoB = getVarInfo(compRefB);
+    TypesType typeA = varInfoA->type()->getType();
+    TypesType typeB = varInfoB->type()->getType();
+    ERROR_UNLESS(typeA == typeB,
+        "EqualExp::equalTraverseElement:\n"
+        "AST_Expression_ComponentReference with the same name but different types.\n");
+    if (typeA == TYARRAY) {
+      return compareArrays(compRefA, compRefB);
+    } else {
+      return (CREF_NAME(a).compare(CREF_NAME(b)) == 0);
+    }
   }
   case EXPDERIVATIVE:
   {
+    AST_ExpressionList argsA = a->getAsDerivative()->arguments();
+    AST_ExpressionList argsB = b->getAsDerivative()->arguments();
+    if (argsA->size() != argsB->size()) return false;
+    ERROR_UNLESS(argsA->size() == 1, "EqualExp::equalTraverseElement:\n"
+        "AST_Expression_Derivative with more than 1 argument are not supported yet.\n");
     AST_Expression_ComponentReference compRef1 = a->getAsDerivative()->arguments()->front()->getAsComponentReference();
     AST_Expression_ComponentReference compRef2 = b->getAsDerivative()->arguments()->front()->getAsComponentReference();
-    return CREF_NAME(compRef1)==CREF_NAME(compRef2);
-    break;
+    return equalTraverse(compRef1, compRef2);
   }
-  // TODO faltan casos a considerar.
+  case EXPREAL:
+  {
+    AST_Expression_Real realA = a->getAsReal();
+    AST_Expression_Real realB = b->getAsReal();
+    return realA->val() == realB->val();
+  }
+  case EXPINTEGER:
+  {
+    AST_Expression_Integer intA = a->getAsInteger();
+    AST_Expression_Integer intB = b->getAsInteger();
+    return intA->val() == intB->val();
+  }
   default:
-    break;
+    ERROR("EqualExp::equalTraverseElement:\n"
+        "Incorrect AST_Expression_Type %s", a->expressionType());
   }
-  return false;
+}
+
+VarInfo EqualExp::getVarInfo(AST_Expression_ComponentReference compRef) {
+  VarInfo varInfo;
+  AST_StringList names = compRef->names();
+  if (names->size() > 0) {
+    ERROR_UNLESS(names->size() == 1, "EqualExp::getVarInfo\n"
+                "AST_Component_Reference with names list bigger than 1 are not supported yet.\n");
+    AST_String name = names->front();
+    varInfo = _symbolTable->lookup(*name);
+  } else {
+    varInfo = _symbolTable->lookup(compRef->name());
+  }
+  return varInfo;
+}
+
+bool EqualExp::compareArrays(AST_Expression_ComponentReference arrayA, AST_Expression_ComponentReference arrayB) {
+  AST_ExpressionListList indexesListA = arrayA->indexes();
+  AST_ExpressionListList indexesListB = arrayB->indexes();
+  ERROR_UNLESS(indexesListA->size() == indexesListB->size(), "EqualExp::compareArrays:\n"
+      "indexes list sizes should be equal.\n");
+  ERROR_UNLESS(indexesListA->size() == 1, "EqualExp::compareArrays:\n"
+        "Indexes list sizes greater than 1 are not supported yet.\n");
+  AST_ExpressionList indexesA = indexesListA->front();
+  AST_ExpressionList indexesB = indexesListA->front();
+  ERROR_UNLESS(indexesA->size() == indexesB->size(), "EqualExp::compareArrays:\n"
+        "indexes sizes should be equal.\n");
+  ERROR_UNLESS(indexesA->size() == 1, "EqualExp::compareArrays:\n"
+          "Multidimensional arrays are not supported yet.\n");
+  return equalTraverse(indexesA->front(), indexesB->front());
 }
 
 bool IsConstant::foldTraverseElement(bool b1, bool b2, BinOpType ) {
@@ -140,14 +202,16 @@ bool IsConstant::foldTraverseElement(AST_Expression e) {
 
 
 
-AST_Expression ReplaceExp::replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in) {
+AST_Expression ReplaceExp::replaceExp(AST_Expression rep, AST_Expression for_exp, AST_Expression in, VarSymbolTable symbol_table) {
   _rep=rep;
   _for_exp=for_exp;
   _in=in;
+  _symbol_table = symbol_table;
   return mapTraverse(in);
 }
 AST_Expression ReplaceExp::mapTraverseElement(AST_Expression e) {
-  if (EqualExp::equalTraverse(e,_rep))
+  EqualExp *equalExp = new EqualExp(_symbol_table);
+  if (equalExp->equalTraverse(e,_rep))
     return _for_exp;
   return e;
 }

@@ -7,7 +7,7 @@
 
 using namespace boost::unit_test;
 
-/* TODO Criterio para la generación de casos de test. */
+/* TODO [Moya] Criterio para la generación de casos de test. */
 
 //____________________________________________________________________________//
 

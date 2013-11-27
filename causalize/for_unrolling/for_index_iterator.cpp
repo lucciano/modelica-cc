@@ -71,7 +71,6 @@ AST_Real RangeIterator::getCompRefVal(AST_Expression_ComponentReference compRef,
     case EXPREAL:
       return exp->getAsReal()->val();
     default:
-      // TODO [Moya]
       ERROR("RangeIterator::getCompRefVal\n"
           "For now only literals are supported as AST_Modification_Equal expression\n");
     }

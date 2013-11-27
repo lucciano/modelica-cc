@@ -68,8 +68,8 @@ void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_E
   switch(eq->equationType()) {
   case EQEQUALITY: {
     AST_Equation_Equality eqeq =  eq->getAsEquality();
-    eqeq->setLeft(rep.replaceExp(alias,var,eqeq->left()));
-    eqeq->setRight(rep.replaceExp(alias,var,eqeq->right()));
+    eqeq->setLeft(rep.replaceExp(alias,var,eqeq->left(), _varSymbolTable));
+    eqeq->setRight(rep.replaceExp(alias,var,eqeq->right(), _varSymbolTable));
     break;
   }
   case EQWHEN: {
@@ -78,11 +78,11 @@ void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_E
     AST_Equation_ElseListIterator else_it;
     MMO_EquationListIterator eqit;
     MMO_EquationList eqs = eqwhen->equationList();
-    eqwhen->setCondition(rep.replaceExp(alias,var,eqwhen->condition()));
+    eqwhen->setCondition(rep.replaceExp(alias,var,eqwhen->condition(), _varSymbolTable));
     foreach(eqit, eqs)
     replaceExpInEq(alias,var,current_element(eqit));
     foreach(else_it,elseeq) {
-      current_element(else_it)->setCondition(rep.replaceExp(alias,var, current_element(else_it)->condition()));
+      current_element(else_it)->setCondition(rep.replaceExp(alias,var, current_element(else_it)->condition(), _varSymbolTable));
       foreach(eqit, current_element(else_it)->equations())
       replaceExpInEq(alias,var,current_element(eqit));
     }
@@ -90,7 +90,7 @@ void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_E
   }
   case EQIF: {
     AST_Equation_If eqif =  eq->getAsIf();
-    eqif->setCondition(rep.replaceExp(alias,var,eqif->condition()));
+    eqif->setCondition(rep.replaceExp(alias,var,eqif->condition(), _varSymbolTable));
     MMO_EquationListIterator eqit;
     MMO_EquationList eqs = eqif->equationList();
     AST_Equation_ElseList else_ls=eqif->equationElseIf();
@@ -101,7 +101,7 @@ void RemoveAlias::replaceExpInEq(AST_Expression alias, AST_Expression var, AST_E
     foreach(eqit, eqs)
     replaceExpInEq(alias,var,current_element(eqit));
     foreach(else_it, else_ls) {
-      current_element(else_it)->setCondition(rep.replaceExp(alias,var,current_element(else_it)->condition()));
+      current_element(else_it)->setCondition(rep.replaceExp(alias,var,current_element(else_it)->condition(), _varSymbolTable));
       eqs = current_element(else_it)->equations();
       foreach(eqit, eqs)
       replaceExpInEq(alias,var,current_element(eqit));

@@ -9,7 +9,8 @@ OBJS_CAUSALIZE := $(OBJS_COMMON) \
             util/debug.o \
             causalize/main.o \
             causalize/compref_occurrence.o \
-            causalize/unknowns_collector_v2.o \
+            causalize/state_variables_finder.o \
+            causalize/unknowns_collector.o \
             causalize/causalization_strategy.o \
             causalize/cycles_identification_strategy.o \
             causalize/for_unrolling/for_index_iterator.o \

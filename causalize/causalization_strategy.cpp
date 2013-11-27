@@ -7,7 +7,7 @@
 #include <boost/lambda/lambda.hpp>
 
 #include <causalize/for_unrolling/process_for_equations.h>
-#include <causalize/unknowns_collector_v2.h>
+#include <causalize/unknowns_collector.h>
 #include <causalize/compref_occurrence.h>
 #include <causalize/causalization_strategy.h>
 #include <causalize/cycles_identification_strategy.h>
@@ -17,8 +17,6 @@
 #include <util/debug.h>
 #include <util/solve.h>
 
-// TODO [Moya] Ver que hacemos con las ecuaciones When.
-
 CausalizationStrategy::CausalizationStrategy(MMO_Class mmo_class) {
 
   _mmo_class = mmo_class;
@@ -27,7 +25,7 @@ CausalizationStrategy::CausalizationStrategy(MMO_Class mmo_class) {
 
   MMO_EquationList equations = mmo_class->getEquations();
 
-  UnknownsCollectorV2 *collector = new UnknownsCollectorV2(mmo_class);
+  UnknownsCollector *collector = new UnknownsCollector(mmo_class);
   AST_ExpressionList unknowns = collector->collectUnknowns();
 
   if (equations->size() != unknowns->size()) {
@@ -85,7 +83,7 @@ CausalizationStrategy::CausalizationStrategy(MMO_Class mmo_class) {
     foreach(unknownsIter, _unknownVertices) {
       Vertex eqVertex = current_element(acausalEqsIter);
       Vertex unknownVertex = current_element(unknownsIter);
-      if(occur(_graph[unknownVertex].unknowns->front(), _graph[eqVertex].eqs->front())) {
+      if(occur(_graph[unknownVertex].unknowns->front(), _graph[eqVertex].eqs->front(), _mmo_class->getVarSymbolTable())) {
         add_edge(eqVertex, unknownVertex, _graph);
         DEBUG('c', "(%d, %d) ", _graph[eqVertex].index, _graph[unknownVertex].index);
       }
@@ -169,7 +167,7 @@ void CausalizationStrategy::causalize(AST_String name, AST_ClassList cl) {
 
 void CausalizationStrategy::makeCausal1(AST_String name, MMO_EquationList eqs, AST_ExpressionList unknowns, AST_ClassList cl) {
   MMO_EquationListIterator iter;
-  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns, _all_unknowns,cl);
+  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns, _all_unknowns,cl, _mmo_class->getVarSymbolTable());
   foreach(iter, causalEqs) {
     _causalEqs1->push_back(current_element(iter));
   }
@@ -177,7 +175,7 @@ void CausalizationStrategy::makeCausal1(AST_String name, MMO_EquationList eqs, A
 
 void CausalizationStrategy::makeCausalN(AST_String name, MMO_EquationList eqs, AST_ExpressionList unknowns, AST_ClassList cl) {
   MMO_EquationListIterator iter;
-  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns, _all_unknowns,cl);
+  MMO_EquationList causalEqs = EquationSolver::solve(name, eqs, unknowns, _all_unknowns,cl, _mmo_class->getVarSymbolTable());
   foreach(iter, causalEqs) {
     _causalEqsN->push_front(current_element(iter));
   }

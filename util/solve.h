@@ -21,12 +21,18 @@
 #ifndef Solve_H
 #define Solve_H
 
+#include <util/symbol_table.h>
 #include <util/ast_util.h>
 #include <mmo/mmo_class.h>
 #include <ginac/ginac.h>
 
 class EquationSolver {
 public:
-  static MMO_EquationList solve(AST_String name, MMO_EquationList eqs, AST_ExpressionList crs,  AST_ExpressionList all_unknowns, AST_ClassList cl);
+  static MMO_EquationList solve(AST_String name,
+                                MMO_EquationList eqs,
+                                AST_ExpressionList crs,
+                                AST_ExpressionList all_unknowns,
+                                AST_ClassList cl,
+                                VarSymbolTable symbolTable);
 };
 #endif

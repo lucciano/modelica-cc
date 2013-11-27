@@ -71,7 +71,6 @@ void process_for_equations(MMO_Class mmo_class) {
     if (eq->equationType() == EQFOR) {
       AST_Equation_For forEq = (AST_Equation_For) eq->getAsFor();
       AST_ForIndexList forIndexList = forEq->forIndexList();
-      // TODO [Moya] for with more than 1 forIndex
       ERROR_UNLESS(forIndexList->size() == 1,
           "process_for_equations:\n"
           "forIndexList with more than 1 forIndex are not supported yet\n");
@@ -91,7 +90,6 @@ void process_for_equations(MMO_Class mmo_class) {
           }
         }
       } else {
-        // TODO [Moya] Implicit range
         ERROR("for-equation's index with implicit range not supported yet\n");
       }
       mmo_class->removeEquation(eq); // Remove FOR Equation.

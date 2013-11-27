@@ -26,9 +26,6 @@
 #include <ast/stored_definition.h>
 #include <ast/class.h>
 #include <ast/ast_types.h>
-#include <causalize/state_variables_finder.h>
-#include <causalize/discrete_variables_finder.h>
-#include <causalize/unknowns_collector.h>
 #include <causalize/causalization_strategy.h>
 #include <mmo/mmo_class.h>
 #include <util/debug.h>
@@ -140,7 +137,7 @@ int main(int argc, char ** argv)
     c->cleanComments();
     c->sortParameters();
   }
-  /* Dump parameters file */ 
+  /* Dump parameters file */
   cout << c;
   printParameters(c);
   return 0;
