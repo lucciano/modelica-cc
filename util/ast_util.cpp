@@ -90,7 +90,6 @@ bool EqualExp::equalTraverse(AST_Expression a, AST_Expression b) {
   default:
     return equalTraverseElement(a, b);
   }
-  return false;
 }
 
 bool EqualExp::equalTraverseElement(AST_Expression a, AST_Expression b) {
@@ -164,7 +163,7 @@ bool EqualExp::compareArrays(AST_Expression_ComponentReference arrayA, AST_Expre
   ERROR_UNLESS(indexesListA->size() == 1, "EqualExp::compareArrays:\n"
         "Indexes list sizes greater than 1 are not supported yet.\n");
   AST_ExpressionList indexesA = indexesListA->front();
-  AST_ExpressionList indexesB = indexesListA->front();
+  AST_ExpressionList indexesB = indexesListB->front();
   ERROR_UNLESS(indexesA->size() == indexesB->size(), "EqualExp::compareArrays:\n"
         "indexes sizes should be equal.\n");
   ERROR_UNLESS(indexesA->size() == 1, "EqualExp::compareArrays:\n"

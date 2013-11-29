@@ -20,6 +20,9 @@
 #include <ast/ast_types.h>
 #include <util/ast_util.h>
 
+// TODO [Moya] Generalizar o convertir en un evaluador genérico de expressiones.
+// probar con inverters.mo
+
 class InstantiationFold : public AST_Expression_Fold<AST_Expression>  {
 public:
   AST_Expression instantiate(AST_String variable, AST_Integer index, AST_Expression exp);

@@ -76,7 +76,7 @@ CausalizationStrategy::CausalizationStrategy(MMO_Class mmo_class) {
     DEBUG('c', "%d: %s\n", vp->index, vp->unknowns->front()->print().c_str());
    }
 
-  DEBUG('c', "Graph edges:\n");
+  DEBUG('c', "Graph edges as (equation_index, uknown_index):\n");
 
   list<Vertex>::iterator acausalEqsIter, unknownsIter;
   foreach(acausalEqsIter, _eqVertices) {
