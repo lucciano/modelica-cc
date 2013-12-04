@@ -1,13 +1,9 @@
-#include <iostream>
-
 #include <boost/test/unit_test.hpp>
 #include <boost/test/included/unit_test.hpp>
 
 #include <causalize/cycles_identification_strategy.h>
 
 using namespace boost::unit_test;
-
-/* TODO [Moya] Criterio para la generación de casos de test. */
 
 //____________________________________________________________________________//
 

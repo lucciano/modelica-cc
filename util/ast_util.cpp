@@ -18,10 +18,15 @@
 
 ******************************************************************************/
 
+#include <math.h>
+
 #include <util/ast_util.h>
+#include <util/symbol_table.h>
 #include <util/debug.h>
 #include <ast/ast_builder.h>
 #include <ast/expression.h>
+#include <ast/modification.h>
+
 
 #include <iostream>
 using namespace std;
@@ -98,16 +103,9 @@ bool EqualExp::equalTraverseElement(AST_Expression a, AST_Expression b) {
   case EXPCOMPREF:
   {
     AST_Expression_ComponentReference compRefA = a->getAsComponentReference();
-    AST_Expression_ComponentReference compRefB = b->getAsComponentReference();
-    VarInfo varInfoA = getVarInfo(compRefA);
-    VarInfo varInfoB = getVarInfo(compRefB);
-    TypesType typeA = varInfoA->type()->getType();
-    TypesType typeB = varInfoB->type()->getType();
-    ERROR_UNLESS(typeA == typeB,
-        "EqualExp::equalTraverseElement:\n"
-        "AST_Expression_ComponentReference with the same name but different types.\n");
-    if (typeA == TYARRAY) {
-      return compareArrays(compRefA, compRefB);
+    VarInfo varInfoA = _symbolTable->lookup(CREF_NAME(compRefA));
+    if (varInfoA != NULL && varInfoA->type()->getType() == TYARRAY) {
+      return compareArrays(compRefA, b->getAsComponentReference());
     } else {
       return (CREF_NAME(a).compare(CREF_NAME(b)) == 0);
     }
@@ -477,3 +475,157 @@ AST_Expression ReplaceReference::foldTraverseElement(AST_Expression e)
   }
 };
 
+EvalExp::EvalExp(VarSymbolTable symbolTable) {
+  _compRef = NULL;
+  _compRefVal = NULL;
+  _symbolTable = symbolTable;
+}
+
+AST_Expression EvalExp::eval(AST_Expression exp) {
+  return foldTraverse(exp);
+}
+
+AST_Expression EvalExp::eval(AST_Expression_ComponentReference compRef, AST_Expression compRefValue, AST_Expression exp) {
+  _compRef = compRef;
+  _compRefVal = compRefValue;
+  return eval(exp);
+}
+
+AST_Expression EvalExp::foldTraverseElement(AST_Expression exp) {
+  switch (exp->expressionType()) {
+  case EXPCOMPREF: {
+    AST_Expression_ComponentReference expCompRef = exp->getAsComponentReference();
+    VarInfo varInfo = _symbolTable->lookup(CREF_NAME(expCompRef));
+    if (varInfo != NULL && varInfo->type()->getType() == TYARRAY) {
+      return evalArray(expCompRef);
+    } else {
+      return evalCompRef(expCompRef);
+    }
+  } case EXPDERIVATIVE: {
+    AST_Expression_Derivative der = exp->getAsDerivative();
+    AST_ExpressionList arguments = der->arguments();
+    AST_ExpressionListIterator argsIter;
+    AST_ExpressionList newArgs = newAST_ExpressionList();
+    foreach(argsIter, arguments) {
+      AST_Expression arg = current_element(argsIter);
+      ERROR_UNLESS(arg->expressionType() == EXPCOMPREF, "InstantiationTraverse::mapTraverseElement:\n"
+          "Incorrect AST_ExpressionDerivative argument type or not supported yet.\n");
+      AST_Expression newArg = evalArray((AST_Expression_ComponentReference)arg);
+      newArgs->push_back(newArg);
+    }
+    return newAST_Expression_Derivative(newArgs);
+  } default:
+    return exp;
+  }
+}
+
+AST_Expression EvalExp::foldTraverseElementUMinus(AST_Expression exp) {
+  AST_Expression_Integer zero = (AST_Expression_Integer) newAST_Expression_Integer(0);
+  return foldTraverseElement(zero, foldTraverse(exp->getAsUMinus()->exp()), BINOPSUB);
+}
+
+AST_Expression EvalExp::foldTraverseElement(AST_Expression left, AST_Expression right, BinOpType binOpType) {
+  switch(binOpType){
+  case BINOPADD: {
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Real(getNumericExpressionVal(left) + getNumericExpressionVal(right));
+    } else {
+      return newAST_Expression_BinOp(left, right, BINOPADD);
+    }
+  } case BINOPSUB: {
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Real(getNumericExpressionVal(left) - getNumericExpressionVal(right));
+    } else {
+      return newAST_Expression_BinOp(left, right, BINOPSUB);
+    }
+  } case BINOPMULT: {
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Real(getNumericExpressionVal(left) * getNumericExpressionVal(right));
+    } else {
+      return newAST_Expression_BinOp(left, right, BINOPMULT);
+    }
+  } case BINOPDIV: {
+    ERROR_UNLESS(right != 0, "process_for_equations - evalExp:\n"
+            "Division by zero.\n");
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Real(getNumericExpressionVal(left) / getNumericExpressionVal(right));
+    } else {
+      return newAST_Expression_BinOp(left, right, BINOPDIV);
+    }
+  } case BINOPEXP: {
+    if (isNumericExpression(left) &&
+        isNumericExpression(right)) {
+      return newAST_Expression_Real(pow(getNumericExpressionVal(left), getNumericExpressionVal(right)));
+    } else {
+      return newAST_Expression_BinOp(left, right, BINOPEXP);
+    }
+  } default:
+    ERROR("process_for_equations.cpp - evalBinOp:\n"
+        "Incorrect Binary operation type.\n");
+  }
+}
+
+AST_Expression EvalExp::evalCompRef(AST_Expression_ComponentReference compRef) {
+  EqualExp eqExp(_symbolTable);
+  if (_compRef && eqExp.equalTraverse(compRef, _compRef)) {
+    return _compRefVal;
+  }
+  VarInfo varInfo = _symbolTable->lookup(CREF_NAME(compRef));
+  if (varInfo != NULL && (varInfo->isParameter() || varInfo->isConstant())) {
+    AST_Modification mod = varInfo->modification();
+    switch(mod->modificationType()) {
+      case MODEQUAL:{
+        AST_Modification_Equal equal = mod->getAsEqual();
+        return foldTraverse(equal->exp());
+      } default:
+        ERROR("RangeIterator::getVal\n"
+          "Incorrect AST_Modification type or not supported yet.\n");
+      }
+  }
+  return compRef;
+}
+
+// The component reference is an array of the form
+// a[i,j].b[x].c[y] (indexesList is ( (i,j) , (x), (y) ).
+AST_Expression EvalExp::evalArray(AST_Expression_ComponentReference array) {
+  AST_Expression_ComponentReference newArray = newAST_Expression_ComponentReference();
+  AST_StringList names = array->names();
+  AST_StringListIterator namesIter = names->begin();
+  AST_ExpressionListList indexesList = array->indexes();
+  AST_ExpressionListListIterator indexesListIter;
+  foreach (indexesListIter, indexesList) {
+    AST_ExpressionListIterator listIter;
+    AST_ExpressionList indexes = current_element(indexesListIter);
+    AST_ExpressionList newIndexes = newAST_ExpressionList();
+    foreach (listIter, indexes) {
+      AST_Expression arrayIndex = current_element(listIter);
+      AST_Expression newArrayIndex = foldTraverse(arrayIndex);
+      newIndexes->push_back(newArrayIndex);
+    }
+    newArray->append((AST_String)current_element(namesIter), newIndexes);
+    namesIter++;
+  }
+  return newArray;
+}
+
+bool EvalExp::isNumericExpression(AST_Expression exp) {
+  return exp->expressionType() == EXPINTEGER || exp->expressionType() == EXPREAL;
+}
+
+AST_Real EvalExp::getNumericExpressionVal(AST_Expression exp) {
+  switch (exp->expressionType()) {
+  case EXPINTEGER: {
+    AST_Expression_Integer integer = exp->getAsInteger();
+    return integer->val();
+  } case EXPREAL: {
+    AST_Expression_Real real = exp->getAsReal();
+    return real->val();
+  } default:
+      ERROR("InstantiationFold::getNumericExpressionVal: \n"
+            "Incorrect type %d.\n", exp->expressionType());
+  }
+}

@@ -25,8 +25,7 @@ UnknownsCollector::~UnknownsCollector() {
 AST_ExpressionList UnknownsCollector::collectUnknowns() {
   _finder->findStateVariables();
   VarSymbolTable symbolTable = _c->getVarSymbolTable();
-	int i; int symbolTableSize = symbolTable->count();
-	for (i = 0; i<symbolTableSize; i++) {
+	for (int i = 0; i<symbolTable->count(); i++) {
 		VarInfo varInfo = symbolTable->varInfo(i);
 		if (!varInfo->builtIn()
 		    && !varInfo->isConstant()
@@ -70,42 +69,11 @@ AST_ExpressionList UnknownsCollector::collectUnknowns() {
 }
 
 int UnknownsCollector::getDimension(AST_Expression arrayDimension, VarSymbolTable symbolTable) {
-    switch (arrayDimension->expressionType()){
-    case EXPCOMPREF:
-      return getCompRefVal(arrayDimension->getAsComponentReference(), symbolTable);
-    case EXPINTEGER:
-      return arrayDimension->getAsInteger()->val();
-    case EXPREAL:
-      return arrayDimension->getAsReal()->val();
-    default:
-      ERROR("Incorrect array dimension type or not supported yet");
-    }
-}
-
-int UnknownsCollector::getCompRefVal(AST_Expression_ComponentReference compRef, VarSymbolTable symbolTable) {
-  VarInfo vInfo = symbolTable->lookup(compRef->name());
-  ERROR_UNLESS(vInfo->isConstant() || vInfo->isParameter(),
-      "RangeIterator::getCompRefVal\n"
-      "AST_Component_Reference in AST_Expression_Range must be constant or parameter.\n");
-  AST_Modification mod = vInfo->modification();
-  switch(mod->modificationType()) {
-  case MODEQUAL: {
-    AST_Modification_Equal equal = mod->getAsEqual();
-    AST_Expression exp = equal->exp();
-    switch (exp->expressionType()) {
-    case EXPINTEGER:
-      return exp->getAsInteger()->val();
-    case EXPREAL:
-      return (int) exp->getAsReal()->val();
-    default:
-      ERROR("RangeIterator::getCompRefVal\n"
-          "For now only literals are supported as AST_Modification_Equal expression\n");
-    }
-    break;
-  } default:
-    ERROR("RangeIterator::getVal\n"
-        "Incorrect AST_Modification type or not supported yet.\n");
-  }
+  EvalExp evaluator(symbolTable);
+  AST_Expression result = evaluator.eval(arrayDimension);
+  ERROR_UNLESS(result->expressionType() == EXPREAL || result->expressionType() == EXPINTEGER, "UnknownsCollector::getDimension\n"
+      "Array dimension evaluation must return an numeric value\n");
+  return (int) result->getAsReal()->val();
 }
 
 AST_Expression UnknownsCollector::buildArray(AST_String name, int index) {

@@ -23,17 +23,16 @@
 class ForIndexIterator {
 public:
   virtual bool hasNext() = 0;
-  virtual AST_Integer next() = 0;
+  virtual AST_Real next() = 0;
 };
 
 class RangeIterator : public ForIndexIterator {
 public:
   RangeIterator(AST_Expression_Range range, VarSymbolTable symbolTable);
   bool hasNext();
-  AST_Integer next();
+  AST_Real next();
 private:
-  AST_Real getVal(AST_ExpressionListIterator iter, VarSymbolTable symbolTable);
-  AST_Real getCompRefVal(AST_Expression_ComponentReference compRef, VarSymbolTable symbolTable);
+  AST_Real eval(AST_Expression exp, VarSymbolTable symbolTable);
   AST_ExpressionList _rangeElements;
   AST_Real _rangeBegin;
   AST_Real _rangeStep;
@@ -45,7 +44,7 @@ class BraceIterator : public ForIndexIterator {
 public:
   BraceIterator(AST_Expression_Brace braceExp);
   bool hasNext();
-  AST_Integer next();
+  AST_Real next();
 private:
   AST_ExpressionList _braceExpElements;
   AST_ExpressionListIterator _braceExpElementsIter;

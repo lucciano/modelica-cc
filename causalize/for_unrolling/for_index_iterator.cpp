@@ -20,64 +20,35 @@
 #include <causalize/for_unrolling/for_index_iterator.h>
 #include <ast/expression.h>
 #include <ast/modification.h>
+#include <util/ast_util.h>
 #include <util/debug.h>
-
 
 RangeIterator::RangeIterator(AST_Expression_Range range, VarSymbolTable symbolTable) {
   _rangeElements = range->expressionList();
   AST_ExpressionListIterator iter = _rangeElements->begin();
-  _rangeBegin = getVal(iter, symbolTable);
+  _rangeBegin = eval(current_element(iter), symbolTable);
   iter++;
-  int temp = getVal(iter, symbolTable);
+  AST_Real temp = eval(current_element(iter), symbolTable);
   iter++;
   if (iter == _rangeElements->end()) {
    _rangeStep = 1;
     _rangeEnd = temp;
   } else {
    _rangeStep = temp;
-   _rangeEnd = getVal(iter, symbolTable);
+   _rangeEnd = eval(current_element(iter), symbolTable);
   }
   _current = _rangeBegin;
 }
 
-AST_Real RangeIterator::getVal(AST_ExpressionListIterator iter, VarSymbolTable symbolTable) {
-  AST_Expression exp = current_element(iter);
-  switch(exp->expressionType()) {
-  case EXPINTEGER:
-    return exp->getAsInteger()->val();
-  case EXPREAL:
-    return exp->getAsReal()->val();
-  case EXPCOMPREF:
-    return getCompRefVal(exp->getAsComponentReference(), symbolTable);
-  default:
-    ERROR("RangeIterator::getVal:\n"
-        "Incorrect colon expression element's type");
-  }
-}
-
-AST_Real RangeIterator::getCompRefVal(AST_Expression_ComponentReference compRef, VarSymbolTable symbolTable) {
-  VarInfo vInfo = symbolTable->lookup(compRef->name());
-  ERROR_UNLESS(vInfo->isConstant() || vInfo->isParameter(),
-      "RangeIterator::getCompRefVal\n"
-      "AST_Component_Reference in AST_Expression_Range must be constant or parameter.\n");
-  AST_Modification mod = vInfo->modification();
-  switch(mod->modificationType()) {
-  case MODEQUAL:{
-    AST_Modification_Equal equal = mod->getAsEqual();
-    AST_Expression exp = equal->exp();
-    switch (exp->expressionType()) {
-    case EXPINTEGER:
-      return exp->getAsInteger()->val();
-    case EXPREAL:
-      return exp->getAsReal()->val();
-    default:
-      ERROR("RangeIterator::getCompRefVal\n"
-          "For now only literals are supported as AST_Modification_Equal expression\n");
-    }
-    break;
-  } default:
-    ERROR("RangeIterator::getVal\n"
-        "Incorrect AST_Modification type or not supported yet.\n");
+AST_Real RangeIterator::eval(AST_Expression exp, VarSymbolTable symbolTable) {
+  EvalExp evaluator(symbolTable);
+  AST_Expression result =  evaluator.eval(exp);
+  ERROR_UNLESS(result->expressionType() == EXPREAL || result->expressionType() == EXPINTEGER, "RangeIterator::getVal:\n"
+      "Expression type should be EXPREAL or EXPINTEGER \n");
+  if (result->expressionType() == EXPREAL) {
+    return result->getAsReal()->val();
+  } else {
+    return result->getAsInteger()->val();
   }
 }
 
@@ -85,8 +56,8 @@ bool RangeIterator::hasNext() {
   return _current <= _rangeEnd;
 }
 
-AST_Integer RangeIterator::next() {
-  AST_Integer value = (int) _current;
+AST_Real RangeIterator::next() {
+  AST_Real value = _current;
   _current += _rangeStep;
   return value;
 }
@@ -100,9 +71,9 @@ bool BraceIterator::hasNext() {
   return _braceExpElementsIter == _braceExpElements->end();
 }
 
-AST_Integer BraceIterator::next() {
+AST_Real BraceIterator::next() {
   AST_Expression exp = *_braceExpElementsIter;
-  AST_Integer value;
+  AST_Real value;
   switch (exp->expressionType()){
   case EXPINTEGER:
     value = exp->getAsInteger()->val();

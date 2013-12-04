@@ -21,9 +21,9 @@
 
 #include <util/debug.h>
 #include <util/symbol_table.h>
+#include <util/ast_util.h>
 
 #include <causalize/for_unrolling/process_for_equations.h>
-#include <causalize/for_unrolling/instantiation_fold.h>
 #include <causalize/for_unrolling/for_index_iterator.h>
 
 ForIndexIterator *processInExp(AST_Expression inExp, VarSymbolTable symbolTable){
@@ -43,13 +43,15 @@ ForIndexIterator *processInExp(AST_Expression inExp, VarSymbolTable symbolTable)
   }
 }
 
-MMO_Equation instantiate_equation(AST_Equation innerEq, AST_String variable, AST_Integer index) {
-  InstantiationFold traverse;
+MMO_Equation instantiate_equation(AST_Equation innerEq, AST_String variable, AST_Integer index, VarSymbolTable symbolTable) {
+  EvalExp evaluator(symbolTable);
   switch (innerEq->equationType()) {
     case EQEQUALITY: {
       AST_Equation_Equality eqEq = innerEq->getAsEquality();
-      AST_Expression left = traverse.instantiate(variable, index, eqEq->left());
-      AST_Expression right = traverse.instantiate(variable, index, eqEq->right());
+      AST_Expression_ComponentReference compRef = (AST_Expression_ComponentReference) newAST_Expression_ComponentReferenceExp(variable);
+      AST_Expression_Integer integerExp = (AST_Expression_Integer) newAST_Expression_Integer(index);
+      AST_Expression left = evaluator.eval(compRef, integerExp, eqEq->left());
+      AST_Expression right = evaluator.eval(compRef, integerExp, eqEq->right());
       return newAST_Equation_Equality(left, right);
     } default:
       ERROR("process_for_equations - instantiate_equation:\n"
@@ -78,14 +80,14 @@ void process_for_equations(MMO_Class mmo_class) {
       AST_String variable = forIndex->variable();
       AST_Expression inExp = forIndex->in_exp();
       if (inExp != NULL) {
-        ForIndexIterator *rangeIter = processInExp(inExp, mmo_class->getVarSymbolTable());
-        while (rangeIter->hasNext()) {
-          AST_Integer index = rangeIter->next();
+        ForIndexIterator *forIndexIter = processInExp(inExp, mmo_class->getVarSymbolTable());
+        while (forIndexIter->hasNext()) {
+          AST_Real index = forIndexIter->next();
           AST_EquationList innerEqs = forEq->equationList();
           AST_EquationListIterator innerEqsIter;
           foreach(innerEqsIter, innerEqs) {
             AST_Equation innerEq = current_element(innerEqsIter);
-            MMO_Equation newEq = instantiate_equation(innerEq, variable, index);
+            MMO_Equation newEq = instantiate_equation(innerEq, variable, index, mmo_class->getVarSymbolTable());
             mmo_class->addEquation(newEq);
           }
         }

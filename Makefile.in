@@ -14,12 +14,13 @@ OBJS_COMMON := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
-all:bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test
+all:bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test test/util/EvalExpTest
 
 include mmo/Makefile.include
 include causalize/Makefile.include
 include antialias/Makefile.include
 include test/causalize/Makefile.include
+include test/util/Makefile.include
 
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
@@ -35,7 +36,7 @@ parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
 	flex++ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
 clean:
-	rm -rf $(OBJS_ANTIALIAS) $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) $(OBJS_CAUSALIZE_TEST) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test 
+	rm -rf $(OBJS_ANTIALIAS) $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) $(OBJS_TEST_CAUSALIZE) $(OBJS_TEST_UTIL) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test test/util/EvalExpTest 
 
 
 

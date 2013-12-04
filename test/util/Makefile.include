@@ -1,0 +1,15 @@
+OBJS_TEST_UTIL := $(OBJS_COMMON) \
+            util/ast_util.o \
+            util/symbol_table.o \
+            util/debug.o \
+            util/type.o \
+            test/util/EvalExpTest.o
+
+LIB_TEST = -lboost_unit_test_framework
+
+test/util/EvalExpTest: $(OBJS_TEST_UTIL)
+	$(CXX) $(CXXFLAGS) -o test/util/EvalExpTest $(OBJS_TEST_UTIL) $(LIB_TEST)
+
+
+
+	

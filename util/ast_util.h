@@ -203,5 +203,33 @@ private:
 	virtual AST_Expression foldTraverseElementUMinus(AST_Expression);
 };
 
+/**
+ * Evaluates an arithmetic expression.
+ * TODO Ver el calculo del tipo de la expression de retorno en el caso en el que se llega a obtener un número.
+ */
+class EvalExp : public AST_Expression_Fold<AST_Expression>  {
+public:
+  EvalExp(VarSymbolTable symbolTable);
+  /**
+   * Evaluates an arithmetic expression.
+   */
+  AST_Expression eval(AST_Expression exp);
+  /**
+   * Evaluates an arithmetic expression replacing the occurrences of compRef with the value provided (compRefValue).
+   */
+  AST_Expression eval(AST_Expression_ComponentReference compRef, AST_Expression compRefValue, AST_Expression exp);
+private:
+  AST_Expression foldTraverseElement(AST_Expression);
+  AST_Expression foldTraverseElementUMinus(AST_Expression);
+  AST_Expression foldTraverseElement(AST_Expression, AST_Expression, BinOpType);
+  AST_Expression evalCompRef(AST_Expression_ComponentReference compRef);
+  AST_Expression evalArray(AST_Expression_ComponentReference exp);
+  bool isNumericExpression(AST_Expression exp);
+  AST_Real getNumericExpressionVal(AST_Expression exp);
+  AST_Expression_ComponentReference _compRef;
+  AST_Expression _compRefVal;
+  VarSymbolTable _symbolTable;
+};
+
 
 #endif
