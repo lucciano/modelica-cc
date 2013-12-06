@@ -224,8 +224,9 @@ private:
   AST_Expression foldTraverseElement(AST_Expression, AST_Expression, BinOpType);
   AST_Expression evalCompRef(AST_Expression_ComponentReference compRef);
   AST_Expression evalArray(AST_Expression_ComponentReference exp);
-  bool isNumericExpression(AST_Expression exp);
-  AST_Real getNumericExpressionVal(AST_Expression exp);
+  bool shouldReturnInteger(AST_Expression left, AST_Expression right);
+  bool shouldReturnReal(AST_Expression left, AST_Expression right);
+  AST_Real getRealVal(AST_Expression exp);
   AST_Expression_ComponentReference _compRef;
   AST_Expression _compRefVal;
   VarSymbolTable _symbolTable;

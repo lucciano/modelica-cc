@@ -71,9 +71,9 @@ AST_ExpressionList UnknownsCollector::collectUnknowns() {
 int UnknownsCollector::getDimension(AST_Expression arrayDimension, VarSymbolTable symbolTable) {
   EvalExp evaluator(symbolTable);
   AST_Expression result = evaluator.eval(arrayDimension);
-  ERROR_UNLESS(result->expressionType() == EXPREAL || result->expressionType() == EXPINTEGER, "UnknownsCollector::getDimension\n"
-      "Array dimension evaluation must return an numeric value\n");
-  return (int) result->getAsReal()->val();
+  ERROR_UNLESS(result->expressionType() == EXPINTEGER, "UnknownsCollector::getDimension\n"
+      "Array dimension evaluation must return an integer value\n");
+  return result->getAsInteger()->val();
 }
 
 AST_Expression UnknownsCollector::buildArray(AST_String name, int index) {

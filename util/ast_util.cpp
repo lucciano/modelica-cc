@@ -527,39 +527,44 @@ AST_Expression EvalExp::foldTraverseElementUMinus(AST_Expression exp) {
 AST_Expression EvalExp::foldTraverseElement(AST_Expression left, AST_Expression right, BinOpType binOpType) {
   switch(binOpType){
   case BINOPADD: {
-    if (isNumericExpression(left) &&
-        isNumericExpression(right)) {
-      return newAST_Expression_Real(getNumericExpressionVal(left) + getNumericExpressionVal(right));
+    if (shouldReturnInteger(left, right)) {
+      return newAST_Expression_Integer(left->getAsInteger()->val() + right->getAsInteger()->val());
+    } else if (shouldReturnReal(left, right)) {
+      return newAST_Expression_Real(getRealVal(left) + getRealVal(right));
     } else {
       return newAST_Expression_BinOp(left, right, BINOPADD);
     }
   } case BINOPSUB: {
-    if (isNumericExpression(left) &&
-        isNumericExpression(right)) {
-      return newAST_Expression_Real(getNumericExpressionVal(left) - getNumericExpressionVal(right));
+    if (shouldReturnInteger(left, right)) {
+      return newAST_Expression_Integer(left->getAsInteger()->val() - right->getAsInteger()->val());
+    } else if (shouldReturnReal(left, right)) {
+      return newAST_Expression_Real(getRealVal(left) - getRealVal(right));
     } else {
       return newAST_Expression_BinOp(left, right, BINOPSUB);
     }
   } case BINOPMULT: {
-    if (isNumericExpression(left) &&
-        isNumericExpression(right)) {
-      return newAST_Expression_Real(getNumericExpressionVal(left) * getNumericExpressionVal(right));
+    if (shouldReturnInteger(left, right)) {
+      return newAST_Expression_Integer(left->getAsInteger()->val() * right->getAsInteger()->val());
+    } else if (shouldReturnReal(left, right)) {
+      return newAST_Expression_Real(getRealVal(left) * getRealVal(right));
     } else {
       return newAST_Expression_BinOp(left, right, BINOPMULT);
     }
   } case BINOPDIV: {
     ERROR_UNLESS(right != 0, "process_for_equations - evalExp:\n"
             "Division by zero.\n");
-    if (isNumericExpression(left) &&
-        isNumericExpression(right)) {
-      return newAST_Expression_Real(getNumericExpressionVal(left) / getNumericExpressionVal(right));
+    if (shouldReturnInteger(left, right)) {
+      return newAST_Expression_Integer(left->getAsInteger()->val() / right->getAsInteger()->val());
+    } else if (shouldReturnReal(left, right)) {
+      return newAST_Expression_Real(getRealVal(left) / getRealVal(right));
     } else {
       return newAST_Expression_BinOp(left, right, BINOPDIV);
     }
   } case BINOPEXP: {
-    if (isNumericExpression(left) &&
-        isNumericExpression(right)) {
-      return newAST_Expression_Real(pow(getNumericExpressionVal(left), getNumericExpressionVal(right)));
+    if (shouldReturnInteger(left, right)) {
+      return newAST_Expression_Integer(pow(left->getAsInteger()->val(), right->getAsInteger()->val()));
+    } else if (shouldReturnReal(left, right)) {
+      return newAST_Expression_Real(pow(getRealVal(left), getRealVal(right)));
     } else {
       return newAST_Expression_BinOp(left, right, BINOPEXP);
     }
@@ -612,20 +617,20 @@ AST_Expression EvalExp::evalArray(AST_Expression_ComponentReference array) {
   return newArray;
 }
 
-bool EvalExp::isNumericExpression(AST_Expression exp) {
-  return exp->expressionType() == EXPINTEGER || exp->expressionType() == EXPREAL;
+bool EvalExp::shouldReturnInteger(AST_Expression left, AST_Expression right) {
+  return left->expressionType() == EXPINTEGER && right->expressionType() == EXPINTEGER;
 }
 
-AST_Real EvalExp::getNumericExpressionVal(AST_Expression exp) {
-  switch (exp->expressionType()) {
-  case EXPINTEGER: {
-    AST_Expression_Integer integer = exp->getAsInteger();
-    return integer->val();
-  } case EXPREAL: {
-    AST_Expression_Real real = exp->getAsReal();
-    return real->val();
-  } default:
-      ERROR("InstantiationFold::getNumericExpressionVal: \n"
-            "Incorrect type %d.\n", exp->expressionType());
+bool EvalExp::shouldReturnReal(AST_Expression left, AST_Expression right) {
+  return (left->expressionType() == EXPREAL && right->expressionType() == EXPINTEGER) ||
+         (left->expressionType() == EXPINTEGER && right->expressionType() == EXPREAL) ||
+         (left->expressionType() == EXPREAL && right->expressionType() == EXPREAL);
+}
+
+AST_Real EvalExp::getRealVal(AST_Expression exp) {
+  if (exp->expressionType() == EXPREAL) {
+    return exp->getAsReal()->val();
+  } else {
+    return exp->getAsInteger()->val();
   }
 }

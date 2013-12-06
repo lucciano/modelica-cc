@@ -20,8 +20,8 @@ void eval_binary_exp_add_test()
   EvalExp *evalExp = new EvalExp(NULL);
   AST_Expression result = evalExp->eval(binOp);
 
-  BOOST_CHECK(result->expressionType() == EXPREAL);
-  BOOST_CHECK(result->getAsReal()->val() == 2);
+  BOOST_CHECK(result->expressionType() == EXPINTEGER);
+  BOOST_CHECK(result->getAsInteger()->val() == 2);
 }
 
 void eval_binary_exp_sub_test()
@@ -33,8 +33,8 @@ void eval_binary_exp_sub_test()
   EvalExp *evalExp = new EvalExp(NULL);
   AST_Expression result = evalExp->eval(binOp);
 
-  BOOST_CHECK(result->expressionType() == EXPREAL);
-  BOOST_CHECK(result->getAsReal()->val() == 1);
+  BOOST_CHECK(result->expressionType() == EXPINTEGER);
+  BOOST_CHECK(result->getAsInteger()->val() == 1);
 }
 
 void eval_binary_exp_mult_test()
@@ -46,8 +46,8 @@ void eval_binary_exp_mult_test()
   EvalExp *evalExp = new EvalExp(NULL);
   AST_Expression result = evalExp->eval(binOp);
 
-  BOOST_CHECK(result->expressionType() == EXPREAL);
-  BOOST_CHECK(result->getAsReal()->val() == 4);
+  BOOST_CHECK(result->expressionType() == EXPINTEGER);
+  BOOST_CHECK(result->getAsInteger()->val() == 4);
 }
 
 void eval_binary_exp_div_test()
@@ -59,8 +59,8 @@ void eval_binary_exp_div_test()
   EvalExp *evalExp = new EvalExp(NULL);
   AST_Expression result = evalExp->eval(binOp);
 
-  BOOST_CHECK(result->expressionType() == EXPREAL);
-  BOOST_CHECK(result->getAsReal()->val() == 2);
+  BOOST_CHECK(result->expressionType() == EXPINTEGER);
+  BOOST_CHECK(result->getAsInteger()->val() == 2);
 }
 
 void eval_binary_exp_exp_test()
@@ -72,15 +72,15 @@ void eval_binary_exp_exp_test()
   EvalExp *evalExp = new EvalExp(NULL);
   AST_Expression result = evalExp->eval(binOp);
 
-  BOOST_CHECK(result->expressionType() == EXPREAL);
-  BOOST_CHECK(result->getAsReal()->val() == 8);
+  BOOST_CHECK(result->expressionType() == EXPINTEGER);
+  BOOST_CHECK(result->getAsInteger()->val() == 8);
 }
 
 void eval_binary_exp_combi_test()
 {
   // 24 / ((2 + 1 + (-1)) ^ 3)
   AST_Expression_Integer intExp =  (AST_Expression_Integer) newAST_Expression_Integer(24);
-  AST_Expression_Integer intExp2 = (AST_Expression_Integer) newAST_Expression_Integer(2);
+  AST_Expression_Integer intExp2 = (AST_Expression_Integer) newAST_Expression_Real(2);
   AST_Expression_Integer intExp3 = (AST_Expression_Integer) newAST_Expression_Integer(1);
   AST_Expression_Integer intExp4 = (AST_Expression_Integer) newAST_Expression_Integer(1);
   AST_Expression_Integer intExp5 = (AST_Expression_Integer) newAST_Expression_Integer(3);
