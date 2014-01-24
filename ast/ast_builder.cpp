@@ -287,6 +287,31 @@ AST_TypePrefix AST_TypePrefixAdd(AST_TypePrefix tp, AST_TypePrefix tpadd) {
 }
 
 AST_Expression newAST_Expression_BinOp(AST_Expression left, AST_Expression right, BinOpType type) {
+  if (type==BINOPMULT && right->expressionType()==EXPREAL && right->getAsReal()->val()==1.0) {
+    return left;
+  }
+  if (type==BINOPMULT && right->expressionType()==EXPINTEGER && right->getAsInteger()->val()==1) {
+    return left;
+  }
+  if (type==BINOPMULT && left->expressionType()==EXPREAL && left->getAsReal()->val()==1.0) {
+    return right;
+  }
+  if (type==BINOPMULT && left->expressionType()==EXPINTEGER && left->getAsInteger()->val()==1) {
+    return right;
+  }
+  if (type==BINOPMULT && right->expressionType()==EXPREAL && right->getAsReal()->val()==0.0) {
+    return right;
+  }
+  if (type==BINOPMULT && right->expressionType()==EXPINTEGER && right->getAsInteger()->val()==0) {
+    return right;
+  }
+  if (type==BINOPMULT && left->expressionType()==EXPREAL && left->getAsReal()->val()==0.0) {
+    return left;
+  }
+  if (type==BINOPMULT && left->expressionType()==EXPINTEGER && left->getAsInteger()->val()==0) {
+    return left;
+  }
+ 
   return new AST_Expression_BinOp_(left,right,type);
 }
 
