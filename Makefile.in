@@ -14,7 +14,7 @@ OBJS_COMMON := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
-all:bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test test/util/EvalExpTest
+all:bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test test/util/EvalExpTest libmocc.a
 
 include mmo/Makefile.include
 include causalize/Makefile.include
@@ -25,7 +25,6 @@ include test/util/Makefile.include
 %.o: %.cpp %.h
 	$(CXX) -c $(CXXFLAGS) $*.cpp -o $*.o
 
-
 docs:
 	doxygen 
 
@@ -35,9 +34,31 @@ parser/mocc_parser.cpp: parser/mocc.y
 parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
 	flex++ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
+libmocc.a:$(OBJS_COMMON)
+	ar cqs libmocc.a $(OBJS_COMMON)
+MOCDIR=/usr/include/mocc
+install: libmocc.a
+	install -m 644 -p libmocc.a /usr/lib
+	mkdir -p $(MOCDIR)/parser 
+	mkdir -p $(MOCDIR)/ast
+	install -m 644 -p parser/parse.h $(MOCDIR)/parser
+	install -m 644 -p parser/mocc_parser.h $(MOCDIR)/parser
+	install -m 644 -p ast/equation.h $(MOCDIR)/ast
+	install -m 644 -p ast/composition.h $(MOCDIR)/ast
+	install -m 644 -p ast/statement.h $(MOCDIR)/ast
+	install -m 644 -p ast/ast_types.h $(MOCDIR)/ast
+	install -m 644 -p ast/class.h $(MOCDIR)/ast
+	install -m 644 -p ast/ast_node.h $(MOCDIR)/ast
+	install -m 644 -p ast/stored_definition.h $(MOCDIR)/ast
+	install -m 644 -p ast/modification.h $(MOCDIR)/ast
+	install -m 644 -p ast/element.h $(MOCDIR)/ast
+	install -m 644 -p ast/ast_builder.h $(MOCDIR)/ast
+	install -m 644 -p ast/ast_printer.h $(MOCDIR)/ast
+	install -m 644 -p ast/expression.h $(MOCDIR)/ast
+
+uninstall:
+	-rm -rf /usr/lib/libmocc.a $(MOCDIR)
+
 clean:
 	rm -rf $(OBJS_ANTIALIAS) $(OBJS_COMMON) $(OBJS_MMO) $(OBJS_CAUSALIZE) $(OBJS_TEST_CAUSALIZE) $(OBJS_TEST_UTIL) parser/mocc_parser.cpp parser/mocc_scanner.cpp parser/mocc_parser.h bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test test/util/EvalExpTest 
-
-
-
-	
+	-rm -rf libmocc.a
