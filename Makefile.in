@@ -14,6 +14,10 @@ OBJS_COMMON := parser/mocc_parser.o \
         ast/stored_definition.o  \
         parser/parse.o 
 
+OBJS_UTILS = util/ast_util.o \
+ 	util/symbol_table.o
+
+
 all:bin/mmo bin/causalize bin/antialias test/causalize/cycles_identification_strategy_test test/util/EvalExpTest libmocc.a
 
 include mmo/Makefile.include
@@ -34,13 +38,16 @@ parser/mocc_parser.cpp: parser/mocc.y
 parser/mocc_scanner.cpp: parser/mocc.lex parser/mocc_parser.cpp
 	flex++ -d -oparser/mocc_scanner.cpp parser/mocc.lex
 
-libmocc.a:$(OBJS_COMMON)
-	ar cqs libmocc.a $(OBJS_COMMON)
+libmocc.a:$(OBJS_COMMON) $(OBJ_UTILS)
+	ar cqs libmocc.a $(OBJS_COMMON) $(OBJ_UTILS)
 MOCDIR=/usr/include/mocc
 install: libmocc.a
 	install -m 644 -p libmocc.a /usr/lib
 	mkdir -p $(MOCDIR)/parser 
 	mkdir -p $(MOCDIR)/ast
+	mkdir -p $(MOCDIR)/util
+	install -m 644 -p util/ast_util.h $(MOCDIR)/util
+	install -m 644 -p util/symbol_table.h $(MOCDIR)/util
 	install -m 644 -p parser/parse.h $(MOCDIR)/parser
 	install -m 644 -p parser/mocc_parser.h $(MOCDIR)/parser
 	install -m 644 -p ast/equation.h $(MOCDIR)/ast
